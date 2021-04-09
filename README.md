@@ -54,7 +54,7 @@ public class DemoChannelHandler implements MartianServerChannelHandler {
     }
 }
 
-// 稍微简单的handler
+// 用起来稍微简单的handler
 public class DemoHandler implements MartianServerHandler {
 
     @Override
@@ -72,17 +72,19 @@ public class DemoHandler implements MartianServerHandler {
     }
 }
 
-// 最简单的handler
+// 用起来最简单的handler
 public class DemoRequestHandler implements MartianServerRequestHandler {
 
     @Override
     public void request(MartianHttpRequest martianHttpRequest) {
         
-        // 如果是json格式提交的，就用这个方法取出参数字符串
+        // 如果是json格式提交的，就用这个方法获取json字符串
         martianHttpRequest.getJsonParam();
-        // 如果是其他方式提交的，就用这个方法去除参数
+        
+        // 如果是其他方式提交的，就用这个方法获取参数
         martianHttpRequest.getMarsParams();
-        // 如果是文件上传就用这个方法取出文件们
+        
+        // 如果是文件上传就用这个方法获取文件们
         martianHttpRequest.getFiles();
         
         MartianHttpExchange martianHttpExchange = martianHttpRequest.getMartianHttpExchange();
