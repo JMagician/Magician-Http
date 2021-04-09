@@ -35,6 +35,13 @@ Martian-server 是一个基于AIO的网络编程包，支持http，websocket，u
     <artifactId>Martian-server</artifactId>
     <version>最新版</version>
 </dependency>
+
+<!-- 这个是日志包，支持任意可以跟slf4j桥接的包 -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-jdk14</artifactId>
+    <version>1.7.12</version>
+</dependency>
 ```
 ### 二、创建Handler
 ```java
