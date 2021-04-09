@@ -271,16 +271,17 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
 
         /* 执行handler */
         MartianServerHandler marsServerHandler = MartianServerConfig.getMartianServerHandler();
-        if(marsServerHandler instanceof MartianServerChannelHandler){
-            marsServerHandler.equals(channel);
-            return;
-        } else if(marsServerHandler instanceof MartianServerHttpExchangeHandler){
-            marsServerHandler.request(marsHttpExchange);
-        } else if(marsServerHandler instanceof MartianServerRequestHandler){
+        if (marsServerHandler instanceof MartianServerRequestHandler) {
             MartianHttpRequest martianHttpRequest = new MartianHttpRequest();
             martianHttpRequest.setMartianHttpExchange(marsHttpExchange);
             martianHttpRequest = ParamParsing.getHttpMarsRequest(martianHttpRequest);
             marsServerHandler.request(martianHttpRequest);
+        } else if (marsServerHandler instanceof MartianServerHttpExchangeHandler) {
+            marsServerHandler.request(marsHttpExchange);
+        } else if (marsServerHandler instanceof MartianServerChannelHandler) {
+            /* 在上游已经判断过了，理论上不会进入这里，但是保险起见了，多写了一个if */
+            marsServerHandler.equals(channel);
+            return;
         }
 
         /* 响应数据 */

@@ -1,6 +1,7 @@
 package com.mars.server.http.handler;
 
 import com.mars.server.MartianServerConfig;
+import com.mars.server.http.handler.ext.MartianServerChannelHandler;
 import com.mars.server.http.parsing.ReadCompletionHandler;
 import com.mars.server.http.request.MartianHttpExchange;
 import com.mars.server.http.util.ChannelUtil;
@@ -24,6 +25,14 @@ public class MartianAioServerHandler implements CompletionHandler<AsynchronousSo
     public void completed(AsynchronousSocketChannel channel, AsynchronousServerSocketChannel serverSocketChannel) {
         serverSocketChannel.accept(serverSocketChannel, this);
 
+        /* 如果是渠道handler就直接交给用户处理 */
+        MartianServerHandler martianServerHandler = MartianServerConfig.getMartianServerHandler();
+        if(martianServerHandler instanceof MartianServerChannelHandler){
+            martianServerHandler.request(channel);
+            return;
+        }
+
+        /* 如果是其他类型的handler才进行解析处理 */
         MartianHttpExchange martianHttpExchange = new MartianHttpExchange();
         martianHttpExchange.setSocketChannel(channel);
 
