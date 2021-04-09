@@ -20,3 +20,44 @@
 基于AIO的网络编程包
 
 </div>
+
+## 项目简介
+
+Martian-server 是一个基于AIO的网络编程包，支持http，websocket，udp等协议【暂时只支持http】
+
+## 安装步骤
+
+#### 导入依赖
+
+```xml
+<dependency>
+    <groupId>com.github.yuyenews</groupId>
+    <artifactId>Martian-server</artifactId>
+    <version>最新版</version>
+</dependency>
+```
+#### 创建Handler
+```java
+public class DemoHandler implements MartianServerHandler {
+
+    @Override
+    public void request(MartianHttpExchange martianHttpExchange) {
+        // 获取请求头
+        HttpHeaders httpHeaders = martianHttpExchange.getRequestHeaders();
+  
+        // 设置响应头
+        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.RESPONSE_CONTENT_TYPE);
+        // 设置响应状态码以及数据
+        martianHttpExchange.sendText(200,"ok");
+    }
+}
+```
+
+#### 创建服务
+```java
+MartianServer.builder()
+                    .bind(8080, 100)
+                    .threadPool(DemoThreadPool.getThreadPoolExecutor())
+                    .handler(new DemoHandler())
+                    .start();
+```
