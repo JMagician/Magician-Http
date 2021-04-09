@@ -23,7 +23,7 @@
 
 ## 项目简介
 
-Martian-server 是一个基于AIO的网络编程包，支持http，websocket，udp等协议【暂时只支持http】
+Martian-Server 是一个基于AIO的网络编程包，支持http，websocket，udp等协议【暂时只支持http】
 
 ## 安装步骤
 
