@@ -27,7 +27,7 @@ Martian-server 是一个基于AIO的网络编程包，支持http，websocket，u
 
 ## 安装步骤
 
-#### 导入依赖
+### 一、导入依赖
 
 ```xml
 <dependency>
@@ -36,7 +36,7 @@ Martian-server 是一个基于AIO的网络编程包，支持http，websocket，u
     <version>最新版</version>
 </dependency>
 ```
-#### 创建Handler
+### 二、创建Handler
 ```java
 public class DemoHandler implements MartianServerHandler {
 
@@ -53,7 +53,7 @@ public class DemoHandler implements MartianServerHandler {
 }
 ```
 
-#### 创建服务
+### 三、创建服务
 ```java
 MartianServer.builder()
                     .bind(8080, 100)
