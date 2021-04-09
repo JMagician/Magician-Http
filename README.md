@@ -64,7 +64,7 @@ public class DemoHandler implements MartianServerHandler {
 ```java
 MartianServer.builder()
                     .bind(8080, 100)
-                    .threadPool(DemoThreadPool.getThreadPoolExecutor())
+                    .threadPool(传入一个线程池))
                     .handler(new DemoHandler())
                     .start();
 ```
