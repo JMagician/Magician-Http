@@ -50,7 +50,7 @@ public class DemoChannelHandler implements MartianServerChannelHandler {
 
     @Override
     public void request(AsynchronousSocketChannel asynchronousSocketChannel) {
-        // 用户自己读写asynchronousSocketChannel
+        // 用户自己读写asynchronousSocketChannel，并且管理asynchronousSocketChannel的关闭
     }
 }
 
