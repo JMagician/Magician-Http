@@ -4,6 +4,9 @@ import com.mars.server.http.handler.MartianServerHandler;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * 服务配置
+ */
 public class MartianServerConfig {
 
     /**
