@@ -43,8 +43,18 @@ Martian-server 是一个基于AIO的网络编程包，支持http，websocket，u
     <version>1.7.12</version>
 </dependency>
 ```
-### 二、创建Handler
+### 二、创建Handler【三选一】
 ```java
+// 用起来最复杂的handler
+public class DemoChannelHandler implements MartianServerChannelHandler {
+
+    @Override
+    public void request(AsynchronousSocketChannel asynchronousSocketChannel) {
+        // 用户自己读写asynchronousSocketChannel
+    }
+}
+
+// 稍微简单的handler
 public class DemoHandler implements MartianServerHandler {
 
     @Override
@@ -52,10 +62,34 @@ public class DemoHandler implements MartianServerHandler {
         // 获取请求头
         HttpHeaders httpHeaders = martianHttpExchange.getRequestHeaders();
   
+        // 获取请求内容，是一个文件流 需要自己解析
+        InputStream inputStream = martianHttpExchange.getRequestBody();
+
         // 设置响应头
         martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.RESPONSE_CONTENT_TYPE);
         // 设置响应状态码以及数据
         martianHttpExchange.sendText(200,"ok");
+    }
+}
+
+// 最简单的handler
+public class DemoRequestHandler implements MartianServerRequestHandler {
+
+    @Override
+    public void request(MartianHttpRequest martianHttpRequest) {
+        
+        // 如果是json格式提交的，就用这个方法取出参数字符串
+        martianHttpRequest.getJsonParam();
+        // 如果是其他方式提交的，就用这个方法去除参数
+        martianHttpRequest.getMarsParams();
+        // 如果是文件上传就用这个方法取出文件们
+        martianHttpRequest.getFiles();
+        
+        MartianHttpExchange martianHttpExchange = martianHttpRequest.getMartianHttpExchange();
+        // 设置响应头
+        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE, MartianServerConstant.RESPONSE_CONTENT_TYPE);
+        // 设置状态码和响应内容
+        martianHttpExchange.sendText(200, "ok");
     }
 }
 ```

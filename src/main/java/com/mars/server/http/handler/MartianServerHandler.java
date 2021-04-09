@@ -1,11 +1,9 @@
 package com.mars.server.http.handler;
 
-import com.mars.server.http.request.MartianHttpExchange;
-
 /**
  * 自定义联络器接口
  */
-public interface MartianServerHandler {
+public interface MartianServerHandler<T> {
 
-    void request(MartianHttpExchange martianHttpExchange);
+    void request(T t);
 }

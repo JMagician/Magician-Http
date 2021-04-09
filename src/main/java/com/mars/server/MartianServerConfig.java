@@ -30,6 +30,14 @@ public class MartianServerConfig {
      */
     private static int readSize = 1024;
     /**
+     * 单个文件限制
+     */
+    private static long fileSizeMax = 2*1024*1024;
+    /**
+     * 上传文件总大小限制
+     */
+    private static long sizeMax = 10*1024*1024;
+    /**
      * 线程池
      */
     private static ThreadPoolExecutor threadPoolExecutor;
@@ -76,6 +84,22 @@ public class MartianServerConfig {
 
     public static void setReadSize(int readSize) {
         MartianServerConfig.readSize = readSize;
+    }
+
+    public static long getFileSizeMax() {
+        return fileSizeMax;
+    }
+
+    public static void setFileSizeMax(long fileSizeMax) {
+        MartianServerConfig.fileSizeMax = fileSizeMax;
+    }
+
+    public static long getSizeMax() {
+        return sizeMax;
+    }
+
+    public static void setSizeMax(long sizeMax) {
+        MartianServerConfig.sizeMax = sizeMax;
     }
 
     public static ThreadPoolExecutor getThreadPoolExecutor() {

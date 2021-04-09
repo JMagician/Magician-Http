@@ -64,6 +64,27 @@ public class MartianServer {
         MartianServerConfig.setReadSize(readSize);
         return this;
     }
+
+    /**
+     * 单个文件限制
+     * @param fileSizeMax
+     * @return
+     */
+    public MartianServer fileSizeMax(long fileSizeMax){
+        MartianServerConfig.setFileSizeMax(fileSizeMax);
+        return this;
+    }
+
+    /**
+     * 文件总大小限制
+     * @param sizeMax
+     * @return
+     */
+    public MartianServer sizeMax(long sizeMax){
+        MartianServerConfig.setSizeMax(sizeMax);
+        return this;
+    }
+
     /**
      * 设置线程池
      * @param threadPoolExecutor

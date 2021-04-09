@@ -4,7 +4,12 @@ import com.mars.server.MartianServerConfig;
 import com.mars.server.http.constant.MartianServerConstant;
 import com.mars.server.http.constant.ReqMethod;
 import com.mars.server.http.handler.MartianServerHandler;
+import com.mars.server.http.handler.ext.MartianServerChannelHandler;
+import com.mars.server.http.handler.ext.MartianServerHttpExchangeHandler;
+import com.mars.server.http.handler.ext.MartianServerRequestHandler;
+import com.mars.server.http.parsing.param.ParamParsing;
 import com.mars.server.http.request.MartianHttpExchange;
+import com.mars.server.http.request.MartianHttpRequest;
 import com.mars.server.http.util.ChannelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -263,9 +268,20 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
      *
      */
     public void write() throws Exception {
+
         /* 执行handler */
         MartianServerHandler marsServerHandler = MartianServerConfig.getMartianServerHandler();
-        marsServerHandler.request(marsHttpExchange);
+        if(marsServerHandler instanceof MartianServerChannelHandler){
+            marsServerHandler.equals(channel);
+            return;
+        } else if(marsServerHandler instanceof MartianServerHttpExchangeHandler){
+            marsServerHandler.request(marsHttpExchange);
+        } else if(marsServerHandler instanceof MartianServerRequestHandler){
+            MartianHttpRequest martianHttpRequest = new MartianHttpRequest();
+            martianHttpRequest.setMartianHttpExchange(marsHttpExchange);
+            martianHttpRequest = ParamParsing.getHttpMarsRequest(martianHttpRequest);
+            marsServerHandler.request(martianHttpRequest);
+        }
 
         /* 响应数据 */
         WriteParsing.builder(marsHttpExchange).responseData();
