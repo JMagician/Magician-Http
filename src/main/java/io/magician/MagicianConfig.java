@@ -126,6 +126,7 @@ public class MagicianConfig {
     }
 
     public static void addMartianServerHandler(String path, MagicianHandler magicianHandler) throws Exception {
+        path = path.toUpperCase();
         if(martianServerHandlerMap.containsKey(path)
                 || martianWebSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为"+path+"的handler");
@@ -137,6 +138,7 @@ public class MagicianConfig {
         if(path.equals("/")){
             throw new Exception("webSocket不可以监听根路径");
         }
+        path = path.toUpperCase();
         if(martianServerHandlerMap.containsKey(path)
                 || martianWebSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为"+path+"的handler");

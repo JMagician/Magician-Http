@@ -103,8 +103,8 @@ public class SocketWriteParsing {
      * @throws Exception
      */
     private String getAccept() throws Exception {
-        String swKey =socketSession.getMagicianHttpExchange().getRequestHeaders().get(WebSocketConstant.SEC_WEBSOCKET_KEY);
-        swKey = swKey + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+        String swKey = socketSession.getMagicianHttpExchange().getRequestHeaders().get(WebSocketConstant.SEC_WEBSOCKET_KEY);
+        swKey = swKey + WebSocketConstant.SOCKET_SECRET_KEY;
         return new String(SocketEncryptionUtil.getSha1AndBase64(swKey), MagicianConstant.ENCODING);
     }
 }

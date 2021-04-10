@@ -100,6 +100,6 @@ public class RoutingParsing {
         if(uri.lastIndexOf("?") > -1){
             endIndex = uri.lastIndexOf("?");
         }
-        return uri.substring(startIndex, endIndex);
+        return uri.substring(startIndex, endIndex).toUpperCase();
     }
 }
