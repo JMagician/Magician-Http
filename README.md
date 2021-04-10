@@ -61,7 +61,7 @@ public class DemoHandler implements MagicianHandler {
         magicianFileUpLoad.getInputStream(); // 文件流
         magicianFileUpLoad.getName();// 参数的name
 
-        // 设置响应头
+        // 响应数据
         magicianRequest.getResponse()
                 .setResponseHeader("content-type", "application/json;charset=UTF-8")
                 .sendText(200, "ok");
