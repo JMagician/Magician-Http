@@ -43,7 +43,7 @@ Magician 是一个基于AIO的网络编程包，支持http，websocket等协议�
 ```
 ### 二、创建Handler
 ```java
-public class DemoRequestHandler implements MagicianHandler {
+public class DemoHandler implements MagicianHandler {
 
     @Override
     public void request(MagicianRequest magicianRequest) {
