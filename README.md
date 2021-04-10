@@ -90,7 +90,7 @@ public class DemoRequestHandler implements HttpRequestHandler {
         // 设置响应格式为json
         martianHttpRequest.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.JSON_CONTENT_TYPE);
         // 设置响应状态码以及数据
-        martianHttpExchange.sendText(200,"ok");
+        martianHttpRequest.sendText(200,"ok");
     }
 }
 ```

@@ -3,6 +3,7 @@ package com.mars.server.tcp.http.request;
 import com.mars.server.tcp.http.constant.ReqMethod;
 import com.mars.server.tcp.http.model.MarsFileUpLoad;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -112,5 +113,32 @@ public class MartianHttpRequest {
      */
     public void setResponseHeader(String key, String value){
         httpExchange.setResponseHeader(key,value);
+    }
+
+    /**
+     * 设置响应数据
+     * @param code
+     * @param data
+     */
+    public void sendText(int code, String data){
+        httpExchange.sendText(code, data);
+    }
+
+    /**
+     * 设置响应文件流
+     * @param bytes
+     * @throws Exception
+     */
+    public void sendResponseBody(byte[] bytes) throws Exception {
+        httpExchange.setResponseBody(bytes);
+    }
+
+    /**
+     * 设置响应文件流
+     * @param inputStream
+     * @throws Exception
+     */
+    public void sendResponseBody(InputStream inputStream) throws Exception {
+        httpExchange.setResponseBody(inputStream);
     }
 }
