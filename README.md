@@ -84,8 +84,6 @@ public class DemoRequestHandler implements HttpRequestHandler {
         // 如果是文件上传就用这个方法获取文件们
         martianHttpRequest.getFiles();
         
-        MartianHttpExchange martianHttpExchange = martianHttpRequest.getMartianHttpExchange();
-        
         /* *************************设置响应头************************* */
         // 如果不想让框架自己关闭channel的话，这句是必须的
         martianHttpRequest.setResponseHeader(MartianServerConstant.CONNECTION,"keep-alive");
