@@ -23,7 +23,7 @@
 
 ## 项目简介
 
-Martian-Server 是一个基于AIO的网络编程包，支持http，websocket，udp等协议【暂时只支持http】
+Martian-Server 是一个基于AIO的网络编程包，支持http，websocket等协议【暂时只支持http】
 
 ## 安装步骤
 
@@ -45,35 +45,32 @@ Martian-Server 是一个基于AIO的网络编程包，支持http，websocket，u
 ```
 ### 二、创建Handler【三选一】
 ```java
-// 用起来最复杂的handler
-public class DemoChannelHandler implements MartianServerChannelHandler {
-
-    @Override
-    public void request(AsynchronousSocketChannel asynchronousSocketChannel) {
-        // 用户自己读写asynchronousSocketChannel，并且管理asynchronousSocketChannel的关闭
-    }
-}
-
-// 用起来稍微简单的handler
-public class DemoHandler implements MartianServerHandler {
+// 用起来较为复杂的handler
+public class DemoHandler implements HttpExchangeHandler {
 
     @Override
     public void request(MartianHttpExchange martianHttpExchange) {
         // 获取请求头
         HttpHeaders httpHeaders = martianHttpExchange.getRequestHeaders();
-  
+        
         // 获取请求内容，是一个文件流 需要自己解析
         InputStream inputStream = martianHttpExchange.getRequestBody();
-
-        // 设置响应头
-        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.RESPONSE_CONTENT_TYPE);
+    
+        // 也可以自己直接操作channel
+        AsynchronousSocketChannel socketChannel = martianHttpExchange.getSocketChannel();
+    
+        /* *************************设置响应头************************* */
+        // 如果不想让框架自己关闭channel的话，这句是必须的
+        martianHttpExchange.setResponseHeader(MartianServerConstant.CONNECTION,"keep-alive");
+        // 设置响应格式为json
+        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.JSON_CONTENT_TYPE);
         // 设置响应状态码以及数据
         martianHttpExchange.sendText(200,"ok");
     }
 }
 
-// 用起来最简单的handler
-public class DemoRequestHandler implements MartianServerRequestHandler {
+// 用起来较为简单的handler
+public class DemoRequestHandler implements HttpRequestHandler {
 
     @Override
     public void request(MartianHttpRequest martianHttpRequest) {
@@ -88,19 +85,36 @@ public class DemoRequestHandler implements MartianServerRequestHandler {
         martianHttpRequest.getFiles();
         
         MartianHttpExchange martianHttpExchange = martianHttpRequest.getMartianHttpExchange();
-        // 设置响应头
-        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE, MartianServerConstant.RESPONSE_CONTENT_TYPE);
-        // 设置状态码和响应内容
-        martianHttpExchange.sendText(200, "ok");
+        
+        /* *************************设置响应头************************* */
+        // 如果不想让框架自己关闭channel的话，这句是必须的
+        martianHttpExchange.setResponseHeader(MartianServerConstant.CONNECTION,"keep-alive");
+        // 设置响应格式为json
+        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.JSON_CONTENT_TYPE);
+        // 设置响应状态码以及数据
+        martianHttpExchange.sendText(200,"ok");
     }
 }
 ```
 
 ### 三、创建服务
 ```java
+// 链式写法
 MartianServer.builder()
                     .bind(8080, 100)
-                    .threadPool(传入一个线程池))
-                    .handler(new DemoHandler())
+                    .threadPool(传入一个线程池)
+                    .httpHandler("/", new DemoHandler())
                     .start();
+
+// 常规写法
+MartianServer martianServer = MartianServer.builder();
+martianServer.bind(8080, 100);
+martianServer.threadPool(传入一个线程池);
+martianServer.httpHandler("/", new DemoHandler());
+martianServer.start();
 ```
+
+### 官方资源
+- 官方网站: [http://mars-framework.com](http://mars-framework.com)
+- 使用示例: [https://github.com/yuyenews/MartianServer-Example](https://github.com/yuyenews/MartianServer-Example)
+- 开发文档: [http://mars-framework.com/doc.html?tag=server](http://mars-framework.com/doc.html?tag=server)

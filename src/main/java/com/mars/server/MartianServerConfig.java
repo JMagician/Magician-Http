@@ -1,7 +1,10 @@
 package com.mars.server;
 
-import com.mars.server.http.handler.MartianServerHandler;
+import com.mars.server.tcp.http.handler.MartianServerHandler;
+import com.mars.server.tcp.websocket.handler.WebSocketHandler;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -44,7 +47,11 @@ public class MartianServerConfig {
     /**
      * 联络器
      */
-    private static MartianServerHandler martianServerHandler;
+    private static Map<String, MartianServerHandler> martianServerHandlerMap = new HashMap<>();
+    /**
+     * webSocket联络器
+     */
+    private static Map<String, WebSocketHandler> martianWebSocketHandlerMap = new HashMap<>();
 
     public static int getPort() {
         return port;
@@ -110,11 +117,30 @@ public class MartianServerConfig {
         MartianServerConfig.threadPoolExecutor = threadPoolExecutor;
     }
 
-    public static MartianServerHandler getMartianServerHandler() {
-        return martianServerHandler;
+    public static Map<String, MartianServerHandler> getMartianServerHandlerMap() {
+        return martianServerHandlerMap;
     }
 
-    public static void setMartianServerHandler(MartianServerHandler martianServerHandler) {
-        MartianServerConfig.martianServerHandler = martianServerHandler;
+    public static Map<String, WebSocketHandler> getMartianWebSocketHandlerMap() {
+        return martianWebSocketHandlerMap;
+    }
+
+    public static void addMartianServerHandler(String path, MartianServerHandler martianServerHandler) throws Exception {
+        if(martianServerHandlerMap.containsKey(path)
+                || martianWebSocketHandlerMap.containsKey(path)){
+            throw new Exception("已经存在地址为"+path+"的handler");
+        }
+        MartianServerConfig.martianServerHandlerMap.put(path, martianServerHandler);
+    }
+
+    public static void addMartianWebSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
+        if(path.equals("/")){
+            throw new Exception("webSocket不可以监听根路径");
+        }
+        if(martianServerHandlerMap.containsKey(path)
+                || martianWebSocketHandlerMap.containsKey(path)){
+            throw new Exception("已经存在地址为"+path+"的handler");
+        }
+        MartianServerConfig.martianWebSocketHandlerMap.put(path, webSocketHandler);
     }
 }

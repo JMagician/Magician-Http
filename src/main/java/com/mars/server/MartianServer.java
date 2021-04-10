@@ -1,13 +1,11 @@
 package com.mars.server;
 
-import com.mars.server.http.handler.MartianAioServerHandler;
-import com.mars.server.http.handler.MartianServerHandler;
+import com.mars.server.tcp.http.handler.MartianServerHandler;
+import com.mars.server.tcp.http.server.HttpServerCreate;
+import com.mars.server.tcp.websocket.handler.WebSocketHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.AsynchronousServerSocketChannel;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -100,8 +98,18 @@ public class MartianServer {
      * @param martianServerHandler
      * @return
      */
-    public MartianServer handler(MartianServerHandler martianServerHandler){
-        MartianServerConfig.setMartianServerHandler(martianServerHandler);
+    public MartianServer httpHandler(String path, MartianServerHandler martianServerHandler) throws Exception {
+        MartianServerConfig.addMartianServerHandler(path, martianServerHandler);
+        return this;
+    }
+
+    /**
+     * 设置联络器
+     * @param webSocketHandler
+     * @return
+     */
+    public MartianServer webSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
+        MartianServerConfig.addMartianWebSocketHandler(path, webSocketHandler);
         return this;
     }
 
@@ -110,16 +118,8 @@ public class MartianServer {
      * @throws Exception
      */
     public void start() throws Exception {
-
-        /* 创建线程组 */
-        AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withThreadPool(MartianServerConfig.getThreadPoolExecutor());
-        /* 创建服务器通道 */
-        AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(channelGroup);
-        /* 开始监听端口 */
-        serverSocketChannel.bind(new InetSocketAddress(MartianServerConfig.getPort()), MartianServerConfig.getBackLog());
-        /* 添加handler */
-        serverSocketChannel.accept(serverSocketChannel,
-                new MartianAioServerHandler());
+        /* 创建服务 */
+        HttpServerCreate.create();
 
         /* 标识服务是否已经启动 */
         log.info("启动成功");
