@@ -43,7 +43,7 @@ Martian-Server 是一个基于AIO的网络编程包，支持http，websocket等�
     <version>1.7.12</version>
 </dependency>
 ```
-### 二、创建Handler【三选一】
+### 二、创建Handler【二选一】
 ```java
 // 用起来较为复杂的handler
 public class DemoHandler implements HttpExchangeHandler {
