@@ -1,8 +1,3 @@
-<div align=center>
-<img width="200px;" src="http://mars-framework.com/img/logo-github.png"/>
-</div>
-
-<br/>
 
 <div align=center>
 
@@ -23,7 +18,7 @@
 
 ## 项目简介
 
-Martian-Server 是一个基于AIO的网络编程包，支持http，websocket等协议【暂时只支持http】
+Magician 是一个基于AIO的网络编程包，支持http，websocket等协议【暂时只支持http】
 
 ## 安装步骤
 
@@ -32,7 +27,7 @@ Martian-Server 是一个基于AIO的网络编程包，支持http，websocket等�
 ```xml
 <dependency>
     <groupId>com.github.yuyenews</groupId>
-    <artifactId>Martian-server</artifactId>
+    <artifactId>Magician</artifactId>
     <version>最新版</version>
 </dependency>
 
@@ -43,73 +38,40 @@ Martian-Server 是一个基于AIO的网络编程包，支持http，websocket等�
     <version>1.7.12</version>
 </dependency>
 ```
-### 二、创建Handler【二选一】
+### 二、创建Handler
 ```java
-// 用起来较为复杂的handler
-public class DemoHandler implements HttpExchangeHandler {
+public class DemoRequestHandler implements MagicianHandler {
 
     @Override
-    public void request(MartianHttpExchange martianHttpExchange) {
-        // 获取请求头
-        HttpHeaders httpHeaders = martianHttpExchange.getRequestHeaders();
-        
-        // 获取请求内容，是一个文件流 需要自己解析
-        InputStream inputStream = martianHttpExchange.getRequestBody();
-    
-        // 也可以自己直接操作channel
-        AsynchronousSocketChannel socketChannel = martianHttpExchange.getSocketChannel();
-    
-        /* *************************设置响应头************************* */
-        // 如果不想让框架自己关闭channel的话，这句是必须的
-        martianHttpExchange.setResponseHeader(MartianServerConstant.CONNECTION,"keep-alive");
-        // 设置响应格式为json
-        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.JSON_CONTENT_TYPE);
-        // 设置响应状态码以及数据
-        martianHttpExchange.sendText(200,"ok");
-    }
-}
+    public void request(MagicianRequest magicianRequest) {
+        // 如果是json格式提交的，就用这个方法获取参数字符串
+        String jsonStr = magicianRequest.getJsonParam();
 
-// 用起来较为简单的handler
-public class DemoRequestHandler implements HttpRequestHandler {
+        /* *********如果是其他方式提交的，就用这个方法获取参数********* */
+        String list = magicianRequest.getParam("参数的name");
 
-    @Override
-    public void request(MartianHttpRequest martianHttpRequest) {
-        
-        // 如果是json格式提交的，就用这个方法获取json字符串
-        martianHttpRequest.getJsonParam();
-        
-        // 如果是其他方式提交的，就用这个方法获取参数
-        martianHttpRequest.getMarsParams();
-        
-        // 如果是文件上传就用这个方法获取文件们
-        martianHttpRequest.getFiles();
-        
-        /* *************************设置响应头************************* */
-        // 如果不想让框架自己关闭channel的话，这句是必须的
-        martianHttpRequest.setResponseHeader(MartianServerConstant.CONNECTION,"keep-alive");
-        // 设置响应格式为json
-        martianHttpRequest.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.JSON_CONTENT_TYPE);
-        // 设置响应状态码以及数据
-        martianHttpRequest.sendText(200,"ok");
+        /* *********如果是文件上传就用这个方法获取文件们********* */
+        Map<String, MagicianFileUpLoad> fileUpLoadMap = magicianRequest.getFiles();
+        // 可以这样获取到文件
+        MagicianFileUpLoad magicianFileUpLoad = fileUpLoadMap.get("参数的name");
+        magicianFileUpLoad.getFileName();// 文件名
+        magicianFileUpLoad.getInputStream(); // 文件流
+        magicianFileUpLoad.getName();// 参数的name
+
+        // 设置响应头
+        magicianRequest.getResponse()
+                .setResponseHeader("content-type", "application/json;charset=UTF-8")
+                .sendText(200, "ok");
     }
 }
 ```
 
 ### 三、创建服务
 ```java
-// 链式写法
-MartianServer.builder()
-                    .bind(8080, 100)
+Magician.builder().bind(8080, 100)
                     .threadPool(传入一个线程池)
                     .httpHandler("/", new DemoHandler())
                     .start();
-
-// 常规写法
-MartianServer martianServer = MartianServer.builder();
-martianServer.bind(8080, 100);
-martianServer.threadPool(传入一个线程池);
-martianServer.httpHandler("/", new DemoHandler());
-martianServer.start();
 ```
 
 ### 官方资源
