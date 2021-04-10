@@ -101,7 +101,16 @@ public class MartianHttpRequest {
      * @param key 键
      * @return 头数据
      */
-    public String getHeader(String key) {
-        return httpExchange.getRequestHeaders().get(key);
+    public String getRequestHeader(String key) {
+        return httpExchange.getRequestHeaders().get(key.toUpperCase());
+    }
+
+    /**
+     * 设置响应头
+     * @param key
+     * @param value
+     */
+    public void setResponseHeader(String key, String value){
+        httpExchange.setResponseHeader(key,value);
     }
 }

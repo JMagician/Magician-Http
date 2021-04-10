@@ -88,9 +88,9 @@ public class DemoRequestHandler implements HttpRequestHandler {
         
         /* *************************设置响应头************************* */
         // 如果不想让框架自己关闭channel的话，这句是必须的
-        martianHttpExchange.setResponseHeader(MartianServerConstant.CONNECTION,"keep-alive");
+        martianHttpRequest.setResponseHeader(MartianServerConstant.CONNECTION,"keep-alive");
         // 设置响应格式为json
-        martianHttpExchange.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.JSON_CONTENT_TYPE);
+        martianHttpRequest.setResponseHeader(MartianServerConstant.CONTENT_TYPE,MartianServerConstant.JSON_CONTENT_TYPE);
         // 设置响应状态码以及数据
         martianHttpExchange.sendText(200,"ok");
     }
