@@ -91,15 +91,13 @@ public class RoutingParsing {
      * @return
      */
     private static String getUri(String uri){
-        int startIndex = 0;
-        int endIndex = uri.length();
         if(!uri.startsWith("/")){
-            startIndex = uri.indexOf("/");
+            uri = "/"+uri;
         }
-
+        int endIndex = uri.length();
         if(uri.lastIndexOf("?") > -1){
             endIndex = uri.lastIndexOf("?");
         }
-        return uri.substring(startIndex, endIndex).toUpperCase();
+        return uri.substring(0, endIndex).toUpperCase();
     }
 }
