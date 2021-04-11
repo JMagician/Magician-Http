@@ -124,7 +124,6 @@ public class HttpServerCreate {
      * @throws Exception
      */
     public void start() throws Exception {
-        /* 创建服务 */
         /* 创建线程组 */
         AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withThreadPool(HttpServerConfig.getThreadPoolExecutor());
         /* 创建服务器通道 */
