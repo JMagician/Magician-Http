@@ -38,6 +38,14 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
      */
     private boolean readHead = false;
     /**
+     * 从报文寻找head结束标识的起始坐标
+     */
+    private int startIndex;
+    /**
+     * 从报文寻找head结束标识的结束坐标
+     */
+    private int endIndex;
+    /**
      * head的长度，用来计算body长度
      */
     private int headLength = 0;
@@ -61,6 +69,8 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
     public ReadCompletionHandler(MagicianHttpExchange magicianHttpExchange){
         this.channel = magicianHttpExchange.getSocketChannel();
         this.magicianHttpExchange = magicianHttpExchange;
+        startIndex = 0;
+        endIndex = 0;
     }
 
     /**
@@ -134,16 +144,14 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
 
         /* 判断是否已经把头读完了 */
         if (!readHead) {
-            String headStr = outputStream.toString(MagicianConstant.ENCODING);
-            /* 如果出现了连续的两个换行，则代表头已经读完了 */
-            int headEndIndex = headStr.indexOf(MagicianConstant.HEAD_END);
-            if (headEndIndex < 0) {
+            int length = headIndexOf();
+            if (length < 0) {
                 readOver = false;
                 return readBuffer;
             }
 
             /* 解析头并获取头的长度 */
-            headLength = parseHeader(headStr, headEndIndex);
+            headLength = parseHeader(length);
             readHead = true;
             /* 如果头读完了，并且此次请求是GET，则停止 */
             if (magicianHttpExchange.getRequestMethod().toUpperCase().equals(ReqMethod.GET.toString())) {
@@ -158,7 +166,6 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
                 return null;
             }
         }
-
         /* 判断已经读取的body长度是否等于Content-Length，如果条件满足则说明读取完成 */
         int streamLength = outputStream.size();
         if ((streamLength - headLength) >= contentLength) {
@@ -173,6 +180,70 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
         readBuffer.clear();
 
         return readBuffer;
+    }
+
+    /**
+     * 截取请求头
+     * @param length
+     * @return
+     */
+    private byte[] subHead(int length){
+        if(length <= 0){
+            return new byte[1];
+        }
+
+        byte[] nowBytes = outputStream.toByteArray();
+        byte[] bytes = new byte[length];
+        for(int i=0;i<length;i++){
+            bytes[i] = nowBytes[i];
+        }
+        return bytes;
+    }
+
+    /**
+     * 获取请求头的结束坐标
+     * @return -1 表示头还没读完，>-1 表示头的结束位置（不包含\r\n\r\n）
+     * @throws Exception
+     */
+    private int headIndexOf() throws Exception {
+        byte[] nowBytes = outputStream.toByteArray();
+        byte[] headEndBytes = MagicianConstant.HEAD_END.getBytes(MagicianConstant.ENCODING);
+
+        /* 这两个变量设置成全局，是为了避免每次都被初始化，从而实现从上次的坐标继续找，节约查找次数 */
+        startIndex = 0;
+        endIndex = headEndBytes.length;
+
+        while (true){
+            int index = 0;
+            boolean exist = true;
+
+            /* 如果剩余长度已经 小于 结束符的长度 就不用继续了 */
+            if((nowBytes.length - startIndex) < headEndBytes.length){
+                return -1;
+            }
+            /* 从startIndex开始比较，往后比较到endIndex的位置，如果全都相等就说明找到了了头的结束符 */
+            for(int i=startIndex; i<endIndex; i++){
+                if(index > headEndBytes.length - 1){
+                    return -1;
+                }
+                /* 只要有一个不相同就说明不相同，重新设置坐标，再次比较 */
+                if(nowBytes[i] != headEndBytes[index]){
+                    startIndex++;
+                    endIndex++;
+                    if(startIndex > (nowBytes.length-1) || endIndex > nowBytes.length){
+                        /* 如果坐标已经超出数据的范围了，说明没找到 */
+                        return -1;
+                    }
+                    exist = false;
+                    break;
+                }
+                index++;
+            }
+            if(exist){
+                /* 如果exist等于true，说明上面的for循环里没有进入过if，也就是说已经找到结束符了 */
+                return startIndex;
+            }
+        }
     }
 
     /**
@@ -193,9 +264,8 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
      *
      * @throws Exception
      */
-    private int parseHeader(String headStr, int headEndIndex) throws Exception {
-        headStr = headStr.substring(0, headEndIndex);
-
+    private int parseHeader(int length) throws Exception {
+        String headStr = new String(subHead(length));
         String[] headers = headStr.split(MagicianConstant.CARRIAGE_RETURN);
         for (int i = 0; i < headers.length; i++) {
             String head = headers[i];
