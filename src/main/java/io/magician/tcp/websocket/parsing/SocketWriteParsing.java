@@ -1,6 +1,6 @@
 package io.magician.tcp.websocket.parsing;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.constant.MagicianConstant;
 import io.magician.tcp.http.parsing.WriteParsing;
 import io.magician.tcp.http.util.ChannelUtil;
@@ -65,7 +65,7 @@ public class SocketWriteParsing {
         AsynchronousSocketChannel channel = socketSession.getMagicianHttpExchange().getSocketChannel();
         try {
             channel.write(byteBuffer,
-                    MagicianConfig.getWriteTimeout(),
+                    HttpServerConfig.getWriteTimeout(),
                     TimeUnit.MILLISECONDS,
                     byteBuffer,
                     new WriteCreateConnectionSocketHandler(channel, socketSession)

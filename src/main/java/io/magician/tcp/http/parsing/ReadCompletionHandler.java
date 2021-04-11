@@ -1,6 +1,6 @@
 package io.magician.tcp.http.parsing;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.constant.MagicianConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.http.util.ChannelUtil;
@@ -10,9 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.Channels;
 import java.nio.channels.CompletionHandler;
 import java.nio.channels.WritableByteChannel;
@@ -21,46 +19,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * 读取数据
  */
-public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuffer> {
+public class ReadCompletionHandler extends ReadFields implements CompletionHandler<Integer, ByteBuffer> {
 
     private Logger logger = LoggerFactory.getLogger(ReadCompletionHandler.class);
-
-    /**
-     * 通道
-     */
-    private AsynchronousSocketChannel channel;
-    /**
-     * 请求对象
-     */
-    private MagicianHttpExchange magicianHttpExchange;
-    /**
-     * 是否已经读完head了
-     */
-    private boolean readHead = false;
-    /**
-     * 从报文寻找head结束标识的起始坐标
-     */
-    private int startIndex;
-    /**
-     * 从报文寻找head结束标识的结束坐标
-     */
-    private int endIndex;
-    /**
-     * head的长度，用来计算body长度
-     */
-    private int headLength = 0;
-    /**
-     * 内容长度
-     */
-    private long contentLength = Long.MAX_VALUE;
-    /**
-     * 读完了没
-     */
-    private boolean readOver = false;
-    /**
-     * 读取到的数据缓存到这里
-     */
-    private ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     /**
      * 构造函数
@@ -87,7 +48,7 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
                 if(readBuffer != null){
                     /* 如果数据没读完，就接着读 */
                     channel.read(readBuffer,
-                            MagicianConfig.getReadTimeout(),
+                            HttpServerConfig.getReadTimeout(),
                             TimeUnit.MILLISECONDS,
                             readBuffer,
                             this);
@@ -176,7 +137,7 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
         readOver = false;
 
         /* 当请求头读完了以后，就加大每次读取大小 加快速度 */
-        readBuffer = ByteBuffer.allocate(MagicianConfig.getReadSize());
+        readBuffer = ByteBuffer.allocate(HttpServerConfig.getReadSize());
         readBuffer.clear();
 
         return readBuffer;
@@ -207,7 +168,9 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
      */
     private int headIndexOf() throws Exception {
         byte[] nowBytes = outputStream.toByteArray();
-        byte[] headEndBytes = MagicianConstant.HEAD_END.getBytes(MagicianConstant.ENCODING);
+        if(headEndBytes == null){
+            headEndBytes = MagicianConstant.HEAD_END.getBytes(MagicianConstant.ENCODING);
+        }
 
         /* 这两个变量设置成全局，是为了避免每次都被初始化，从而实现从上次的坐标继续找，节约查找次数 */
         startIndex = 0;

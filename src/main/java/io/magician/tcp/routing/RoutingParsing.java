@@ -1,6 +1,6 @@
 package io.magician.tcp.routing;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.websocket.WebSocketSession;
 import io.magician.tcp.websocket.constant.WebSocketConstant;
@@ -24,8 +24,8 @@ public class RoutingParsing {
      */
     public static void parsing(MagicianHttpExchange httpExchange) throws Exception {
 
-        Map<String, MagicianHandler> martianServerHandlerMap = MagicianConfig.getMartianServerHandlerMap();
-        Map<String, WebSocketHandler> martianWebSocketHandlerMap = MagicianConfig.getMartianWebSocketHandlerMap();
+        Map<String, MagicianHandler> martianServerHandlerMap = HttpServerConfig.getMartianServerHandlerMap();
+        Map<String, WebSocketHandler> martianWebSocketHandlerMap = HttpServerConfig.getMartianWebSocketHandlerMap();
 
         String uri = httpExchange.getRequestURI().toString();
         uri = getUri(uri);

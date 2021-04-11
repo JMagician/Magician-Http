@@ -1,4 +1,4 @@
-package io.magician;
+package io.magician.tcp.http.server;
 
 import io.magician.tcp.http.handler.MagicianHandler;
 import io.magician.tcp.websocket.handler.WebSocketHandler;
@@ -10,9 +10,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * 服务配置
+ * http服务配置
  */
-public class MagicianConfig {
+public class HttpServerConfig {
 
     /**
      * 端口号
@@ -60,7 +60,7 @@ public class MagicianConfig {
     }
 
     public static void setPort(int port) {
-        MagicianConfig.port = port;
+        HttpServerConfig.port = port;
     }
 
     public static int getBackLog() {
@@ -68,7 +68,7 @@ public class MagicianConfig {
     }
 
     public static void setBackLog(int backLog) {
-        MagicianConfig.backLog = backLog;
+        HttpServerConfig.backLog = backLog;
     }
 
     public static long getReadTimeout() {
@@ -76,7 +76,7 @@ public class MagicianConfig {
     }
 
     public static void setReadTimeout(long readTimeout) {
-        MagicianConfig.readTimeout = readTimeout;
+        HttpServerConfig.readTimeout = readTimeout;
     }
 
     public static long getWriteTimeout() {
@@ -84,7 +84,7 @@ public class MagicianConfig {
     }
 
     public static void setWriteTimeout(long writeTimeout) {
-        MagicianConfig.writeTimeout = writeTimeout;
+        HttpServerConfig.writeTimeout = writeTimeout;
     }
 
     public static int getReadSize() {
@@ -92,7 +92,7 @@ public class MagicianConfig {
     }
 
     public static void setReadSize(int readSize) {
-        MagicianConfig.readSize = readSize;
+        HttpServerConfig.readSize = readSize;
     }
 
     public static long getFileSizeMax() {
@@ -100,7 +100,7 @@ public class MagicianConfig {
     }
 
     public static void setFileSizeMax(long fileSizeMax) {
-        MagicianConfig.fileSizeMax = fileSizeMax;
+        HttpServerConfig.fileSizeMax = fileSizeMax;
     }
 
     public static long getSizeMax() {
@@ -108,7 +108,7 @@ public class MagicianConfig {
     }
 
     public static void setSizeMax(long sizeMax) {
-        MagicianConfig.sizeMax = sizeMax;
+        HttpServerConfig.sizeMax = sizeMax;
     }
 
     public static ExecutorService getThreadPoolExecutor() {
@@ -119,7 +119,7 @@ public class MagicianConfig {
     }
 
     public static void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
-        MagicianConfig.threadPoolExecutor = threadPoolExecutor;
+        HttpServerConfig.threadPoolExecutor = threadPoolExecutor;
     }
 
     public static Map<String, MagicianHandler> getMartianServerHandlerMap() {
@@ -136,7 +136,7 @@ public class MagicianConfig {
                 || martianWebSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为"+path+"的handler");
         }
-        MagicianConfig.martianServerHandlerMap.put(path, magicianHandler);
+        HttpServerConfig.martianServerHandlerMap.put(path, magicianHandler);
     }
 
     public static void addMartianWebSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
@@ -148,6 +148,6 @@ public class MagicianConfig {
                 || martianWebSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为"+path+"的handler");
         }
-        MagicianConfig.martianWebSocketHandlerMap.put(path, webSocketHandler);
+        HttpServerConfig.martianWebSocketHandlerMap.put(path, webSocketHandler);
     }
 }

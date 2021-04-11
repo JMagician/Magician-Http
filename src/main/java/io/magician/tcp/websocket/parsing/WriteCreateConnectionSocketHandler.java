@@ -1,6 +1,6 @@
 package io.magician.tcp.websocket.parsing;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.util.ChannelUtil;
 import io.magician.tcp.websocket.WebSocketSession;
 import io.magician.tcp.websocket.cache.ConnectionCache;
@@ -41,7 +41,7 @@ public class WriteCreateConnectionSocketHandler implements CompletionHandler<Int
     public void completed(Integer result, ByteBuffer attachment) {
         try {
             if(attachment.hasRemaining()){
-                channel.write(attachment, MagicianConfig.getWriteTimeout(),
+                channel.write(attachment, HttpServerConfig.getWriteTimeout(),
                         TimeUnit.MILLISECONDS, attachment,this);
             }
         } catch (Exception e){

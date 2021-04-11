@@ -1,6 +1,6 @@
 package io.magician.tcp.http.handler;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.parsing.ReadCompletionHandler;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.http.util.ChannelUtil;
@@ -28,7 +28,7 @@ public class MagicianCompletionHandler implements CompletionHandler<Asynchronous
             magicianHttpExchange.setSocketChannel(channel);
 
             ByteBuffer byteBuffer = ByteBuffer.allocate(800);
-            channel.read(byteBuffer, MagicianConfig.getReadTimeout(), TimeUnit.MILLISECONDS, byteBuffer, new ReadCompletionHandler(magicianHttpExchange));
+            channel.read(byteBuffer, HttpServerConfig.getReadTimeout(), TimeUnit.MILLISECONDS, byteBuffer, new ReadCompletionHandler(magicianHttpExchange));
         } catch (Exception e) {
             logger.error("处理请求异常", e);
             ChannelUtil.close(channel);

@@ -1,6 +1,6 @@
 package io.magician.tcp.http.parsing.param.formdata;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.model.MagicianFileUpLoad;
 import io.magician.tcp.http.constant.MagicianConstant;
 import org.apache.commons.fileupload.FileItem;
@@ -77,8 +77,8 @@ public class ParsingFormData {
         FileUploadBase fileUploadBase = new HttpExchangeFileUpload();
         fileUploadBase.setFileItemFactory(factory);
 
-        fileUploadBase.setFileSizeMax(MagicianConfig.getFileSizeMax());
-        fileUploadBase.setSizeMax(MagicianConfig.getSizeMax());
+        fileUploadBase.setFileSizeMax(HttpServerConfig.getFileSizeMax());
+        fileUploadBase.setSizeMax(HttpServerConfig.getSizeMax());
 
         List<FileItem> fileItemList = fileUploadBase.parseRequest(uploadContext);
 

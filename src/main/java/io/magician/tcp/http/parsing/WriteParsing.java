@@ -1,6 +1,6 @@
 package io.magician.tcp.http.parsing;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.constant.MagicianConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.http.util.ChannelUtil;
@@ -103,7 +103,7 @@ public class WriteParsing {
     private void doWrite(ByteBuffer byteBuffer) {
         try {
             magicianHttpExchange.getSocketChannel().write(byteBuffer,
-                    MagicianConfig.getWriteTimeout(),
+                    HttpServerConfig.getWriteTimeout(),
                     TimeUnit.MILLISECONDS,
                     byteBuffer,
                     new WriteCompletionHandler(magicianHttpExchange, magicianHttpExchange.getResponseBody())

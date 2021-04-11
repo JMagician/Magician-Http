@@ -1,6 +1,6 @@
 package io.magician.tcp.http.parsing;
 
-import io.magician.MagicianConfig;
+import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.http.constant.MagicianConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.http.util.ChannelUtil;
@@ -34,7 +34,7 @@ public class WriteCompletionHandler implements CompletionHandler<Integer, ByteBu
     public void completed(Integer result, ByteBuffer attachment) {
         try {
             if(attachment.hasRemaining()){
-                channel.write(attachment, MagicianConfig.getWriteTimeout(),
+                channel.write(attachment, HttpServerConfig.getWriteTimeout(),
                         TimeUnit.MILLISECONDS, attachment,this);
             } else {
                 if(isClose()){
