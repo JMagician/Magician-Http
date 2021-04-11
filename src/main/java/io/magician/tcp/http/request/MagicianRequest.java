@@ -150,7 +150,7 @@ public class MagicianRequest {
      * 获取所有请求头
      * @return
      */
-    public HttpHeaders getHttpHeaders(){
+    public HttpHeaders getRequestHeaders(){
         return httpExchange.getRequestHeaders();
     }
 
