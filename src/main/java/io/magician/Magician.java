@@ -24,6 +24,16 @@ public class Magician {
     }
 
     /**
+     * 绑定端口
+     * @param port
+     * @return
+     */
+    public Magician bind(int port){
+        bind(port,100);
+        return this;
+    }
+
+    /**
      * 绑定端口，设置最大连接数
      * @param port
      * @param backLog
@@ -34,6 +44,7 @@ public class Magician {
         MagicianConfig.setBackLog(backLog);
         return this;
     }
+
     /**
      * 设置读取超时时间
      * @param readTimeout

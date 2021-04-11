@@ -5,6 +5,8 @@ import io.magician.tcp.websocket.handler.WebSocketHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -43,7 +45,7 @@ public class MagicianConfig {
     /**
      * 线程池
      */
-    private static ThreadPoolExecutor threadPoolExecutor;
+    private static ExecutorService threadPoolExecutor;
     /**
      * 联络器
      */
@@ -109,7 +111,10 @@ public class MagicianConfig {
         MagicianConfig.sizeMax = sizeMax;
     }
 
-    public static ThreadPoolExecutor getThreadPoolExecutor() {
+    public static ExecutorService getThreadPoolExecutor() {
+        if(threadPoolExecutor == null){
+            return Executors.newFixedThreadPool(20);
+        }
         return threadPoolExecutor;
     }
 

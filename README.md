@@ -57,10 +57,20 @@ public class DemoHandler implements MagicianHandler {
 
 ### 三、创建服务
 ```java
-Magician.builder().bind(8080, 100)
-                    .threadPool(传入一个线程池)
+Magician.builder().bind(8080)
                     .httpHandler("/", new DemoHandler())
                     .start();
+```
+
+## 第二步和第三步也可以合并为一步
+```java
+Magician.builder().httpHandler("/", req -> {
+
+                        req.getResponse()
+                           .setResponseHeader("content-type", "application/json;charset=UTF-8")
+                           .sendText(200, "ok");
+
+                    }).bind(8080).start();
 ```
 
 ## 开发文档
