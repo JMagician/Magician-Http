@@ -18,6 +18,11 @@ public class MagicianRequest {
     private MagicianHttpExchange httpExchange;
 
     /**
+     * 响应管理
+     */
+    private MagicianResponse magicianResponse;
+
+    /**
      * 参数
      */
     private Map<String, List<String>> magicianParams;
@@ -168,6 +173,9 @@ public class MagicianRequest {
      * @return
      */
     public MagicianResponse getResponse(){
-        return new MagicianResponse(httpExchange);
+        if(magicianResponse == null){
+            magicianResponse = new MagicianResponse(httpExchange);
+        }
+        return magicianResponse;
     }
 }
