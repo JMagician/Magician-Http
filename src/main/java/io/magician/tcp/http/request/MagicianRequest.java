@@ -138,7 +138,7 @@ public class MagicianRequest {
      * @return
      * @throws IOException
      */
-    public SocketAddress getSocketAddress() throws IOException {
+    public SocketAddress getRemoteAddress() throws IOException {
         return httpExchange.getSocketChannel().getRemoteAddress();
     }
 
