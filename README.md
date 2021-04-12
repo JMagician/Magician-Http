@@ -15,7 +15,7 @@
 <br/>
 
 <div align=center>
-基于AIO的网络编程包
+一个异步非阻塞的网络编程包
 </div>
 
 
