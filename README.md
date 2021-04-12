@@ -21,7 +21,7 @@
 
 ## 项目简介
 
-Magician 是一个基于AIO的网络编程包，支持http，websocket等协议【暂时只支持http】
+Magician 是一个异步非阻塞的网络编程包，支持http，websocket等协议【暂时只支持http】
 
 ## 安装步骤
 
@@ -49,8 +49,7 @@ public class DemoHandler implements MagicianHandler {
     public void request(MagicianRequest magicianRequest) {
         // 响应数据
         magicianRequest.getResponse()
-                .setResponseHeader("content-type", "application/json;charset=UTF-8")
-                .sendText(200, "ok");
+                .sendJson(200, "{'status':'ok'}");
     }
 }
 ```
@@ -67,8 +66,7 @@ Magician.createHttpServer().bind(8080)
 Magician.createHttpServer().httpHandler("/", req -> {
 
                         req.getResponse()
-                           .setResponseHeader("content-type", "application/json;charset=UTF-8")
-                           .sendText(200, "ok");
+                           .sendJson(200, "{'status':'ok'}");
 
                     }).bind(8080).start();
 ```
