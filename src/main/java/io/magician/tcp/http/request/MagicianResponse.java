@@ -1,6 +1,9 @@
 package io.magician.tcp.http.request;
 
+import io.magician.tcp.http.constant.MagicianConstant;
+
 import java.io.InputStream;
+import java.net.URLEncoder;
 
 /**
  * 响应管理
@@ -8,6 +11,7 @@ import java.io.InputStream;
 public class MagicianResponse {
 
     private static String contentType = "Content-type";
+    private static String contentDis = "Content-Disposition";
 
     private MagicianHttpExchange httpExchange;
 
@@ -70,8 +74,9 @@ public class MagicianResponse {
      * @param bytes
      * @throws Exception
      */
-    public void sendStream(byte[] bytes) throws Exception {
+    public void sendStream(String fileName, byte[] bytes) throws Exception {
         setResponseHeader(contentType, "application/octet-stream");
+        setResponseHeader(contentDis, "attachment; filename=" + URLEncoder.encode(fileName, MagicianConstant.ENCODING));
         httpExchange.setResponseBody(bytes);
     }
 
@@ -80,8 +85,9 @@ public class MagicianResponse {
      * @param inputStream
      * @throws Exception
      */
-    public void sendStream(InputStream inputStream) throws Exception {
+    public void sendStream(String fileName, InputStream inputStream) throws Exception {
         setResponseHeader(contentType, "application/octet-stream");
+        setResponseHeader(contentDis, "attachment; filename=" + URLEncoder.encode(fileName, MagicianConstant.ENCODING));
         httpExchange.setResponseBody(inputStream);
     }
 }
