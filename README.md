@@ -1,5 +1,5 @@
 <div align=center>
-<img width="260px;" src="http://127.0.0.1:8848/Magician/img/logo.png"/>
+<img width="260px;" src="http://magician-io.com/img/logo-black.png"/>
 </div>
 
 <br/>
