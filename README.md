@@ -1,5 +1,5 @@
 <div align=center>
-<img width="200px;" src="http://mars-framework.com/img/logo-black.png"/>
+<img width="260px;" src="http://127.0.0.1:8848/Magician/img/logo.png"/>
 </div>
 
 <br/>
