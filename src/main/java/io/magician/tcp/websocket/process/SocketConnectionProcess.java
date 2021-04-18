@@ -24,7 +24,7 @@ public class SocketConnectionProcess {
                 return;
             }
 
-            /* 200毫秒读一次socketChannel, 用来实时接口数据 */
+            /* 100毫秒读一次socketChannel, 用来实时接收数据 */
             new Timer().scheduleAtFixedRate(new SocketTimerTask(),
                             new Date(),
                             100);
