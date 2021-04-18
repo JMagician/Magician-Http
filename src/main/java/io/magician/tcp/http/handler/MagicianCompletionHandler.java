@@ -15,12 +15,10 @@ public class MagicianCompletionHandler  {
     private static Logger logger = LoggerFactory.getLogger(MagicianCompletionHandler.class);
 
     /**
-     * 轮询选择器，根据状态进行对应的操作
+     * 监控ServerSocketChannel，发现有连接进来就放入队列
      * @param serverSocketChannel
      */
     public static void completed(ServerSocketChannel serverSocketChannel) {
-
-
         while (true){
             SocketChannel channel = null;
             try {
