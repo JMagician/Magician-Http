@@ -1,9 +1,10 @@
 package io.magician.tcp.http.parsing;
 
-import io.magician.tcp.http.server.HttpServerConfig;
+import io.magician.tcp.HttpServerConfig;
 import io.magician.tcp.http.constant.MagicianConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.http.util.ChannelUtil;
+import io.magician.tcp.http.util.ReadUtil;
 import io.magician.tcp.routing.RoutingParsing;
 import io.magician.tcp.http.constant.ReqMethod;
 import org.slf4j.Logger;
@@ -74,13 +75,12 @@ public class ReadCompletionHandler extends ReadFields {
      */
     private ByteBuffer parsingByByteBuffer(ByteBuffer readBuffer) throws Exception {
         /* 将本次读取到的数据追加到输出流 */
-        readData(readBuffer);
+        ReadUtil.byteBufferToOutputStream(readBuffer, outputStream);
 
         /* 判断是否已经把头读完了 */
         if (!readHead) {
             int length = headIndexOf();
             if (length < 0) {
-                readOver = false;
                 return readBuffer;
             }
 
@@ -89,25 +89,20 @@ public class ReadCompletionHandler extends ReadFields {
             readHead = true;
             /* 如果头读完了，并且此次请求是GET，则停止 */
             if (magicianHttpExchange.getRequestMethod().toUpperCase().equals(ReqMethod.GET.toString())) {
-                readOver = true;
                 return null;
             }
 
             /* 从head获取到Content-Length */
             contentLength = magicianHttpExchange.getRequestContentLength();
             if (contentLength < 0) {
-                readOver = true;
                 return null;
             }
         }
         /* 判断已经读取的body长度是否等于Content-Length，如果条件满足则说明读取完成 */
         int streamLength = outputStream.size();
         if ((streamLength - headLength) >= contentLength) {
-            readOver = true;
             return null;
         }
-
-        readOver = false;
 
         /* 当请求头读完了以后，就加大每次读取大小 加快速度 */
         readBuffer = ByteBuffer.allocate(HttpServerConfig.getReadSize());

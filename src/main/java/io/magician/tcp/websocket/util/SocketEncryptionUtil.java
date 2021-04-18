@@ -1,7 +1,6 @@
 package io.magician.tcp.websocket.util;
 
 import io.magician.tcp.http.constant.MagicianConstant;
-
 import java.security.MessageDigest;
 import java.util.Base64;
 
@@ -33,5 +32,4 @@ public class SocketEncryptionUtil {
 
         return sha1.digest();
     }
-
 }

@@ -1,6 +1,6 @@
 package io.magician.tcp.http.parsing.thread;
 
-import io.magician.tcp.http.server.HttpServerConfig;
+import io.magician.tcp.HttpServerConfig;
 
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;

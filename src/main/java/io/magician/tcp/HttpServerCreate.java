@@ -1,8 +1,9 @@
-package io.magician.tcp.http.server;
+package io.magician.tcp;
 
 import io.magician.tcp.http.handler.MagicianCompletionHandler;
 import io.magician.tcp.http.handler.MagicianHandler;
 import io.magician.tcp.websocket.handler.WebSocketHandler;
+import io.magician.tcp.websocket.process.SocketConnectionProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,9 +132,13 @@ public class HttpServerCreate {
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.bind(new InetSocketAddress(HttpServerConfig.getPort()), HttpServerConfig.getBackLog());
 
+        /* 如果设置了socketHandler，就执行socket监听 */
+        SocketConnectionProcess.process();
+
         /* 标识服务是否已经启动 */
         log.info("启动成功");
 
+        /* 监听Http */
         MagicianCompletionHandler.completed(serverSocketChannel);
     }
 }

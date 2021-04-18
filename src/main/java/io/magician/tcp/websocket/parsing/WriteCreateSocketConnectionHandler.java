@@ -16,7 +16,7 @@ import java.nio.channels.SocketChannel;
 /**
  * 解析连接请求
  */
-public class WriteCreateConnectionSocketHandler {
+public class WriteCreateSocketConnectionHandler {
 
     private Logger logger = LoggerFactory.getLogger(WriteCompletionHandler.class);
 
@@ -29,8 +29,8 @@ public class WriteCreateConnectionSocketHandler {
      * 构建一个解析器
      * @return
      */
-    public static WriteCreateConnectionSocketHandler builder(WebSocketSession socketSession){
-        WriteCreateConnectionSocketHandler writeParsing = new WriteCreateConnectionSocketHandler();
+    public static WriteCreateSocketConnectionHandler builder(WebSocketSession socketSession){
+        WriteCreateSocketConnectionHandler writeParsing = new WriteCreateSocketConnectionHandler();
         writeParsing.socketSession = socketSession;
         return writeParsing;
     }

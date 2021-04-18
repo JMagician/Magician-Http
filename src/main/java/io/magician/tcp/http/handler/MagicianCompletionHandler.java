@@ -19,10 +19,14 @@ public class MagicianCompletionHandler  {
      * @param serverSocketChannel
      */
     public static void completed(ServerSocketChannel serverSocketChannel) {
+
+
         while (true){
             SocketChannel channel = null;
             try {
+                /* 这个方法会阻塞，直到有新连接进来 */
                 channel = serverSocketChannel.accept();
+                channel.configureBlocking(false);
 
                 /* 将任务添加到队列里执行 */
                 ParsingThreadManager.addTaskToParsingThread(channel);

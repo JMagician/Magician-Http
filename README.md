@@ -23,12 +23,9 @@
 
 ## 项目简介
 
-Magician 是一个异步非阻塞的网络编程包，支持http，websocket等协议【暂时只支持http】
+Magician 是一个异步非阻塞的网络编程包，支持Http，WebSocket, UDP等协议
 
-## 安装步骤
-
-### 一、导入依赖
-
+## 导入依赖
 ```xml
 <dependency>
     <groupId>com.github.yuyenews</groupId>
@@ -43,7 +40,9 @@ Magician 是一个异步非阻塞的网络编程包，支持http，websocket等�
     <version>1.7.12</version>
 </dependency>
 ```
-### 二、创建Handler
+
+## 创建http服务
+### 一、创建Handler
 ```java
 public class DemoHandler implements MagicianHandler {
 
@@ -56,14 +55,14 @@ public class DemoHandler implements MagicianHandler {
 }
 ```
 
-### 三、创建服务
+### 二、创建服务
 ```java
 Magician.createHttpServer().bind(8080)
                     .httpHandler("/", new DemoHandler())
                     .start();
 ```
 
-## 第二步和第三步也可以合并为一步
+### 也可以合并为一步
 ```java
 Magician.createHttpServer().httpHandler("/", req -> {
 
@@ -71,6 +70,25 @@ Magician.createHttpServer().httpHandler("/", req -> {
                            .sendJson(200, "{'status':'ok'}");
 
                     }).bind(8080).start();
+```
+
+## 创建WebSocket
+只需要在创建http服务的时候加一个handler即可
+```java
+Magician.createHttpServer().bind(8080)
+                    .httpHandler("/", new DemoHandler())
+                    .webSocketHandler("/websocket", new DemoSocketHandler())
+                    .start();
+```
+
+## 创建UDP服务
+
+```java
+Magician.createUdpServer()
+                .handler(outputStream -> {
+                    // outputStream 是ByteArrayOutputStream类型的
+                    // 它是客户端发过来的数据，自行解析即可
+                }).bind(8088).start();
 ```
 
 ## 开发资源

@@ -1,4 +1,4 @@
-package io.magician.tcp.http.server;
+package io.magician.tcp;
 
 import io.magician.tcp.http.handler.MagicianHandler;
 import io.magician.tcp.websocket.handler.WebSocketHandler;

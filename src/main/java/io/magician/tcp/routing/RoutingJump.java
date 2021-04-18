@@ -8,8 +8,7 @@ import io.magician.tcp.http.request.MagicianRequest;
 import io.magician.tcp.websocket.WebSocketSession;
 import io.magician.tcp.websocket.cache.ConnectionCache;
 import io.magician.tcp.websocket.constant.WebSocketEnum;
-import io.magician.tcp.websocket.parsing.WriteCreateConnectionSocketHandler;
-import io.magician.tcp.websocket.process.SocketConnectionProcess;
+import io.magician.tcp.websocket.parsing.WriteCreateSocketConnectionHandler;
 
 /**
  * 路由跳转
@@ -25,9 +24,7 @@ public class RoutingJump {
             case OPEN:
                 ConnectionCache.addSession(socketSession);
                 socketSession.getWebSocketHandler().onOpen(socketSession);
-                WriteCreateConnectionSocketHandler.builder(socketSession).completed();
-
-                SocketConnectionProcess.process();
+                WriteCreateSocketConnectionHandler.builder(socketSession).completed();
                 break;
             case CLOSE:
                 socketSession.getWebSocketHandler().onClose(socketSession);

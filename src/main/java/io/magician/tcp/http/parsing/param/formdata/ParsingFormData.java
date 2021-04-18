@@ -1,6 +1,6 @@
 package io.magician.tcp.http.parsing.param.formdata;
 
-import io.magician.tcp.http.server.HttpServerConfig;
+import io.magician.tcp.HttpServerConfig;
 import io.magician.tcp.http.model.MagicianFileUpLoad;
 import io.magician.tcp.http.constant.MagicianConstant;
 import org.apache.commons.fileupload.FileItem;

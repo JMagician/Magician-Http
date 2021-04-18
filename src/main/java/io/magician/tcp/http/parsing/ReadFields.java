@@ -43,10 +43,6 @@ public class ReadFields {
      */
     protected long contentLength = Long.MAX_VALUE;
     /**
-     * 读完了没
-     */
-    protected boolean readOver = false;
-    /**
      * 读取到的数据缓存到这里
      */
     protected ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

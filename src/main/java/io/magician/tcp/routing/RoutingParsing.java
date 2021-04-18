@@ -1,6 +1,6 @@
 package io.magician.tcp.routing;
 
-import io.magician.tcp.http.server.HttpServerConfig;
+import io.magician.tcp.HttpServerConfig;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.websocket.WebSocketSession;
 import io.magician.tcp.websocket.constant.WebSocketConstant;

@@ -1,7 +1,7 @@
 package io.magician;
 
-import io.magician.tcp.http.server.HttpServerCreate;
-import io.magician.udp.server.UDPServerCreate;
+import io.magician.tcp.HttpServerCreate;
+import io.magician.udp.UDPServerCreate;
 
 
 /**

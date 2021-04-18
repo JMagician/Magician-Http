@@ -2,7 +2,6 @@ package io.magician.tcp.websocket;
 
 import io.magician.tcp.http.constant.MagicianConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
-import io.magician.tcp.http.server.HttpServerConfig;
 import io.magician.tcp.websocket.handler.WebSocketHandler;
 
 import java.io.UnsupportedEncodingException;
@@ -16,6 +15,9 @@ import java.util.concurrent.CountDownLatch;
  */
 public class WebSocketSession {
 
+    /**
+     * 计数器用来控制每个session只能有一个线程读取
+     */
     private CountDownLatch countDownLatch;
 
     /**
@@ -27,11 +29,11 @@ public class WebSocketSession {
      */
     private long activeTime;
     /**
-     * http请求处理器，用来获取请求头
+     * http请求处理器
      */
     private MagicianHttpExchange magicianHttpExchange;
     /**
-     * 这个session要用handler
+     * 这个session要用的handler
      */
     private WebSocketHandler webSocketHandler;
 
@@ -58,6 +60,7 @@ public class WebSocketSession {
             countDownLatch.countDown();
         }
     }
+
 
     public MagicianHttpExchange getMagicianHttpExchange() {
         return magicianHttpExchange;
@@ -93,8 +96,12 @@ public class WebSocketSession {
      */
     public void send(byte[] message) throws Exception {
         SocketChannel channel = magicianHttpExchange.getSocketChannel();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        byteBuffer.put(message);
+        byte[] boardCastData = new byte[2 + message.length];
+        boardCastData[0] = (byte) 0x81;
+        boardCastData[1] = (byte) message.length;
+        System.arraycopy(message, 0, boardCastData, 2, message.length);
+
+        ByteBuffer byteBuffer = ByteBuffer.wrap(boardCastData);
 
         while (byteBuffer.hasRemaining()){
             channel.write(byteBuffer);
