@@ -5,9 +5,6 @@ import io.magician.tcp.websocket.handler.WebSocketHandler;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * http服务配置
@@ -43,9 +40,9 @@ public class HttpServerConfig {
      */
     private static long sizeMax = 10*1024*1024;
     /**
-     * 线程池
+     * 允许几个线程同时处理
      */
-    private static ExecutorService threadPoolExecutor;
+    private static int threadSize = 3;
     /**
      * 联络器
      */
@@ -111,15 +108,12 @@ public class HttpServerConfig {
         HttpServerConfig.sizeMax = sizeMax;
     }
 
-    public static ExecutorService getThreadPoolExecutor() {
-        if(threadPoolExecutor == null){
-            return Executors.newFixedThreadPool(20);
-        }
-        return threadPoolExecutor;
+    public static int getThreadSize() {
+        return threadSize;
     }
 
-    public static void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
-        HttpServerConfig.threadPoolExecutor = threadPoolExecutor;
+    public static void setThreadSize(int threadSize) {
+        HttpServerConfig.threadSize = threadSize;
     }
 
     public static Map<String, MagicianHandler> getMartianServerHandlerMap() {

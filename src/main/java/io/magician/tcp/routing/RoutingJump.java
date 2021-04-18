@@ -1,14 +1,14 @@
 package io.magician.tcp.routing;
 
 import io.magician.tcp.http.handler.MagicianHandler;
-import io.magician.tcp.http.parsing.WriteParsing;
+import io.magician.tcp.http.parsing.WriteCompletionHandler;
 import io.magician.tcp.http.parsing.param.ParamParsing;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.http.request.MagicianRequest;
 import io.magician.tcp.websocket.WebSocketSession;
 import io.magician.tcp.websocket.cache.ConnectionCache;
 import io.magician.tcp.websocket.constant.WebSocketEnum;
-import io.magician.tcp.websocket.parsing.SocketWriteParsing;
+import io.magician.tcp.websocket.parsing.WriteCreateConnectionSocketHandler;
 import io.magician.tcp.websocket.process.SocketConnectionProcess;
 
 /**
@@ -25,7 +25,7 @@ public class RoutingJump {
             case OPEN:
                 ConnectionCache.addSession(socketSession);
                 socketSession.getWebSocketHandler().onOpen(socketSession);
-                SocketWriteParsing.builder(socketSession).responseText();
+                WriteCreateConnectionSocketHandler.builder(socketSession).completed();
 
                 SocketConnectionProcess.process();
                 break;
@@ -49,6 +49,6 @@ public class RoutingJump {
 
         serverHandler.request(magicianRequest);
         /* 响应数据 */
-        WriteParsing.builder(httpExchange).responseData();
+        WriteCompletionHandler.builder(httpExchange).completed();
     }
 }

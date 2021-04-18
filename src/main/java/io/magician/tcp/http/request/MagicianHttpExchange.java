@@ -7,6 +7,7 @@ import io.magician.tcp.http.model.HttpHeaders;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.SocketChannel;
 
 /**
  * 请求处理器
@@ -16,7 +17,7 @@ public class MagicianHttpExchange {
     /**
      * 通道
      */
-    private AsynchronousSocketChannel socketChannel;
+    private SocketChannel socketChannel;
 
     /**
      * 请求的地址
@@ -75,11 +76,11 @@ public class MagicianHttpExchange {
         statusCode = 200;
     }
 
-    public AsynchronousSocketChannel getSocketChannel() {
+    public SocketChannel getSocketChannel() {
         return socketChannel;
     }
 
-    public void setSocketChannel(AsynchronousSocketChannel socketChannel) {
+    public void setSocketChannel(SocketChannel socketChannel) {
         this.socketChannel = socketChannel;
     }
 

@@ -11,15 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.CompletionHandler;
-import java.nio.channels.WritableByteChannel;
-import java.util.concurrent.TimeUnit;
+import java.nio.channels.*;
 
 /**
  * 读取数据
  */
-public class ReadCompletionHandler extends ReadFields implements CompletionHandler<Integer, ByteBuffer> {
+public class ReadCompletionHandler extends ReadFields {
 
     private Logger logger = LoggerFactory.getLogger(ReadCompletionHandler.class);
 
@@ -28,69 +25,45 @@ public class ReadCompletionHandler extends ReadFields implements CompletionHandl
      * @param magicianHttpExchange
      */
     public ReadCompletionHandler(MagicianHttpExchange magicianHttpExchange){
-        this.channel = magicianHttpExchange.getSocketChannel();
         this.magicianHttpExchange = magicianHttpExchange;
+        this.channel = magicianHttpExchange.getSocketChannel();
         startIndex = 0;
         endIndex = 0;
     }
 
     /**
      * 读取请求数据
-     * @param result
-     * @param attachment
      */
-    @Override
-    public void completed(Integer result, ByteBuffer attachment) {
+    public void completed() {
         try {
             /* 解析读到的数据 */
-            if(result > 0){
-                ByteBuffer readBuffer = parsingByByteBuffer(attachment);
-                if(readBuffer != null){
-                    /* 如果数据没读完，就接着读 */
-                    channel.read(readBuffer,
-                            HttpServerConfig.getReadTimeout(),
-                            TimeUnit.MILLISECONDS,
-                            readBuffer,
-                            this);
-                    return;
+            ByteBuffer readBuffer = ByteBuffer.allocate(800);
+            while (this.channel.read(readBuffer) > -1) {
+                readBuffer = parsingByByteBuffer(readBuffer);
+                if(readBuffer == null){
+                    break;
                 }
             }
 
-            /* 如果读到的数据小于0，说明此次请求是一个无效请求 */
-            if(!readOver){
-                ChannelUtil.close(channel);
+            /* **********************如果读完了，就执行业务逻辑********************** */
+
+            /* 过滤掉非法请求, 理论上这块代码已经不需要了, 但是保险起见 就没删除 */
+            if(magicianHttpExchange.getRequestURI() == null
+                    || magicianHttpExchange.getRequestMethod() == null
+                    || magicianHttpExchange.getHttpVersion() == null){
+                ChannelUtil.close(this.channel);
                 return;
             }
 
-            /* 如果读完了，就执行业务逻辑 */
-            if(readOver){
-                /* 过滤掉非法请求 */
-                if(magicianHttpExchange.getRequestURI() == null
-                        || magicianHttpExchange.getRequestMethod() == null
-                        || magicianHttpExchange.getHttpVersion() == null){
-                    ChannelUtil.close(channel);
-                    return;
-                }
-                /* 如果数据没读完，会在第一段的if里被return掉，所以执行到这肯定是已经读完了，所以接着执行业务逻辑，并关闭通道 */
-                getBody();
-                /* 解析结果，判断是不是websocket 然后进行分别处理 */
-                RoutingParsing.parsing(magicianHttpExchange);
-            }
+            /* 获取body */
+            getBody();
+
+            /* 根据解析结果判断是不是websocket 然后进行分别处理 */
+            RoutingParsing.parsing(magicianHttpExchange);
         } catch (Exception e){
             logger.error("读取数据异常", e);
-            ChannelUtil.close(channel);
+            ChannelUtil.close(this.channel);
         }
-    }
-
-    /**
-     * 读取异常处理
-     * @param exc
-     * @param attachment
-     */
-    @Override
-    public void failed(Throwable exc, ByteBuffer attachment) {
-        logger.error("读取数据异常", exc);
-        ChannelUtil.close(channel);
     }
 
     /**

@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.nio.channels.*;
 
 /**
  * http服务创建
@@ -41,19 +39,23 @@ public class HttpServerCreate {
     }
 
     /**
-     * 设置读取超时时间
+     * 设置读取超时时间,
+     * 暂时没用到
      * @param readTimeout
      * @return
      */
+    @Deprecated
     public HttpServerCreate readTimeout(long readTimeout){
         HttpServerConfig.setReadTimeout(readTimeout);
         return this;
     }
     /**
      * 设置写入超时时间
+     * 暂时没用到
      * @param writeTimeout
      * @return
      */
+    @Deprecated
     public HttpServerCreate writeTimeout(long writeTimeout){
         HttpServerConfig.setWriteTimeout(writeTimeout);
         return this;
@@ -90,12 +92,12 @@ public class HttpServerCreate {
     }
 
     /**
-     * 设置线程池
-     * @param threadPoolExecutor
+     * 设置允许几个线程同时处理任务
+     * @param threadSize
      * @return
      */
-    public HttpServerCreate threadPool(ThreadPoolExecutor threadPoolExecutor){
-        HttpServerConfig.setThreadPoolExecutor(threadPoolExecutor);
+    public HttpServerCreate threadSize(int threadSize){
+        HttpServerConfig.setThreadSize(threadSize);
         return this;
     }
 
@@ -124,22 +126,14 @@ public class HttpServerCreate {
      * @throws Exception
      */
     public void start() throws Exception {
-        /* 创建线程组 */
-        AsynchronousChannelGroup channelGroup = AsynchronousChannelGroup.withThreadPool(HttpServerConfig.getThreadPoolExecutor());
-        /* 创建服务器通道 */
-        AsynchronousServerSocketChannel serverSocketChannel = AsynchronousServerSocketChannel.open(channelGroup);
+
         /* 开始监听端口 */
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
         serverSocketChannel.bind(new InetSocketAddress(HttpServerConfig.getPort()), HttpServerConfig.getBackLog());
-        /* 添加handler */
-        serverSocketChannel.accept(serverSocketChannel,
-                new MagicianCompletionHandler());
 
         /* 标识服务是否已经启动 */
         log.info("启动成功");
 
-        /* 阻塞主线程，防止进程停掉 */
-        while (true){
-            Thread.sleep(10000000);
-        }
+        MagicianCompletionHandler.completed(serverSocketChannel);
     }
 }

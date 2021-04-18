@@ -1,43 +1,35 @@
 package io.magician.tcp.http.handler;
 
-import io.magician.tcp.http.server.HttpServerConfig;
-import io.magician.tcp.http.parsing.ReadCompletionHandler;
-import io.magician.tcp.http.request.MagicianHttpExchange;
+import io.magician.tcp.http.parsing.thread.ParsingThreadManager;
 import io.magician.tcp.http.util.ChannelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.concurrent.TimeUnit;
+import java.nio.channels.*;
 
 /**
- * 异步处理请求
+ * 处理请求
  */
-public class MagicianCompletionHandler implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
+public class MagicianCompletionHandler  {
 
-    private Logger logger = LoggerFactory.getLogger(MagicianCompletionHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(MagicianCompletionHandler.class);
 
-    @Override
-    public void completed(AsynchronousSocketChannel channel, AsynchronousServerSocketChannel serverSocketChannel) {
-        serverSocketChannel.accept(serverSocketChannel, this);
-        try {
-            MagicianHttpExchange magicianHttpExchange = new MagicianHttpExchange();
-            magicianHttpExchange.setSocketChannel(channel);
+    /**
+     * 轮询选择器，根据状态进行对应的操作
+     * @param serverSocketChannel
+     */
+    public static void completed(ServerSocketChannel serverSocketChannel) {
+        while (true){
+            SocketChannel channel = null;
+            try {
+                channel = serverSocketChannel.accept();
 
-            ByteBuffer byteBuffer = ByteBuffer.allocate(800);
-            channel.read(byteBuffer, HttpServerConfig.getReadTimeout(), TimeUnit.MILLISECONDS, byteBuffer, new ReadCompletionHandler(magicianHttpExchange));
-        } catch (Exception e) {
-            logger.error("处理请求异常", e);
-            ChannelUtil.close(channel);
+                /* 将任务添加到队列里执行 */
+                ParsingThreadManager.addTaskToParsingThread(channel);
+            } catch (Exception e){
+                logger.error("处理请求出现异常", e);
+                ChannelUtil.close(channel);
+            }
         }
-    }
-
-    @Override
-    public void failed(Throwable exc, AsynchronousServerSocketChannel serverSocketChannel) {
-        logger.error("建立连接异常", exc);
-        serverSocketChannel.accept(serverSocketChannel, this);
     }
 }

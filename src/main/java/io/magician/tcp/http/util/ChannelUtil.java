@@ -2,6 +2,7 @@ package io.magician.tcp.http.util;
 
 import java.io.OutputStream;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.SocketChannel;
 
 public class ChannelUtil {
 
@@ -10,7 +11,7 @@ public class ChannelUtil {
      *
      * @param socketChannel
      */
-    public static void close(AsynchronousSocketChannel socketChannel) {
+    public static void close(SocketChannel socketChannel) {
         try {
             if (socketChannel != null && socketChannel.isOpen()) {
                 socketChannel.shutdownInput();

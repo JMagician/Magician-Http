@@ -3,7 +3,7 @@ package io.magician.tcp.http.parsing;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.SocketChannel;
 
 /**
  * 从channel读数据需要用到的字段
@@ -13,7 +13,7 @@ public class ReadFields {
     /**
      * 通道
      */
-    protected AsynchronousSocketChannel channel;
+    protected SocketChannel channel;
     /**
      * 请求对象
      */
