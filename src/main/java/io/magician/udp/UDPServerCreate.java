@@ -68,6 +68,9 @@ public class UDPServerCreate {
 
             Selector select = Selector.open() ;
             dc.register(select, SelectionKey.OP_READ) ;
+
+            log.info("启动UDP服务成功");
+
             while(true) {
                 int num = select.select();
                 if (num == 0) {
