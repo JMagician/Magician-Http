@@ -23,7 +23,7 @@
 
 ## 项目简介
 
-Magician 是一个异步非阻塞的网络编程包，支持Http，WebSocket, UDP等协议
+Magician 是一个异步非阻塞的网络编程包，支持Http, WebSocket, UDP等协议
 
 ## 运行环境
 
