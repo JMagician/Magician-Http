@@ -82,7 +82,6 @@ Magician.createHttpServer().bind(8080)
 ```
 
 ## 创建UDP服务
-
 ```java
 Magician.createUdpServer()
                 .handler(outputStream -> {
@@ -90,6 +89,7 @@ Magician.createUdpServer()
                     // 它是客户端发过来的数据，自行解析即可
                 }).bind(8088).start();
 ```
+除了这种写法，也可以单独创建handler，在这里add进去
 
 ## 开发资源
 - 开发文档: [http://magician-io.com/docs/index.html](http://magician-io.com/docs/index.html)
