@@ -1,6 +1,6 @@
 package io.magician.tcp.websocket;
 
-import io.magician.tcp.http.constant.MagicianConstant;
+import io.magician.common.constant.CommonConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import io.magician.tcp.websocket.handler.WebSocketHandler;
 
@@ -114,6 +114,6 @@ public class WebSocketSession {
      * @throws UnsupportedEncodingException
      */
     public void send(String message) throws Exception {
-        send(message.getBytes(MagicianConstant.ENCODING));
+        send(message.getBytes(CommonConstant.ENCODING));
     }
 }

@@ -16,7 +16,7 @@
  */
 package io.magician.tcp.http.parsing.param.formdata;
 
-import io.magician.tcp.http.constant.MagicianConstant;
+import io.magician.common.constant.CommonConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
 import org.apache.commons.fileupload.UploadContext;
 
@@ -70,7 +70,7 @@ public class HttpExchangeRequestContext implements UploadContext {
      * @return The character encoding for the request.
      */
     public String getCharacterEncoding() {
-        return MagicianConstant.ENCODING;
+        return CommonConstant.ENCODING;
     }
 
     /**

@@ -1,8 +1,8 @@
 package io.magician.tcp.http.parsing.param.formdata;
 
+import io.magician.common.constant.CommonConstant;
 import io.magician.tcp.HttpServerConfig;
 import io.magician.tcp.http.model.MagicianFileUpLoad;
-import io.magician.tcp.http.constant.MagicianConstant;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -43,7 +43,7 @@ public class ParsingFormData {
         for(FileItem item : fileItemList){
             if(item.isFormField()){
                 String name = item.getFieldName();
-                String value = item.getString(MagicianConstant.ENCODING);
+                String value = item.getString(CommonConstant.ENCODING);
                 List<String> params = magicianParams.get(name);
                 if(params == null){
                     params = new ArrayList<>();

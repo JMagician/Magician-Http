@@ -1,8 +1,9 @@
 package io.magician.tcp.http.parsing;
 
-import io.magician.tcp.http.constant.MagicianConstant;
+import io.magician.common.constant.CommonConstant;
+import io.magician.tcp.http.constant.HttpConstant;
 import io.magician.tcp.http.request.MagicianHttpExchange;
-import io.magician.tcp.http.util.ChannelUtil;
+import io.magician.common.util.ChannelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +52,11 @@ public class WriteCompletionHandler {
      */
     private void responseFile() throws Exception {
         /* 加载响应头 */
-        magicianHttpExchange.setResponseHeader(MagicianConstant.CONTENT_TYPE, "application/octet-stream");
+        magicianHttpExchange.setResponseHeader(HttpConstant.CONTENT_TYPE, "application/octet-stream");
         StringBuffer buffer = getCommonResponse(magicianHttpExchange.getResponseBody().size());
 
         /* 转成ByteBuffer */
-        byte[] bytes = buffer.toString().getBytes(MagicianConstant.ENCODING);
+        byte[] bytes = buffer.toString().getBytes(CommonConstant.ENCODING);
 
         /* 加载要响应的数据 */
         ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length + magicianHttpExchange.getResponseBody().size());
@@ -74,7 +75,7 @@ public class WriteCompletionHandler {
     private void responseText() throws Exception {
         String text = magicianHttpExchange.getSendText();
         if(text == null || text.equals("")){
-            text = MagicianConstant.NO_DATA;
+            text = HttpConstant.NO_DATA;
         }
 
         /* 加载响应头 */
@@ -84,7 +85,7 @@ public class WriteCompletionHandler {
         buffer.append(text);
 
         /* 转成ByteBuffer */
-        byte[] bytes = buffer.toString().getBytes(MagicianConstant.ENCODING);
+        byte[] bytes = buffer.toString().getBytes(CommonConstant.ENCODING);
         ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
         byteBuffer.put(bytes);
 
@@ -105,12 +106,12 @@ public class WriteCompletionHandler {
             }
 
             if(isClose()){
-                ChannelUtil.close(magicianHttpExchange.getSocketChannel());
+                ChannelUtil.destroy(magicianHttpExchange);
             }
             ChannelUtil.closeOutputStream(magicianHttpExchange.getResponseBody());
         } catch (Exception e) {
             logger.error("给客户端写入响应数据异常", e);
-            ChannelUtil.close(magicianHttpExchange.getSocketChannel());
+            ChannelUtil.destroy(magicianHttpExchange);
             ChannelUtil.closeOutputStream(magicianHttpExchange.getResponseBody());
         }
     }
@@ -120,8 +121,8 @@ public class WriteCompletionHandler {
      * @return
      */
     private boolean isClose(){
-        String connection = magicianHttpExchange.getResponseHeaders().get(MagicianConstant.CONNECTION);
-        if(connection != null && connection.equals(MagicianConstant.CONNECTION_CLOSE)){
+        String connection = magicianHttpExchange.getResponseHeaders().get(HttpConstant.CONNECTION);
+        if(connection != null && connection.equals(HttpConstant.CONNECTION_CLOSE)){
             return true;
         }
         return false;
@@ -135,10 +136,10 @@ public class WriteCompletionHandler {
         StringBuffer buffer = new StringBuffer();
 
         /* 加载初始化头 */
-        buffer.append(MagicianConstant.BASIC_RESPONSE.replace("{statusCode}", String.valueOf(magicianHttpExchange.getStatusCode())));
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
-        buffer.append(MagicianConstant.CONTENT_LENGTH + ": " + length);
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.BASIC_RESPONSE.replace("{statusCode}", String.valueOf(magicianHttpExchange.getStatusCode())));
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.CONTENT_LENGTH + ": " + length);
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
 
         /* 加载自定义头 */
         for(Map.Entry<String, String> entry : magicianHttpExchange.getResponseHeaders().entrySet()){
@@ -147,9 +148,9 @@ public class WriteCompletionHandler {
                 continue;
             }
             buffer.append(entry.getKey() + ":" + value);
-            buffer.append(MagicianConstant.CARRIAGE_RETURN);
+            buffer.append(HttpConstant.CARRIAGE_RETURN);
         }
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
         return buffer;
     }
 }

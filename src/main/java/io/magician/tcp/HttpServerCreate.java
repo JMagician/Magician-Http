@@ -1,9 +1,8 @@
 package io.magician.tcp;
 
-import io.magician.tcp.http.handler.MagicianCompletionHandler;
 import io.magician.tcp.http.handler.MagicianHandler;
+import io.magician.tcp.protocol.parsing.ProtocolParsing;
 import io.magician.tcp.websocket.handler.WebSocketHandler;
-import io.magician.tcp.websocket.process.SocketConnectionProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,12 +92,32 @@ public class HttpServerCreate {
     }
 
     /**
-     * 设置允许几个线程同时处理任务
+     * 设置允许几个线程同时解析数据
      * @param threadSize
      * @return
      */
-    public HttpServerCreate threadSize(int threadSize){
-        HttpServerConfig.setThreadSize(threadSize);
+    public HttpServerCreate readThreadSize(int threadSize){
+        HttpServerConfig.setReadThreadSize(threadSize);
+        return this;
+    }
+
+    /**
+     * 设置允许几个线程同时执行业务逻辑
+     * @param threadSize
+     * @return
+     */
+    public HttpServerCreate execThreadSize(int threadSize){
+        HttpServerConfig.setExecuteThreadSize(threadSize);
+        return this;
+    }
+
+    /**
+     * 添加协议解析器
+     * @param protocolParsing
+     * @return
+     */
+    public HttpServerCreate addProtocolParsing(ProtocolParsing protocolParsing){
+        HttpServerConfig.addProtocolParsingList(protocolParsing);
         return this;
     }
 
@@ -130,15 +149,13 @@ public class HttpServerCreate {
 
         /* 开始监听端口 */
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.configureBlocking(false);
         serverSocketChannel.bind(new InetSocketAddress(HttpServerConfig.getPort()), HttpServerConfig.getBackLog());
-
-        /* 如果设置了socketHandler，就执行socket监听 */
-        SocketConnectionProcess.process();
 
         /* 标识服务是否已经启动 */
         log.info("启动成功");
 
         /* 监听Http */
-        MagicianCompletionHandler.completed(serverSocketChannel);
+        HttpServerMonitor.doMonitor(serverSocketChannel);
     }
 }

@@ -8,6 +8,5 @@ package io.magician.tcp.http.constant;
  */
 public enum ReqMethod {
 
-    POST, GET, PUT, DELETE;
-    // HEAD, OPTIONS, TRACE, CONNECT
+    POST, GET, PUT, DELETE, HEAD, OPTIONS, TRACE, CONNECT
 }

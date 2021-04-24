@@ -1,13 +1,11 @@
-package io.magician.tcp.routing;
+package io.magician.tcp.protocol.routing;
 
 import io.magician.tcp.HttpServerConfig;
 import io.magician.tcp.http.request.MagicianHttpExchange;
-import io.magician.tcp.websocket.WebSocketSession;
 import io.magician.tcp.websocket.constant.WebSocketConstant;
 import io.magician.tcp.http.constant.ReqMethod;
 import io.magician.tcp.http.handler.MagicianHandler;
 import io.magician.tcp.http.model.HttpHeaders;
-import io.magician.tcp.websocket.constant.WebSocketEnum;
 import io.magician.tcp.websocket.handler.WebSocketHandler;
 
 import java.util.Map;
@@ -35,10 +33,7 @@ public class RoutingParsing {
             WebSocketHandler webSocketHandler = martianWebSocketHandlerMap.get(uri);
             if(webSocketHandler != null){
                 /* 如果是socket就建立连接 */
-                WebSocketSession socketSession = new WebSocketSession();
-                socketSession.setMagicianHttpExchange(httpExchange);
-                socketSession.setWebSocketHandler(webSocketHandler);
-                RoutingJump.websocket(socketSession, WebSocketEnum.OPEN);
+                RoutingJump.websocket(httpExchange, webSocketHandler);
                 return;
             }
             throw new Exception("没有找到对应的websocketHandler，handler:[" + uri + "]");

@@ -1,9 +1,14 @@
 package io.magician.tcp;
 
 import io.magician.tcp.http.handler.MagicianHandler;
+import io.magician.tcp.protocol.parsing.ProtocolParsing;
+import io.magician.tcp.protocol.parsing.impl.HttpProtocolParsing;
+import io.magician.tcp.protocol.parsing.impl.WebSocketProtocolParsing;
 import io.magician.tcp.websocket.handler.WebSocketHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,9 +45,17 @@ public class HttpServerConfig {
      */
     private static long sizeMax = 10*1024*1024;
     /**
-     * 允许几个线程同时处理
+     * 允许几个线程同时解析数据
      */
-    private static int threadSize = 3;
+    private static int readThreadSize = 3;
+    /**
+     * 允许几个线程同时执行业务逻辑
+     */
+    private static int executeThreadSize = 3;
+    /**
+     * 协议解析器
+     */
+    private static List<ProtocolParsing> protocolParsingList;
     /**
      * 联络器
      */
@@ -108,12 +121,26 @@ public class HttpServerConfig {
         HttpServerConfig.sizeMax = sizeMax;
     }
 
-    public static int getThreadSize() {
-        return threadSize;
+    public static int getReadThreadSize() {
+        return readThreadSize;
     }
 
-    public static void setThreadSize(int threadSize) {
-        HttpServerConfig.threadSize = threadSize;
+    public static void setReadThreadSize(int readThreadSize) {
+        if(readThreadSize < 3){
+            readThreadSize = 3;
+        }
+        HttpServerConfig.readThreadSize = readThreadSize;
+    }
+
+    public static int getExecuteThreadSize() {
+        return executeThreadSize;
+    }
+
+    public static void setExecuteThreadSize(int executeThreadSize) {
+        if(executeThreadSize < 3){
+            executeThreadSize = 3;
+        }
+        HttpServerConfig.executeThreadSize = executeThreadSize;
     }
 
     public static Map<String, MagicianHandler> getMartianServerHandlerMap() {
@@ -143,5 +170,21 @@ public class HttpServerConfig {
             throw new Exception("已经存在地址为"+path+"的handler");
         }
         HttpServerConfig.martianWebSocketHandlerMap.put(path, webSocketHandler);
+    }
+
+    public static List<ProtocolParsing> getProtocolParsingList() {
+        if(HttpServerConfig.protocolParsingList == null){
+            HttpServerConfig.protocolParsingList = new ArrayList<ProtocolParsing>();
+            HttpServerConfig.protocolParsingList.add(new HttpProtocolParsing());
+            HttpServerConfig.protocolParsingList.add(new WebSocketProtocolParsing());
+        }
+        return protocolParsingList;
+    }
+
+    public static void addProtocolParsingList(ProtocolParsing protocolParsing) {
+        if(HttpServerConfig.protocolParsingList == null){
+            HttpServerConfig.protocolParsingList = new ArrayList<ProtocolParsing>();
+        }
+        HttpServerConfig.protocolParsingList.add(protocolParsing);
     }
 }

@@ -1,6 +1,6 @@
 package io.magician.tcp.http.request;
 
-import io.magician.tcp.http.constant.MagicianConstant;
+import io.magician.common.constant.CommonConstant;
 
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -76,7 +76,7 @@ public class MagicianResponse {
      */
     public void sendStream(String fileName, byte[] bytes) throws Exception {
         setResponseHeader(contentType, "application/octet-stream");
-        setResponseHeader(contentDis, "attachment; filename=" + URLEncoder.encode(fileName, MagicianConstant.ENCODING));
+        setResponseHeader(contentDis, "attachment; filename=" + URLEncoder.encode(fileName, CommonConstant.ENCODING));
         httpExchange.setResponseBody(bytes);
     }
 
@@ -87,7 +87,7 @@ public class MagicianResponse {
      */
     public void sendStream(String fileName, InputStream inputStream) throws Exception {
         setResponseHeader(contentType, "application/octet-stream");
-        setResponseHeader(contentDis, "attachment; filename=" + URLEncoder.encode(fileName, MagicianConstant.ENCODING));
+        setResponseHeader(contentDis, "attachment; filename=" + URLEncoder.encode(fileName, CommonConstant.ENCODING));
         httpExchange.setResponseBody(inputStream);
     }
 }

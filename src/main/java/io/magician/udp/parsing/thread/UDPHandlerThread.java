@@ -10,22 +10,14 @@ import java.util.concurrent.LinkedBlockingDeque;
 /**
  * 执行业务逻辑的线程
  */
-public class ExecuteHandlerThread extends Thread {
+public class UDPHandlerThread extends Thread {
 
-    private Logger logger = LoggerFactory.getLogger(ExecuteHandlerThread.class);
+    private Logger logger = LoggerFactory.getLogger(UDPHandlerThread.class);
 
     private LinkedBlockingDeque<ByteArrayOutputStream> blockingDeque;
 
-    public ExecuteHandlerThread(){
-        blockingDeque = new LinkedBlockingDeque<>();
-    }
-
-    /**
-     * 添加一个任务
-     * @param outputStream
-     */
-    public void addTask(ByteArrayOutputStream outputStream){
-        this.blockingDeque.add(outputStream);
+    public UDPHandlerThread(LinkedBlockingDeque<ByteArrayOutputStream> blockingDeque){
+        this.blockingDeque = blockingDeque;
     }
 
     /**

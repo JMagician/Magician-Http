@@ -1,6 +1,6 @@
 package io.magician.tcp.http.parsing.param;
 
-import io.magician.tcp.http.constant.MagicianConstant;
+import io.magician.common.constant.CommonConstant;
 import io.magician.tcp.http.model.MagicianFileUpLoad;
 import io.magician.tcp.http.parsing.param.formdata.ParsingFormData;
 import io.magician.tcp.http.constant.ParamTypeConstant;
@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 参数解析
+ */
 public class ParamParsing {
 
     /**
@@ -76,7 +79,7 @@ public class ParamParsing {
      * @throws Exception 异常
      */
     private static String getParamStr(InputStream inputStream) throws Exception {
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, MagicianConstant.ENCODING);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, CommonConstant.ENCODING);
         BufferedReader br = new BufferedReader(inputStreamReader);
         try {
             String line = null;
@@ -124,7 +127,7 @@ public class ParamParsing {
 
                 String value = param[1];
                 if (hasDecode) {
-                    value = URLDecoder.decode(value, MagicianConstant.ENCODING);
+                    value = URLDecoder.decode(value, CommonConstant.ENCODING);
                 }
                 values.add(value);
                 magicianParams.put(key, values);

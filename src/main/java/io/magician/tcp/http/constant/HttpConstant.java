@@ -3,17 +3,12 @@ package io.magician.tcp.http.constant;
 /**
  * 常量
  */
-public class MagicianConstant {
+public class HttpConstant {
 
     /**
      * 无返回值
      */
     public static final String NO_DATA = "No data!";
-
-    /**
-     * 参数字符编码
-     */
-    public static final String ENCODING = "UTF-8";
 
     /**
      * 回车换行符
@@ -53,4 +48,9 @@ public class MagicianConstant {
      * 连接状态:关闭
      */
     public static final String CONNECTION_CLOSE = "close";
+
+    /**
+     * 协议标记
+     */
+    public static final String TARGET = "HTTP/";
 }

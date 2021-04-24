@@ -1,16 +1,16 @@
 package io.magician.tcp.http.request;
 
-import io.magician.tcp.http.constant.MagicianConstant;
+import io.magician.tcp.http.constant.HttpConstant;
 import io.magician.tcp.http.model.RequestURI;
 import io.magician.tcp.http.model.HttpHeaders;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 /**
- * 请求处理器
+ * 请求数据中转器
  */
 public class MagicianHttpExchange {
 
@@ -18,6 +18,11 @@ public class MagicianHttpExchange {
      * 通道
      */
     private SocketChannel socketChannel;
+
+    /**
+     * SelectionKey
+     */
+    private SelectionKey selectionKey;
 
     /**
      * 请求的地址
@@ -70,9 +75,9 @@ public class MagicianHttpExchange {
     public MagicianHttpExchange(){
         requestHeaders = new HttpHeaders();
         responseHeaders = new HttpHeaders();
-        responseHeaders.put(MagicianConstant.CONNECTION, MagicianConstant.CONNECTION_CLOSE);
+        responseHeaders.put(HttpConstant.CONNECTION, HttpConstant.CONNECTION_CLOSE);
 
-        sendText = MagicianConstant.NO_DATA;
+        sendText = HttpConstant.NO_DATA;
         statusCode = 200;
     }
 
@@ -82,6 +87,14 @@ public class MagicianHttpExchange {
 
     public void setSocketChannel(SocketChannel socketChannel) {
         this.socketChannel = socketChannel;
+    }
+
+    public SelectionKey getSelectionKey() {
+        return selectionKey;
+    }
+
+    public void setSelectionKey(SelectionKey selectionKey) {
+        this.selectionKey = selectionKey;
     }
 
     public void setRequestURI(String url) {
@@ -229,7 +242,7 @@ public class MagicianHttpExchange {
      * @return
      */
     public String getContentType(){
-        return requestHeaders.get(MagicianConstant.CONTENT_TYPE);
+        return requestHeaders.get(HttpConstant.CONTENT_TYPE);
     }
 
     /**
@@ -237,7 +250,7 @@ public class MagicianHttpExchange {
      * @return
      */
     public long getRequestContentLength(){
-        String contentLength = requestHeaders.get(MagicianConstant.CONTENT_LENGTH);
+        String contentLength = requestHeaders.get(HttpConstant.CONTENT_LENGTH);
         if(contentLength == null){
             return -1;
         }

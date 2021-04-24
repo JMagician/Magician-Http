@@ -1,10 +1,10 @@
 package io.magician.tcp.websocket.parsing;
 
-import io.magician.tcp.http.constant.MagicianConstant;
+import io.magician.common.constant.CommonConstant;
+import io.magician.tcp.http.constant.HttpConstant;
 import io.magician.tcp.http.parsing.WriteCompletionHandler;
-import io.magician.tcp.http.util.ChannelUtil;
+import io.magician.common.util.ChannelUtil;
 import io.magician.tcp.websocket.WebSocketSession;
-import io.magician.tcp.websocket.cache.ConnectionCache;
 import io.magician.tcp.websocket.constant.WebSocketConstant;
 import io.magician.tcp.websocket.util.SocketEncryptionUtil;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class WriteCreateSocketConnectionHandler {
         StringBuffer buffer = getCommonResponse();
 
         /* 转成ByteBuffer */
-        byte[] bytes = buffer.toString().getBytes(MagicianConstant.ENCODING);
+        byte[] bytes = buffer.toString().getBytes(CommonConstant.ENCODING);
         ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
         byteBuffer.put(bytes);
 
@@ -67,8 +67,7 @@ public class WriteCreateSocketConnectionHandler {
             }
         } catch (Exception e) {
             logger.error("给客户端写入响应数据异常", e);
-            ChannelUtil.close(channel);
-            ConnectionCache.removeSession(socketSession.getId());
+            ChannelUtil.destroy(socketSession.getMagicianHttpExchange());
         }
     }
 
@@ -81,14 +80,14 @@ public class WriteCreateSocketConnectionHandler {
 
         /* 加载初始化头 */
         buffer.append(WebSocketConstant.SOCKET_RESPONSE_ONE_LINE);
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
         buffer.append("Upgrade:websocket");
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
         buffer.append("Connection:Upgrade");
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
         buffer.append("Sec-WebSocket-Accept:" + getAccept());
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
-        buffer.append(MagicianConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
+        buffer.append(HttpConstant.CARRIAGE_RETURN);
         return buffer;
     }
 
@@ -100,6 +99,6 @@ public class WriteCreateSocketConnectionHandler {
     private String getAccept() throws Exception {
         String swKey = socketSession.getMagicianHttpExchange().getRequestHeaders().get(WebSocketConstant.SEC_WEBSOCKET_KEY);
         swKey = swKey + WebSocketConstant.SOCKET_SECRET_KEY;
-        return new String(SocketEncryptionUtil.getSha1AndBase64(swKey), MagicianConstant.ENCODING);
+        return new String(SocketEncryptionUtil.getSha1AndBase64(swKey), CommonConstant.ENCODING);
     }
 }

@@ -1,4 +1,4 @@
-package io.magician.tcp.http.util;
+package io.magician.common.util;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;

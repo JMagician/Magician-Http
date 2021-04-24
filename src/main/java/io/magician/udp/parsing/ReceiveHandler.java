@@ -1,8 +1,8 @@
 package io.magician.udp.parsing;
 
-import io.magician.tcp.http.util.ReadUtil;
+import io.magician.common.threadpool.ThreadPoolManagerFactory;
+import io.magician.common.util.ReadUtil;
 import io.magician.udp.handler.MagicianUDPHandler;
-import io.magician.udp.parsing.thread.ExecuteHandlerThreadManager;
 import io.magician.udp.UDPServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,9 @@ public class ReceiveHandler {
             ReadUtil.byteBufferToOutputStream(byteBuffer, outputStream);
 
             /* 异步执行业务逻辑 */
-            ExecuteHandlerThreadManager.addTaskToParsingThread(outputStream);
+            ThreadPoolManagerFactory
+                    .getThreadPoolManager(ThreadPoolManagerFactory.UDP_EXECUTE)
+                    .addTask(outputStream);
         } catch (Exception e){
             logger.error("接收数据异常", e);
         }

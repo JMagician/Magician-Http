@@ -1,6 +1,5 @@
 package io.magician.udp;
 
-import io.magician.tcp.HttpServerCreate;
 import io.magician.udp.handler.MagicianUDPHandler;
 import io.magician.udp.parsing.ReceiveHandler;
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import java.util.Set;
 
 public class UDPServerCreate {
 
-    private Logger log = LoggerFactory.getLogger(HttpServerCreate.class);
+    private Logger log = LoggerFactory.getLogger(UDPServerCreate.class);
 
     /**
      * 绑定端口
