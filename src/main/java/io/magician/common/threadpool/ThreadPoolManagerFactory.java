@@ -1,7 +1,7 @@
 package io.magician.common.threadpool;
 
-import io.magician.tcp.protocol.execute.thread.TCPHandlerThreadManager;
-import io.magician.tcp.protocol.thread.ParsingThreadManager;
+import io.magician.tcp.protocol.threads.handler.thread.TCPHandlerThreadManager;
+import io.magician.tcp.protocol.threads.codec.ParsingThreadManager;
 import io.magician.udp.parsing.thread.UDPHandlerThreadManager;
 
 /**

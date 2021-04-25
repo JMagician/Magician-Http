@@ -1,20 +1,21 @@
 package io.magician;
 
-import io.magician.tcp.HttpServerCreate;
+import io.magician.tcp.TCPServer;
 import io.magician.udp.UDPServerCreate;
 
 
 /**
- * 服务，采用AIO
+ * 主类，用NIO 创建服务
  */
 public class Magician {
 
     /**
-     * 构建一个http服务
+     * 构建一个tcp服务
+     * 默认采用http解码器
      * @return
      */
-    public static HttpServerCreate createHttpServer(){
-        return new HttpServerCreate();
+    public static TCPServer createTCPServer(){
+        return new TCPServer();
     }
 
     /**
