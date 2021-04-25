@@ -48,7 +48,7 @@ public class TCPServerMonitor {
                     if(selectionKey.isAcceptable()){
                         SocketChannel channel = ((ServerSocketChannel) selectionKey.channel()).accept();
                         channel.configureBlocking(false);
-                        channel.register(selector, SelectionKey.OP_READ, UUID.randomUUID().toString());
+                        channel.register(selector, SelectionKey.OP_READ);
                     } else if(selectionKey.isReadable()){
                         read(selectionKey);
                     }
