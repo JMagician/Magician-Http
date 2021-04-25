@@ -105,7 +105,7 @@ public class TCPServerMonitor {
         protocolDataModel.setSelectionKey(selectionKey);
 
         ThreadPoolManagerFactory
-                .getThreadPoolManager(ThreadPoolManagerFactory.TCP_READ)
+                .getThreadPoolManager(ThreadPoolManagerFactory.TCP_CODEC)
                 .addTask(protocolDataModel);
     }
 }

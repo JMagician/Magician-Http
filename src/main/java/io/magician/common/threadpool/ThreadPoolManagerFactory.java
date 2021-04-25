@@ -12,16 +12,15 @@ public class ThreadPoolManagerFactory {
     /**
      * 解析TCP数据的线程池
      */
-    public static final String TCP_READ = "TCP_READ";
+    public static final String TCP_CODEC = "TCP_CODEC";
     /**
      * 执行TCP业务逻辑的线程池
      */
-    public static final String TCP_EXECUTE = "TCP_EXECUTE";
-
+    public static final String TCP_HANDLER = "TCP_HANDLER";
     /**
      * 执行UDP业务逻辑的线程池
      */
-    public static final String UDP_EXECUTE = "UDP_EXECUTE";
+    public static final String UDP_HANDLER = "UDP_HANDLER";
 
     /**
      * 获取线程池
@@ -30,11 +29,11 @@ public class ThreadPoolManagerFactory {
      */
     public synchronized static ThreadPoolManager getThreadPoolManager(String type){
         switch (type){
-            case TCP_READ:
+            case TCP_CODEC:
                 return ParsingThreadManager.getParsingThreadManager();
-            case TCP_EXECUTE:
+            case TCP_HANDLER:
                 return TCPHandlerThreadManager.getHandlerThreadManager();
-            case UDP_EXECUTE:
+            case UDP_HANDLER:
                 return UDPHandlerThreadManager.getUDPHandlerThreadManager();
         }
         return null;

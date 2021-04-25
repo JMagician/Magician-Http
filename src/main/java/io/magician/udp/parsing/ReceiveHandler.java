@@ -32,7 +32,7 @@ public class ReceiveHandler {
 
             /* 异步执行业务逻辑 */
             ThreadPoolManagerFactory
-                    .getThreadPoolManager(ThreadPoolManagerFactory.UDP_EXECUTE)
+                    .getThreadPoolManager(ThreadPoolManagerFactory.UDP_HANDLER)
                     .addTask(outputStream);
         } catch (Exception e){
             logger.error("接收数据异常", e);

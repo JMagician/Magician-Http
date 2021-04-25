@@ -44,8 +44,14 @@ public class HttpMessageParsing extends ReadFields {
 
         /* 如果不是get请求，就要获取content-length */
         long contentLength = magicianHttpExchange.getRequestContentLength();
+
+        /*
+         * 如果头读完了，但是没有content-length， 这是属于不正常的现象
+         * 但是他毕竟真的读到了数据，所以就当他已经完了吧，返回数据让后面的逻辑尝试执行handler
+         */
         if(contentLength < 0){
-            return null;
+            getBody();
+            return magicianHttpExchange;
         }
 
         /* 报文长度-head长度 如果 < 内容长度，就说明还没读完 */

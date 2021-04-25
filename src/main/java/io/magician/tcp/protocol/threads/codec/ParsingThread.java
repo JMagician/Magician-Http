@@ -50,7 +50,7 @@ public class ParsingThread extends Thread {
                 executeModel.setProtocolCodec(protocolCodec);
 
                 ThreadPoolManagerFactory
-                        .getThreadPoolManager(ThreadPoolManagerFactory.TCP_EXECUTE)
+                        .getThreadPoolManager(ThreadPoolManagerFactory.TCP_HANDLER)
                         .addTask(executeModel);
             } catch (Exception e){
                 logger.error("执行读数据线程队列出现异常", e);
