@@ -1,6 +1,6 @@
 package io.magician.common.util;
 
-import io.magician.tcp.protocol.codec.impl.http.request.MagicianHttpExchange;
+import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 
 import java.io.OutputStream;
 import java.nio.channels.SelectionKey;

@@ -1,8 +1,8 @@
 package io.magician.tcp;
 
 import io.magician.tcp.handler.MagicianHandler;
-import io.magician.tcp.protocol.codec.ProtocolCodec;
-import io.magician.tcp.protocol.codec.impl.websocket.handler.WebSocketHandler;
+import io.magician.tcp.codec.ProtocolCodec;
+import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

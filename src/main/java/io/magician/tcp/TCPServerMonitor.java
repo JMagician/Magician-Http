@@ -3,7 +3,8 @@ package io.magician.tcp;
 import io.magician.common.threadpool.ThreadPoolManagerFactory;
 import io.magician.common.util.ChannelUtil;
 import io.magician.common.util.ReadUtil;
-import io.magician.tcp.protocol.model.ProtocolDataModel;
+import io.magician.tcp.cache.ProtocolDataCacheManager;
+import io.magician.tcp.cache.ProtocolDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +78,7 @@ public class TCPServerMonitor {
             if(size < 0){
                 /* 如果客户端已经断开，并且之前的循环也没读到数据，那就直接释放channel和key */
                 if(outputStream.size() < 1){
+                    ProtocolDataCacheManager.remove(channel);
                     ChannelUtil.cancel(selectionKey);
                     ChannelUtil.close(channel);
                     return;
@@ -99,7 +101,7 @@ public class TCPServerMonitor {
         }
 
         /* 将读到的数据丢入队列，给协议层处理 */
-        ProtocolDataModel protocolDataModel = new ProtocolDataModel();
+        ProtocolDataModel protocolDataModel = ProtocolDataCacheManager.get(channel);
         protocolDataModel.setByteArrayOutputStream(outputStream);
         protocolDataModel.setSocketChannel(channel);
         protocolDataModel.setSelectionKey(selectionKey);
