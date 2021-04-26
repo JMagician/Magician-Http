@@ -58,6 +58,9 @@ public class WebSocketMessageParsing {
         byte[] payloadData = Arrays.copyOfRange(bytesData, 6, bytesData.length);
         for (int i = 0; i < payloadData.length; i++) {
             payloadData[i] = (byte) (payloadData[i] ^ mask[i % 4]);
+            if(payloadData.length >= payloadLength){
+                break;
+            }
         }
 
         if(payloadData.length < payloadLength){
