@@ -21,6 +21,10 @@ public class WebSocketExchange {
      * 报文数据
      */
     private ByteArrayOutputStream outputStream;
+    /**
+     * 数据包长度
+     */
+    private int length;
 
     public WebSocketSession getWebSocketSession() {
         return webSocketSession;
@@ -44,5 +48,13 @@ public class WebSocketExchange {
 
     public void setOutputStream(ByteArrayOutputStream outputStream) {
         this.outputStream = outputStream;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
     }
 }

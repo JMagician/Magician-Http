@@ -1,10 +1,10 @@
 package io.magician.tcp;
 
-import io.magician.common.threadpool.ThreadPoolManagerFactory;
 import io.magician.common.util.ChannelUtil;
 import io.magician.common.util.ReadUtil;
-import io.magician.tcp.cache.ProtocolDataCacheManager;
-import io.magician.tcp.cache.ProtocolDataModel;
+import io.magician.tcp.workers.WorkersCacheManager;
+import io.magician.tcp.workers.Worker;
+import io.magician.tcp.workers.selector.WorkerSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,12 +73,10 @@ public class TCPServerMonitor {
 
         while (true){
             int size = channel.read(readBuffer);
-
             /* 小于0 表示客户端已经断开了 */
             if(size < 0){
                 /* 如果客户端已经断开，并且之前的循环也没读到数据，那就直接释放channel和key */
                 if(outputStream.size() < 1){
-                    ProtocolDataCacheManager.remove(channel);
                     ChannelUtil.cancel(selectionKey);
                     ChannelUtil.close(channel);
                     return;
@@ -100,14 +98,15 @@ public class TCPServerMonitor {
             return;
         }
 
-        /* 将读到的数据丢入队列，给协议层处理 */
-        ProtocolDataModel protocolDataModel = ProtocolDataCacheManager.get(channel);
-        protocolDataModel.setByteArrayOutputStream(outputStream);
-        protocolDataModel.setSocketChannel(channel);
-        protocolDataModel.setSelectionKey(selectionKey);
+        /* 将读到的数据添加到worker的流水线，给协议层处理 */
+        Worker worker = WorkersCacheManager.get(channel);
+        worker.addPipeLine(outputStream);
+        worker.setSocketChannel(channel);
+        worker.setSelectionKey(selectionKey);
 
-        ThreadPoolManagerFactory
-                .getThreadPoolManager(ThreadPoolManagerFactory.TCP_CODEC)
-                .addTask(protocolDataModel);
+        WorkersCacheManager.put(channel, worker);
+
+        /* 通知worker选择器，有可读状态的worker */
+        WorkerSelector.notifySelector();
     }
 }

@@ -25,10 +25,6 @@ public class WebSocketSession {
      */
     private String id;
     /**
-     * 最后活跃时间，用来判断是否应该回收
-     */
-    private long activeTime;
-    /**
      * http请求处理器
      */
     private MagicianHttpExchange magicianHttpExchange;
@@ -39,7 +35,6 @@ public class WebSocketSession {
 
     public WebSocketSession(){
         this.id = UUID.randomUUID().toString();
-        this.activeTime = System.currentTimeMillis();
         countDownLatch = new CountDownLatch(0);
     }
 
@@ -80,14 +75,6 @@ public class WebSocketSession {
 
     public String getId() {
         return id;
-    }
-
-    public void updateActiveTime(){
-        this.activeTime = System.currentTimeMillis();
-    }
-
-    public long getActiveTime() {
-        return activeTime;
     }
 
     /**

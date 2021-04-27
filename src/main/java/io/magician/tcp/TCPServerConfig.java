@@ -7,6 +7,9 @@ import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * http服务配置
@@ -42,13 +45,9 @@ public class TCPServerConfig {
      */
     private static long sizeMax = 10*1024*1024;
     /**
-     * 允许几个线程同时解析数据
+     * 业务线程池
      */
-    private static int readThreadSize = 3;
-    /**
-     * 允许几个线程同时执行业务逻辑
-     */
-    private static int executeThreadSize = 3;
+    private static Executor threadPool;
     /**
      * 协议解析器
      */
@@ -118,26 +117,15 @@ public class TCPServerConfig {
         TCPServerConfig.sizeMax = sizeMax;
     }
 
-    public static int getReadThreadSize() {
-        return readThreadSize;
-    }
-
-    public static void setReadThreadSize(int readThreadSize) {
-        if(readThreadSize < 3){
-            readThreadSize = 3;
+    public static Executor getThreadPool() {
+        if(threadPool == null){
+            threadPool = Executors.newCachedThreadPool();
         }
-        TCPServerConfig.readThreadSize = readThreadSize;
+        return threadPool;
     }
 
-    public static int getExecuteThreadSize() {
-        return executeThreadSize;
-    }
-
-    public static void setExecuteThreadSize(int executeThreadSize) {
-        if(executeThreadSize < 3){
-            executeThreadSize = 3;
-        }
-        TCPServerConfig.executeThreadSize = executeThreadSize;
+    public static void setThreadPool(Executor threadPool) {
+        TCPServerConfig.threadPool = threadPool;
     }
 
     public static Map<String, MagicianHandler> getMartianServerHandlerMap() {

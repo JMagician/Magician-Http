@@ -1,6 +1,7 @@
 package io.magician.common.util;
 
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
+import io.magician.tcp.workers.WorkersCacheManager;
 
 import java.io.OutputStream;
 import java.nio.channels.SelectionKey;
@@ -26,6 +27,7 @@ public class ChannelUtil {
     public static void close(SocketChannel socketChannel) {
         try {
             if (socketChannel != null && socketChannel.isOpen()) {
+                WorkersCacheManager.remove(socketChannel);
                 socketChannel.shutdownInput();
                 socketChannel.shutdownOutput();
                 socketChannel.close();

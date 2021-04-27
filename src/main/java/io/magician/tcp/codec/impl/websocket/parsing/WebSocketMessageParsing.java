@@ -2,7 +2,6 @@ package io.magician.tcp.codec.impl.websocket.parsing;
 
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
 import io.magician.tcp.codec.impl.websocket.constant.WebSocketEnum;
-import io.magician.tcp.cache.ProtocolDataModel;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -15,7 +14,7 @@ public class WebSocketMessageParsing {
     /**
      * 报文数据
      */
-    private ProtocolDataModel protocolDataModel;
+    private ByteArrayOutputStream outputStream;
 
     /**
      * webSocket数据中转器
@@ -24,11 +23,11 @@ public class WebSocketMessageParsing {
 
     /**
      * 构造函数
-     * @param protocolDataModel
+     * @param outputStream
      * @param webSocketExchange
      */
-    public WebSocketMessageParsing(ProtocolDataModel protocolDataModel, WebSocketExchange webSocketExchange){
-        this.protocolDataModel = protocolDataModel;
+    public WebSocketMessageParsing(ByteArrayOutputStream outputStream, WebSocketExchange webSocketExchange){
+        this.outputStream = outputStream;
         this.webSocketExchange = webSocketExchange;
     }
 
@@ -39,7 +38,7 @@ public class WebSocketMessageParsing {
      */
     public WebSocketExchange completed() throws Exception {
 
-        byte[] bytesData = protocolDataModel.getByteArrayOutputStream().toByteArray();
+        byte[] bytesData = outputStream.toByteArray();
         if (bytesData.length < 1) {
             return null;
         }
@@ -55,12 +54,9 @@ public class WebSocketMessageParsing {
 
         byte payloadLength = (byte) (bytesData[1] & 0x7f);
         byte[] mask = Arrays.copyOfRange(bytesData, 2, 6);
-        byte[] payloadData = Arrays.copyOfRange(bytesData, 6, bytesData.length);
+        byte[] payloadData = Arrays.copyOfRange(bytesData, 6, payloadLength + 6);
         for (int i = 0; i < payloadData.length; i++) {
             payloadData[i] = (byte) (payloadData[i] ^ mask[i % 4]);
-            if(payloadData.length >= payloadLength){
-                break;
-            }
         }
 
         if(payloadData.length < payloadLength){
@@ -70,6 +66,7 @@ public class WebSocketMessageParsing {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(payloadData);
 
+        webSocketExchange.setLength(6 + outputStream.size());
         webSocketExchange.setOutputStream(outputStream);
         webSocketExchange.setWebSocketEnum(WebSocketEnum.MESSAGE);
 

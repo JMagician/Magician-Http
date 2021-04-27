@@ -3,11 +3,13 @@ package io.magician.tcp;
 import io.magician.tcp.handler.MagicianHandler;
 import io.magician.tcp.codec.ProtocolCodec;
 import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
+import io.magician.tcp.thread.WorkerSelectorThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.*;
+import java.util.concurrent.Executor;
 
 /**
  * http服务创建
@@ -93,21 +95,11 @@ public class TCPServer {
 
     /**
      * 设置允许几个线程同时解析数据
-     * @param threadSize
+     * @param executor
      * @return
      */
-    public TCPServer readThreadSize(int threadSize){
-        TCPServerConfig.setReadThreadSize(threadSize);
-        return this;
-    }
-
-    /**
-     * 设置允许几个线程同时执行业务逻辑
-     * @param threadSize
-     * @return
-     */
-    public TCPServer execThreadSize(int threadSize){
-        TCPServerConfig.setExecuteThreadSize(threadSize);
+    public TCPServer threadPool(Executor executor){
+        TCPServerConfig.setThreadPool(executor);
         return this;
     }
 
@@ -155,7 +147,10 @@ public class TCPServer {
         /* 标识服务是否已经启动 */
         log.info("启动成功");
 
-        /* 监听Http */
+        /* 开启workerSelector监听器 */
+        new WorkerSelectorThread().start();
+
+        /* 开启NIOSelector监听器 */
         TCPServerMonitor.doMonitor(serverSocketChannel);
     }
 }

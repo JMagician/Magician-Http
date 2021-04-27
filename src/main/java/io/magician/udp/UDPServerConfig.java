@@ -2,6 +2,9 @@ package io.magician.udp;
 
 import io.magician.udp.handler.MagicianUDPHandler;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 /**
  * UDP服务配置
  */
@@ -13,9 +16,9 @@ public class UDPServerConfig {
     private static int port;
 
     /**
-     * 线程数
+     * 业务线程池
      */
-    private static int threadSize = 3;
+    private static Executor threadPool;
 
     /**
      * 接收数据的缓冲区大小
@@ -35,12 +38,15 @@ public class UDPServerConfig {
         UDPServerConfig.port = port;
     }
 
-    public static int getThreadSize() {
-        return threadSize;
+    public static Executor getThreadPool() {
+        if(threadPool == null){
+            threadPool = Executors.newCachedThreadPool();
+        }
+        return threadPool;
     }
 
-    public static void setThreadSize(int threadSize) {
-        UDPServerConfig.threadSize = threadSize;
+    public static void setThreadPool(Executor threadPool) {
+        UDPServerConfig.threadPool = threadPool;
     }
 
     public static MagicianUDPHandler getMagicianUDPHandler() {

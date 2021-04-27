@@ -1,7 +1,7 @@
 package io.magician.udp;
 
 import io.magician.udp.handler.MagicianUDPHandler;
-import io.magician.udp.parsing.ReceiveHandler;
+import io.magician.udp.workers.ReceiveHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +9,7 @@ import java.net.*;
 import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 public class UDPServerCreate {
 
@@ -26,13 +27,13 @@ public class UDPServerCreate {
     }
 
     /**
-     * 设置允许几个线程同时处理任务
+     * 设置线程池
      *
-     * @param threadSize
+     * @param executor
      * @return
      */
-    public UDPServerCreate threadSize(int threadSize) {
-        UDPServerConfig.setThreadSize(threadSize);
+    public UDPServerCreate threadPool(Executor executor) {
+        UDPServerConfig.setThreadPool(executor);
         return this;
     }
 
