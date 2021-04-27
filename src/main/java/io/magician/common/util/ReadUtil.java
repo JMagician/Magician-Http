@@ -18,8 +18,9 @@ public class ReadUtil {
      */
     public static void byteBufferToOutputStream(ByteBuffer byteBuffer, ByteArrayOutputStream outputStream) throws Exception {
         byteBuffer.flip();
-        WritableByteChannel writableByteChannel = Channels.newChannel(outputStream);
-        writableByteChannel.write(byteBuffer);
+        byte[] bytes = new byte[byteBuffer.limit()];
+        byteBuffer.get(bytes, 0, byteBuffer.limit());
+        outputStream.write(bytes);
         byteBuffer.clear();
     }
 }
