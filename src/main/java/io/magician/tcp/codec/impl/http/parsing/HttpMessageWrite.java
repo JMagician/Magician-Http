@@ -100,27 +100,11 @@ public class HttpMessageWrite {
             while (byteBuffer.hasRemaining()){
                 magicianHttpExchange.getSocketChannel().write(byteBuffer);
             }
-
-            if(isClose()){
-                ChannelUtil.destroy(magicianHttpExchange);
-            }
-            ChannelUtil.closeOutputStream(magicianHttpExchange.getResponseBody());
         } catch (Exception e) {
+        } finally {
             ChannelUtil.destroy(magicianHttpExchange);
             ChannelUtil.closeOutputStream(magicianHttpExchange.getResponseBody());
         }
-    }
-
-    /**
-     * 是否需要关闭
-     * @return
-     */
-    private boolean isClose(){
-        String connection = magicianHttpExchange.getRequestHeaders().get(HttpConstant.CONNECTION.toUpperCase());
-        if(connection != null && connection.equals(HttpConstant.CONNECTION_CLOSE.toUpperCase())){
-            return true;
-        }
-        return false;
     }
 
     /**

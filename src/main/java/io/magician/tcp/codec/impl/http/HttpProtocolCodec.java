@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.channels.SelectionKey;
 
 /**
  * HTTP协议解析器
@@ -93,7 +94,12 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
      * @return
      */
     private boolean isWebSocket(Worker worker){
-        Object obj = worker.getSelectionKey().attachment();
+        SelectionKey selectionKey = worker.getSelectionKey();
+        if(selectionKey == null){
+            return false;
+        }
+
+        Object obj = selectionKey.attachment();
         /*
          * 在用http建立连接的时候，会将session存入SelectionKey的附件，
          * 所以如果附件没东西就不可能是WebSocket

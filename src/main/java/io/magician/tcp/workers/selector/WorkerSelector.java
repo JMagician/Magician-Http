@@ -60,9 +60,12 @@ public class WorkerSelector {
                     continue;
                 }
                 for(Worker worker : workerList){
+                    if(worker.getSelectionKey() == null || worker.getSocketChannel() == null){
+                        continue;
+                    }
                     /* 如果worker已经在队列里了，则直接停止，一个连接不需要两个线程来执行worker */
                     if(worker.getStatusEnums().equals(StatusEnums.RUNNING)){
-                        break;
+                        continue;
                     }
 
                     /* 设置成工作中状态 */

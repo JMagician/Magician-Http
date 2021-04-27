@@ -26,7 +26,7 @@ public class ChannelUtil {
      */
     public static void close(SocketChannel socketChannel) {
         try {
-            if (socketChannel != null && socketChannel.isOpen()) {
+            if (socketChannel != null) {
                 WorkersCacheManager.remove(socketChannel);
                 socketChannel.shutdownInput();
                 socketChannel.shutdownOutput();
