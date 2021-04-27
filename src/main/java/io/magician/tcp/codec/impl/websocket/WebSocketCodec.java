@@ -12,8 +12,17 @@ import io.magician.tcp.workers.Worker;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * websocket协议解析器
+ */
 public class WebSocketCodec implements ProtocolCodec<Object> {
 
+    /**
+     * 解析协议报文
+     * @param worker 一个工作者
+     * @return
+     * @throws Exception
+     */
     @Override
     public Object codecData(Worker worker) throws Exception {
         Object obj = worker.getSelectionKey().attachment();
@@ -39,6 +48,11 @@ public class WebSocketCodec implements ProtocolCodec<Object> {
         return webSocketExchange;
     }
 
+    /**
+     * 执行handler
+     * @param object 解析出来的完整报文
+     * @throws Exception
+     */
     @Override
     public void handler(Object object) throws Exception {
         WebSocketExchange webSocketExchange = (WebSocketExchange)object;
