@@ -100,7 +100,7 @@ public class TCPServerMonitor {
         if(outputStream.size() < 1){
             return;
         }
-        
+
         /* 将读到的数据添加到worker的流水线，给协议层处理 */
         Worker worker = WorkersCacheManager.get(channel);
         worker.addPipeLine(outputStream);
