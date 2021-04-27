@@ -67,10 +67,13 @@ public class TCPServerMonitor {
     private static void read(SelectionKey selectionKey) throws Exception {
         SocketChannel channel = (SocketChannel) selectionKey.channel();
 
-        /* 将这当前一个管子数据全部读出来 */
+        /* 创建一个临时容器，将当前channel里的数据都暂存在里面，一起丢给worker */
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        /* 缓冲区，每轮循环读取的最大长度 */
         ByteBuffer readBuffer = ByteBuffer.allocate(TCPServerConfig.getReadSize());
 
+        /* 将这当前一个管子数据全部读出来 */
         while (true){
             int size = channel.read(readBuffer);
             /* 小于0 表示客户端已经断开了 */
@@ -106,7 +109,7 @@ public class TCPServerMonitor {
 
         WorkersCacheManager.put(channel, worker);
 
-        /* 通知worker选择器，有可读状态的worker */
+        /* 通知worker选择器，有新数据到达 */
         WorkerSelector.notifySelector();
     }
 }

@@ -48,19 +48,27 @@ public class WebSocketMessageParsing {
             webSocketExchange.setWebSocketEnum(WebSocketEnum.CLOSE);
             return webSocketExchange;
         }
-        if (bytesData.length < 6) {
+        if (bytesData.length < 2) {
             return null;
         }
 
         byte payloadLength = (byte) (bytesData[1] & 0x7f);
+        if(payloadLength < 1){
+            return null;
+        }
+
+        if(bytesData.length < (payloadLength + 6)){
+            return null;
+        }
         byte[] mask = Arrays.copyOfRange(bytesData, 2, 6);
         byte[] payloadData = Arrays.copyOfRange(bytesData, 6, payloadLength + 6);
-        for (int i = 0; i < payloadData.length; i++) {
-            payloadData[i] = (byte) (payloadData[i] ^ mask[i % 4]);
-        }
 
         if(payloadData.length < payloadLength){
             return null;
+        }
+
+        for (int i = 0; i < payloadData.length; i++) {
+            payloadData[i] = (byte) (payloadData[i] ^ mask[i % 4]);
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
