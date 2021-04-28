@@ -1,7 +1,7 @@
 package io.magician;
 
 import io.magician.tcp.TCPServer;
-import io.magician.udp.UDPServerCreate;
+import io.magician.udp.UDPServer;
 
 
 /**
@@ -22,7 +22,7 @@ public class Magician {
      * 构建一个udp服务
      * @return
      */
-    public static UDPServerCreate createUdpServer(){
-        return new UDPServerCreate();
+    public static UDPServer createUdpServer(){
+        return new UDPServer();
     }
 }
