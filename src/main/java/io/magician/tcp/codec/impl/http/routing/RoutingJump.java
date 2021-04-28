@@ -1,5 +1,7 @@
 package io.magician.tcp.codec.impl.http.routing;
 
+import io.magician.tcp.attach.AttachUtil;
+import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.codec.impl.http.parsing.param.ParamParsing;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
 import io.magician.tcp.handler.MagicianHandler;
@@ -25,7 +27,8 @@ public class RoutingJump {
         socketSession.setWebSocketHandler(webSocketHandler);
 
         /* 将session加入附件 */
-        httpExchange.getSelectionKey().attach(socketSession);
+        AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(httpExchange.getSelectionKey());
+        attachmentModel.setWebSocketSession(socketSession);
 
         socketSession.getWebSocketHandler().onOpen(socketSession);
         WebSocketMessageWrite.builder(socketSession).completed();

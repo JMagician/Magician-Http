@@ -41,7 +41,10 @@ public class WorkerThread extends Thread {
             /* 对于已经读完整的数据，传入handler执行业务逻辑 */
             protocolCodec.handler(obj);
         } catch (Exception e){
-            logger.error("执行读数据线程队列出现异常", e);
+            logger.error("WorkerThread出现异常", e);
+            if(worker != null){
+                worker.destroy();
+            }
         } finally {
             /* 设置成WAIT状态，允许下次执行 */
             if(worker != null){

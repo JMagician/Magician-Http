@@ -15,6 +15,11 @@ import java.io.ByteArrayOutputStream;
 public class HttpMessageParsing extends ReadFields {
 
     /**
+     * head结束符
+     */
+    private static byte[] headEnd;
+
+    /**
      * 构造函数
      * @param magicianHttpExchange
      */
@@ -28,8 +33,12 @@ public class HttpMessageParsing extends ReadFields {
      * @return
      */
     public MagicianHttpExchange completed() throws Exception {
+        if(headEnd == null){
+            headEnd = HttpConstant.HEAD_END.getBytes(CommonConstant.ENCODING);
+        }
+
         /* 查找head结束符，如果没找到就返回-1，找到了就返回位置 */
-        int length = ByteUtil.byteIndexOf(outputStream.toByteArray(), HttpConstant.HEAD_END.getBytes(CommonConstant.ENCODING));
+        int length = ByteUtil.byteIndexOf(outputStream.toByteArray(), headEnd);
         if (length < 0) {
             return null;
         }

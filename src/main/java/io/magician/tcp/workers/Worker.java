@@ -1,23 +1,25 @@
 package io.magician.tcp.workers;
 
 import io.magician.common.constant.StatusEnums;
+import io.magician.common.util.ChannelUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * 工作者，每个连接对应一个对象
  */
 public class Worker {
 
+    private Logger logger = LoggerFactory.getLogger(Worker.class);
+
     /**
      * 流水线，selector从channel读到了数据 都会追加进来
      */
-    private volatile List<ByteArrayOutputStream> pipeLine = new LinkedList<>();
+    private volatile ByteArrayOutputStream pipeLine = new ByteArrayOutputStream();
 
     /**
      * 数据缓存，解码器解码的时候会将流水线上的数据都合并到这里
@@ -46,13 +48,6 @@ public class Worker {
     private volatile StatusEnums statusEnums = StatusEnums.WAIT;
 
     /**
-     * 是否可读状态
-     * NIOSelector每次读到了数据都会把这个worker改为OP_READ状态，这样WorkerSelector将会发现这个worker从而给它指派工作
-     * 解码器每次读完数据后都会把这个worker改为OP_ACCEPT状态，从而阻止WorkerSelector重复消费
-     */
-    private volatile int opStatus = SelectionKey.OP_WRITE;
-
-    /**
      * 添加数据到流水线
      * @param byteArrayOutputStream
      * @throws Exception
@@ -63,12 +58,15 @@ public class Worker {
         }
 
         synchronized (this.pipeLine) {
-            if (this.pipeLine == null) {
-                this.pipeLine = new LinkedList<>();
-            }
+            try {
+                if (this.pipeLine == null) {
+                    this.pipeLine = new ByteArrayOutputStream();
+                }
 
-            this.pipeLine.add(byteArrayOutputStream);
-            opStatus = SelectionKey.OP_READ;
+                this.pipeLine.write(byteArrayOutputStream.toByteArray());
+            } catch (Exception e){
+                logger.error("给Worker追加新数据异常", e);
+            }
         }
     }
 
@@ -79,17 +77,48 @@ public class Worker {
      */
     public ByteArrayOutputStream getOutputStream() throws Exception {
         synchronized (this.pipeLine) {
-            Iterator<ByteArrayOutputStream> it = this.pipeLine.iterator();
-            while (it.hasNext()) {
-                ByteArrayOutputStream item = it.next();
-                if(item != null && item.size() > 0){
-                    outputStream.write(item.toByteArray());
-                }
-                it.remove();
+            if(this.pipeLine == null || this.pipeLine.size() < 1){
+                return null;
             }
-            opStatus = SelectionKey.OP_ACCEPT;
+            outputStream.write(this.pipeLine.toByteArray());
             return outputStream;
         }
+    }
+
+    /**
+     * 解码器每次读取了pipeLine 都会清空它
+     * 所以只要pipeLine不为空，就说明有新数据可用
+     * @return
+     */
+    public boolean isRead(){
+        synchronized (this.pipeLine){
+            return this.pipeLine.size() > 0;
+        }
+    }
+
+    /**
+     * 从缓存中去除已经被业务使用的那部分数据
+     * @param skip
+     * @throws Exception
+     */
+    public void skipOutputStream(int skip) throws Exception {
+        byte[] dataBytes = outputStream.toByteArray();
+        byte[] newBytes = new byte[dataBytes.length - skip];
+
+        System.arraycopy(dataBytes, skip, newBytes, 0, newBytes.length);
+
+        outputStream.reset();
+        outputStream.write(newBytes);
+    }
+
+    /**
+     * 销毁连接
+     */
+    public void destroy(){
+        ChannelUtil.close(socketChannel);
+        ChannelUtil.cancel(selectionKey);
+        pipeLine.reset();
+        outputStream.reset();
     }
 
     public SocketChannel getSocketChannel() {
@@ -114,24 +143,5 @@ public class Worker {
 
     public void setStatusEnums(StatusEnums statusEnums) {
         this.statusEnums = statusEnums;
-    }
-
-    public int getOpStatus() {
-        return opStatus;
-    }
-
-    /**
-     * 从缓存中去除已经被业务使用的那部分数据
-     * @param skip
-     * @throws Exception
-     */
-    public void skipOutputStream(int skip) throws Exception {
-        byte[] dataBytes = outputStream.toByteArray();
-        byte[] newBytes = new byte[dataBytes.length - skip];
-
-        System.arraycopy(dataBytes, skip, newBytes, 0, newBytes.length);
-
-        outputStream.reset();
-        outputStream.write(newBytes);
     }
 }

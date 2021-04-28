@@ -1,5 +1,7 @@
 package io.magician.tcp.codec.impl.websocket;
 
+import io.magician.tcp.attach.AttachUtil;
+import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
@@ -25,12 +27,16 @@ public class WebSocketCodec implements ProtocolCodec<Object> {
      */
     @Override
     public Object codecData(Worker worker) throws Exception {
-        Object obj = worker.getSelectionKey().attachment();
+        AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(worker.getSelectionKey());
 
         ByteArrayOutputStream outputStream = worker.getOutputStream();
+        if(outputStream == null){
+            return null;
+        }
+
         WebSocketExchange webSocketExchange = new WebSocketExchange();
-        if (obj != null) {
-            webSocketExchange.setWebSocketSession((WebSocketSession) obj);
+        if (attachmentModel != null) {
+            webSocketExchange.setWebSocketSession(attachmentModel.getWebSocketSession());
         }
 
         webSocketExchange = new WebSocketMessageParsing(

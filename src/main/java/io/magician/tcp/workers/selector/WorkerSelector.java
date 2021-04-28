@@ -8,10 +8,7 @@ import io.magician.tcp.workers.thread.WorkerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -55,27 +52,29 @@ public class WorkerSelector {
         while (true){
             try {
                 /* 获取read状态的worker */
-                List<Worker> workerList = selectWorkers();
-                if(workerList == null && workerList.size() < 1){
-                    continue;
-                }
-                for(Worker worker : workerList){
-                    if(worker.getSelectionKey() == null || worker.getSocketChannel() == null){
-                        continue;
-                    }
-                    /* 如果worker已经在队列里了，则直接停止，一个连接不需要两个线程来执行worker */
-                    if(worker.getStatusEnums().equals(StatusEnums.RUNNING)){
-                        continue;
-                    }
+                selectWorkers();
 
-                    /* 设置成工作中状态 */
-                    worker.setStatusEnums(StatusEnums.RUNNING);
+                Map<SocketChannel, Worker> workerMap = WorkersCacheManager.getProtocolDataModelMap();
+                for(Worker worker : workerMap.values()){
+                    if(worker.isRead()){
+                        if(worker.getSelectionKey() == null || worker.getSocketChannel() == null){
+                            continue;
+                        }
+                        /* 如果worker已经在队列里了，则直接停止，一个连接不需要两个线程来执行worker */
+                        if(worker.getStatusEnums().equals(StatusEnums.RUNNING)){
+                            continue;
+                        }
 
-                    /* 丢进线程池处理 */
-                    TCPServerConfig.getThreadPool().execute(new WorkerThread(worker));
+                        /* 设置成工作中状态 */
+                        worker.setStatusEnums(StatusEnums.RUNNING);
+
+                        /* 丢进线程池处理 */
+                        TCPServerConfig.getThreadPool().execute(new WorkerThread(worker));
+                    }
                 }
             } catch (Exception e){
                 logger.error("执行startSelector出现异常", e);
+                continue;
             }
         }
     }
@@ -85,21 +84,11 @@ public class WorkerSelector {
      * @return
      * @throws Exception
      */
-    public static List<Worker> selectWorkers() throws Exception {
+    public static void selectWorkers() throws Exception {
         /* 防止线程间的通讯出现一些小概率事件，所以最多阻塞10秒 */
         countDownLatch.await(10000L, TimeUnit.MILLISECONDS);
         synchronized (lock){
             countDownLatch = new CountDownLatch(1);
         }
-
-        List<Worker> workerList = new ArrayList<>();
-        Map<SocketChannel, Worker> workerMap = WorkersCacheManager.getProtocolDataModelMap();
-
-        for(Worker worker : workerMap.values()){
-            if(worker.getOpStatus() == SelectionKey.OP_READ){
-                workerList.add(worker);
-            }
-        }
-        return workerList;
     }
 }

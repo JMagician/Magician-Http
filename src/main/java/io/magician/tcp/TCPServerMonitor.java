@@ -2,6 +2,8 @@ package io.magician.tcp;
 
 import io.magician.common.util.ChannelUtil;
 import io.magician.common.util.ReadUtil;
+import io.magician.tcp.attach.AttachUtil;
+import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.workers.WorkersCacheManager;
 import io.magician.tcp.workers.Worker;
 import io.magician.tcp.workers.selector.WorkerSelector;
@@ -29,33 +31,40 @@ public class TCPServerMonitor {
         Selector selector = Selector.open();
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        while(true){
-            try {
-                int num = selector.select();
-                if (num <= 0) {
-                    continue;
-                }
+        while (true) {
+            int num = selector.select();
+            if (num <= 0) {
+                continue;
+            }
 
-                Set<SelectionKey> selectionKeySet = selector.selectedKeys();
-                Iterator<SelectionKey> it = selectionKeySet.iterator();
-                while (it.hasNext()) {
-                    SelectionKey selectionKey = it.next();
-                    it.remove();
+            Set<SelectionKey> selectionKeySet = selector.selectedKeys();
+            if (selectionKeySet == null || selectionKeySet.size() < 1) {
+                continue;
+            }
 
-                    if(!selectionKey.isValid()){
+            Iterator<SelectionKey> it = selectionKeySet.iterator();
+            while (it.hasNext()) {
+                SelectionKey selectionKey = it.next();
+                it.remove();
+                SocketChannel channel = null;
+                try {
+                    if (!selectionKey.isValid()) {
                         continue;
                     }
-                    if(selectionKey.isAcceptable()){
-                        SocketChannel channel = ((ServerSocketChannel) selectionKey.channel()).accept();
+                    if (selectionKey.isAcceptable()) {
+                        channel = ((ServerSocketChannel) selectionKey.channel()).accept();
                         channel.configureBlocking(false);
-                        channel.register(selector, SelectionKey.OP_READ);
-                    } else if(selectionKey.isReadable()){
-                        read(selectionKey);
+                        channel.register(selector, SelectionKey.OP_READ, new AttachmentModel());
+                    } else if (selectionKey.isReadable()) {
+                        channel = read(selectionKey);
                     }
+                } catch (Exception e){
+                    logger.error("selector异常", e);
+                    ChannelUtil.cancel(selectionKey);
+                    ChannelUtil.close(channel);
                 }
-            } catch (Exception e){
-                logger.error("Selector出现异常", e);
             }
+            selector.wakeup();
         }
     }
 
@@ -64,7 +73,7 @@ public class TCPServerMonitor {
      * @param selectionKey
      * @throws Exception
      */
-    private static void read(SelectionKey selectionKey) throws Exception {
+    private static SocketChannel read(SelectionKey selectionKey) throws Exception {
         SocketChannel channel = (SocketChannel) selectionKey.channel();
 
         /* 创建一个临时容器，将当前channel里的数据都暂存在里面，一起丢给worker */
@@ -82,7 +91,7 @@ public class TCPServerMonitor {
                 if(outputStream.size() < 1){
                     ChannelUtil.cancel(selectionKey);
                     ChannelUtil.close(channel);
-                    return;
+                    return null;
                 }
                 break;
             }
@@ -98,11 +107,14 @@ public class TCPServerMonitor {
 
         /* 如果没读到数据 就跳出当前方法 */
         if(outputStream.size() < 1){
-            return;
+            return channel;
         }
 
+        /* 获取附件 */
+        AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(selectionKey);
+
         /* 将读到的数据添加到worker的流水线，给协议层处理 */
-        Worker worker = WorkersCacheManager.get(channel);
+        Worker worker = attachmentModel.getWorker();
         worker.addPipeLine(outputStream);
         worker.setSocketChannel(channel);
         worker.setSelectionKey(selectionKey);
@@ -111,5 +123,6 @@ public class TCPServerMonitor {
 
         /* 通知worker选择器，有新数据到达 */
         WorkerSelector.notifySelector();
+        return channel;
     }
 }

@@ -1,12 +1,12 @@
 package io.magician.tcp.codec.impl.http;
 
 import io.magician.common.constant.StatusEnums;
+import io.magician.tcp.attach.AttachUtil;
+import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.workers.WorkersCacheManager;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
-import io.magician.common.util.ChannelUtil;
 import io.magician.tcp.codec.impl.websocket.WebSocketCodec;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
-import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
 import io.magician.tcp.codec.ProtocolCodec;
 import io.magician.tcp.workers.Worker;
 import io.magician.tcp.codec.impl.http.parsing.HttpMessageParsing;
@@ -35,42 +35,37 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
      * @return
      */
     public Object codecData(Worker worker) throws Exception {
-        try {
-            boolean webSocket = isWebSocket(worker);
-            if(webSocket){
-                /* 解析webSocket报文 */
-                return webSocketCodec.codecData(worker);
-            } else {
-                /* 解析Http报文 */
-                ByteArrayOutputStream outputStream = worker.getOutputStream();
-
-                MagicianHttpExchange magicianHttpExchange = new MagicianHttpExchange();
-                magicianHttpExchange.setSocketChannel(worker.getSocketChannel());
-                magicianHttpExchange.setSelectionKey(worker.getSelectionKey());
-
-                magicianHttpExchange = new HttpMessageParsing(
-                        magicianHttpExchange,
-                        outputStream
-                ).completed();
-
-                /* 如果报文读完整了，就返回magicianHttpExchange，让业务可以往下走 */
-                if(magicianHttpExchange != null){
-                    /*
-                     * http要等前一个响应后才能发送下一个请求，所以不会出现粘包
-                     * 获取完整报文后清除缓存即可
-                     * 后续的报文只会在下次请求才会发过来
-                     */
-                    WorkersCacheManager.clear(worker.getSocketChannel());
-                    worker.setStatusEnums(StatusEnums.WAIT);
-                }
-
-                return magicianHttpExchange;
+        boolean webSocket = isWebSocket(worker);
+        if(webSocket){
+            /* 解析webSocket报文 */
+            return webSocketCodec.codecData(worker);
+        } else {
+            /* 解析Http报文 */
+            ByteArrayOutputStream outputStream = worker.getOutputStream();
+            if(outputStream == null){
+                return null;
             }
-        } catch (Exception e){
-            logger.error("解析报文异常", e);
-            ChannelUtil.close(worker.getSocketChannel());
-            ChannelUtil.cancel(worker.getSelectionKey());
-            throw e;
+
+            MagicianHttpExchange magicianHttpExchange = new MagicianHttpExchange();
+            magicianHttpExchange.setSocketChannel(worker.getSocketChannel());
+            magicianHttpExchange.setSelectionKey(worker.getSelectionKey());
+
+            magicianHttpExchange = new HttpMessageParsing(
+                    magicianHttpExchange,
+                    outputStream
+            ).completed();
+
+            /* 如果报文读完整了，就返回magicianHttpExchange，让业务可以往下走 */
+            if(magicianHttpExchange != null){
+                /*
+                 * http要等前一个响应后才能发送下一个请求，所以不会出现粘包
+                 * 获取完整报文后清除缓存即可
+                 * 后续的报文只会在下次请求才会发过来
+                 */
+                WorkersCacheManager.clear(worker.getSocketChannel());
+            }
+
+            return magicianHttpExchange;
         }
     }
 
@@ -99,16 +94,16 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
             return false;
         }
 
-        Object obj = selectionKey.attachment();
+        AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(selectionKey);
         /*
          * 在用http建立连接的时候，会将session存入SelectionKey的附件，
          * 所以如果附件没东西就不可能是WebSocket
          */
-        if(obj == null){
+        if(attachmentModel == null){
             return false;
         }
-        /* 如果附件是 WebSocketSession 类型，那肯定是WebSocket */
-        if(obj instanceof WebSocketSession){
+        /* 如果附件里面的 WebSocketSession对象不为空，则肯定是webSocket */
+        if(attachmentModel.getWebSocketSession() != null){
             return true;
         }
         return false;
