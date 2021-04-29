@@ -165,6 +165,6 @@ public class TCPServer {
                 .addEvent(new TCPServerMonitorTask(serverSocketChannel, tcpServerConfig, ioEventGroup, workerEventGroup));
 
         /* 标识服务是否已经启动 */
-        log.info("启动成功");
+        log.info("启动TCP服务成功");
     }
 }
