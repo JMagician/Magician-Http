@@ -90,7 +90,7 @@ public class TCPServerMonitorTask implements EventTask {
                         channel = read(selectionKey);
                     }
                 } catch (Exception e){
-                    logger.error("selector异常", e);
+                    logger.warn("selector异常:{}", e.getMessage());
                     ChannelUtil.cancel(selectionKey);
                     ChannelUtil.close(channel);
                 }

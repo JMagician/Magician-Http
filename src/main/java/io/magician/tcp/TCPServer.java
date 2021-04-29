@@ -25,11 +25,15 @@ public class TCPServer {
     /**
      * 端口号
      */
-    private int port;
+    private int port = 8080;
     /**
      * 连接数
      */
-    private int backLog;
+    private int backLog = 100;
+    /**
+     * 连接超时时间
+     */
+    private int soTimeout = 10000;
     /**
      * io事件执行器组合
      * 每个端口对应里面的一个 事件执行器
@@ -67,6 +71,7 @@ public class TCPServer {
             this.tcpServerConfig = new TCPServerConfig();
 
             serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.socket().setSoTimeout(soTimeout);
             serverSocketChannel.configureBlocking(false);
         } catch (Exception e){
             log.error("打开serverSocketChannel，出现异常", e);
@@ -92,6 +97,16 @@ public class TCPServer {
     public TCPServer bind(int port, int backLog){
         this.port = port;
         this.backLog = backLog;
+        return this;
+    }
+
+    /**
+     * 连接超时时间
+     * @param soTimeout
+     * @return
+     */
+    public TCPServer soTimeout(int soTimeout){
+        this.soTimeout = soTimeout;
         return this;
     }
 
