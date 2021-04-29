@@ -15,11 +15,15 @@ public class TCPServerConfig {
 
     /**
      * 读取超时时间
+     * 暂时没用到
      */
+    @Deprecated
     private long readTimeout = 10000;
     /**
      * 写入超时时间
+     * 暂时没用到
      */
+    @Deprecated
     private long writeTimeout = 10000;
     /**
      * 每次读取大小

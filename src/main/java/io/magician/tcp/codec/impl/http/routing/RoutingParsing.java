@@ -22,7 +22,7 @@ public class RoutingParsing {
 
     /**
      * 路由跳转
-     * 目前的主要职责是判断 http是否需要升级到webSocket
+     * 判断此次http请求 是否是为了建立websocket连接之后，调用对应的方法做接下去的业务逻辑
      */
     private RoutingJump routingJump;
 

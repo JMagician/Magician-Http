@@ -24,11 +24,32 @@ public class TCPServerMonitorTask implements EventTask {
 
     private static Logger logger = LoggerFactory.getLogger(TCPServerMonitorTask.class);
 
+    /**
+     * 通道，每个连接对应一个
+     */
     private ServerSocketChannel serverSocketChannel;
+    /**
+     * 配置，创建服务时传入
+     */
     private TCPServerConfig tcpServerConfig;
+    /**
+     * IO事件执行器组合
+     * 一个端口 对应一个事件执行器
+     */
     private EventGroup ioEventGroup;
+    /**
+     * 业务事件执行器组合
+     * 一个连接对应一个事件执行器 + N个事件
+     */
     private EventGroup workerEventGroup;
 
+    /**
+     * 创建一个端口监听任务
+     * @param serverSocketChannel
+     * @param tcpServerConfig
+     * @param ioEventGroup
+     * @param workerEventGroup
+     */
     public TCPServerMonitorTask(ServerSocketChannel serverSocketChannel, TCPServerConfig tcpServerConfig, EventGroup ioEventGroup, EventGroup workerEventGroup){
         this.serverSocketChannel = serverSocketChannel;
         this.tcpServerConfig = tcpServerConfig;
@@ -96,7 +117,7 @@ public class TCPServerMonitorTask implements EventTask {
         /* 缓冲区，每轮循环读取的最大长度 */
         ByteBuffer readBuffer = ByteBuffer.allocate(tcpServerConfig.getReadSize());
 
-        /* 将这当前一管子数据全部读出来 */
+        /* 将这当前这一管子数据全部读出来 */
         while (true){
             int size = channel.read(readBuffer);
             /* 小于0 表示客户端已经断开了 */

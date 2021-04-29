@@ -32,6 +32,9 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
      */
     private TCPServerConfig tcpServerConfig;
 
+    /**
+     * 用于分析当前http请求是否需要升级为webSocket
+     */
     private RoutingParsing routingParsing;
 
     public HttpProtocolCodec(TCPServerConfig tcpServerConfig){

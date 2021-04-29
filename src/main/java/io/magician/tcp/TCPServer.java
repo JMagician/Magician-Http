@@ -18,14 +18,36 @@ public class TCPServer {
 
     private Logger log = LoggerFactory.getLogger(TCPServer.class);
 
+    /**
+     * 用来监听端口的通道
+     */
     private ServerSocketChannel serverSocketChannel;
-
+    /**
+     * 端口号
+     */
     private int port;
+    /**
+     * 连接数
+     */
     private int backLog;
+    /**
+     * io事件执行器组合
+     * 每个端口对应里面的一个 事件执行器
+     */
     private EventGroup ioEventGroup;
+    /**
+     * 业务事件执行器组合
+     * 每个连接对应里面的一个事件执行器，一个事件执行器对应多个连接的多个任务
+     */
     private EventGroup workerEventGroup;
+    /**
+     * 配置
+     */
     private TCPServerConfig tcpServerConfig;
 
+    /**
+     * 创建一个默认事件组合的服务，用于监听端口
+     */
     public TCPServer() {
         this(
             new EventGroup(1, Executors.newCachedThreadPool()),
@@ -33,6 +55,11 @@ public class TCPServer {
         );
     }
 
+    /**
+     * 自定义事件组合，创建服务用于监听端口
+     * @param ioEventGroup
+     * @param workerEventGroup
+     */
     public TCPServer(EventGroup ioEventGroup, EventGroup workerEventGroup){
         try {
             this.ioEventGroup = ioEventGroup;
@@ -68,6 +95,11 @@ public class TCPServer {
         return this;
     }
 
+    /**
+     * 添加配置
+     * @param tcpServerConfig
+     * @return
+     */
     public TCPServer config(TCPServerConfig tcpServerConfig){
         this.tcpServerConfig = tcpServerConfig;
         return this;

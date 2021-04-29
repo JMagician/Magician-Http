@@ -1,23 +1,52 @@
 package io.magician.common.event;
 
+import io.magician.common.constant.EventEnum;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * 事件执行器组合
+ */
 public class EventGroup {
 
+    /**
+     * 下标，用来做轮询
+     */
     private AtomicInteger atomicInteger = new AtomicInteger(0);
 
+    /**
+     * 这个事件组里的所有事件执行器
+     */
     private List<EventRunner> eventRunnerList;
 
+    /**
+     * 线程池
+     */
     private ExecutorService executorService;
 
+    /**
+     * 是否允许执行器相互窃取任务
+     * 默认YES
+     */
+    private EventEnum.STEAL steal = EventEnum.STEAL.YES;
+
+    /**
+     * 获取线程池
+     * @return
+     */
     public ExecutorService getThreadPool() {
         return executorService;
     }
 
+    /**
+     * 创建一个事件执行器组合
+     * @param size
+     * @param executorService
+     */
     public EventGroup(int size, ExecutorService executorService){
         this.eventRunnerList = new ArrayList<>(size);
         this.executorService = executorService;
@@ -28,6 +57,10 @@ public class EventGroup {
         }
     }
 
+    /**
+     * 轮询获取这个组合里的事件执行器
+     * @return
+     */
     public EventRunner getEventRunner(){
         int index = atomicInteger.getAndUpdate((val) ->{
             int newVal = val + 1;
@@ -39,7 +72,8 @@ public class EventGroup {
     }
 
     /**
-     * 从任务最多的 EventRunner 窃取任务
+     * 窃取其他事件执行器里的任务
+     * 用于在某个事件执行器空闲后，帮助其他执行器消费队列
      * @return EventTask 对象
      */
     public EventTask stealTask() {
@@ -65,5 +99,13 @@ public class EventGroup {
         synchronized (eventQueue) {
             return eventQueue.poll();
         }
+    }
+
+    public EventEnum.STEAL getSteal() {
+        return steal;
+    }
+
+    public void setSteal(EventEnum.STEAL steal) {
+        this.steal = steal;
     }
 }
