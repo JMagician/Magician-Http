@@ -24,7 +24,7 @@ public class Worker {
     /**
      * 数据缓存，解码器解码的时候会将流水线上的数据都合并到这里
      * 如果里面已经包含了一个完整的报文，那么就将这个完整报文拿走去执行业务逻辑，留下剩余数据，实现拆包
-     * 由于worker是单线程的，所以这个缓存是线程安全的
+     * 这个缓存只有解码器会用，同一个连接，同时只会有一个线程运行解码器，所以这个缓存是线程安全的
      */
     private volatile ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
