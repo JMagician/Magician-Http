@@ -61,14 +61,14 @@ public class DemoHandler implements MagicianHandler<MagicianRequest> {
 
 ### 二、创建服务
 ```java
-Magician.createHttpServer().bind(8080)
+Magician.createTCPServer().bind(8080)
                     .httpHandler("/", new DemoHandler())
                     .start();
 ```
 
 ### 也可以合并为一步
 ```java
-Magician.createHttpServer().httpHandler("/", req -> {
+Magician.createTCPServer().httpHandler("/", req -> {
 
                         req.getResponse()
                            .sendJson(200, "{'status':'ok'}");
@@ -79,7 +79,7 @@ Magician.createHttpServer().httpHandler("/", req -> {
 ## 创建WebSocket
 只需要在创建http服务的时候加一个handler即可
 ```java
-Magician.createHttpServer().bind(8080)
+Magician.createTCPServer().bind(8080)
                     .httpHandler("/", new DemoHandler())
                     .webSocketHandler("/websocket", new DemoSocketHandler())
                     .start();
