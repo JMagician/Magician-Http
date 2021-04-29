@@ -63,7 +63,7 @@ public class TCPServerMonitorTask implements EventTask {
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
         while (true) {
-            int num = selector.select();
+            int num = selector.select(3000);
             if (num <= 0) {
                 continue;
             }
