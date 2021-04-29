@@ -44,11 +44,11 @@ public class TCPServerConfig {
     /**
      * 处理器
      */
-    private Map<String, MagicianHandler> martianServerHandlerMap = new HashMap<>();
+    private Map<String, MagicianHandler> magicianHandlerMap = new HashMap<>();
     /**
      * webSocket处理器
      */
-    private Map<String, WebSocketHandler> martianWebSocketHandlerMap = new HashMap<>();
+    private Map<String, WebSocketHandler> webSocketHandlerMap = new HashMap<>();
 
     public long getReadTimeout() {
         return readTimeout;
@@ -90,33 +90,33 @@ public class TCPServerConfig {
         this.sizeMax = sizeMax;
     }
 
-    public Map<String, MagicianHandler> getMartianServerHandlerMap() {
-        return martianServerHandlerMap;
+    public Map<String, MagicianHandler> getMagicianHandlerMap() {
+        return magicianHandlerMap;
     }
 
-    public Map<String, WebSocketHandler> getMartianWebSocketHandlerMap() {
-        return martianWebSocketHandlerMap;
+    public Map<String, WebSocketHandler> getWebSocketHandlerMap() {
+        return webSocketHandlerMap;
     }
 
-    public void addMartianServerHandler(String path, MagicianHandler magicianHandler) throws Exception {
+    public void addMagicianHandler(String path, MagicianHandler magicianHandler) throws Exception {
         path = path.toUpperCase();
-        if(martianServerHandlerMap.containsKey(path)
-                || martianWebSocketHandlerMap.containsKey(path)){
+        if(magicianHandlerMap.containsKey(path)
+                || webSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为["+path+"]的handler");
         }
-        this.martianServerHandlerMap.put(path, magicianHandler);
+        this.magicianHandlerMap.put(path, magicianHandler);
     }
 
-    public void addMartianWebSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
+    public void addWebSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
         if(path.equals("/")){
             throw new Exception("webSocket不可以监听根路径");
         }
         path = path.toUpperCase();
-        if(martianServerHandlerMap.containsKey(path)
-                || martianWebSocketHandlerMap.containsKey(path)){
+        if(magicianHandlerMap.containsKey(path)
+                || webSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为["+path+"]的handler");
         }
-        this.martianWebSocketHandlerMap.put(path, webSocketHandler);
+        this.webSocketHandlerMap.put(path, webSocketHandler);
     }
 
     public ProtocolCodec getProtocolCodec() {

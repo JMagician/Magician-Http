@@ -38,15 +38,15 @@ public class RoutingParsing {
      */
     public void parsing(MagicianHttpExchange httpExchange) throws Exception {
 
-        Map<String, MagicianHandler> martianServerHandlerMap = tcpServerConfig.getMartianServerHandlerMap();
-        Map<String, WebSocketHandler> martianWebSocketHandlerMap = tcpServerConfig.getMartianWebSocketHandlerMap();
+        Map<String, MagicianHandler> magicianHandlerMap = tcpServerConfig.getMagicianHandlerMap();
+        Map<String, WebSocketHandler> webSocketHandlerMap = tcpServerConfig.getWebSocketHandlerMap();
 
         String uri = httpExchange.getRequestURI().toString();
         uri = getUri(uri);
 
         /* 判断是否为webSocket */
         if(isWebSocket(httpExchange)){
-            WebSocketHandler webSocketHandler = martianWebSocketHandlerMap.get(uri);
+            WebSocketHandler webSocketHandler = webSocketHandlerMap.get(uri);
             if(webSocketHandler != null){
                 /* 如果是socket就建立连接 */
                 routingJump.websocket(httpExchange, webSocketHandler);
@@ -56,8 +56,8 @@ public class RoutingParsing {
         }
 
         /* 不是webSocket的话，就当http处理 */
-        MagicianHandler rootServerHandler = martianServerHandlerMap.get("/");
-        MagicianHandler rouServerHandler = martianServerHandlerMap.get(uri);
+        MagicianHandler rootServerHandler = magicianHandlerMap.get("/");
+        MagicianHandler rouServerHandler = magicianHandlerMap.get(uri);
         if(rootServerHandler == null && rouServerHandler == null){
             throw new Exception("没有找到对应的httpHandler，handler:[" + uri + "]");
         }

@@ -135,8 +135,8 @@ public class TCPServer {
      * @param magicianHandler
      * @return
      */
-    public TCPServer httpHandler(String path, MagicianHandler magicianHandler) throws Exception {
-        this.tcpServerConfig.addMartianServerHandler(path, magicianHandler);
+    public TCPServer handler(String path, MagicianHandler magicianHandler) throws Exception {
+        this.tcpServerConfig.addMagicianHandler(path, magicianHandler);
         return this;
     }
 
@@ -146,7 +146,7 @@ public class TCPServer {
      * @return
      */
     public TCPServer webSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
-        this.tcpServerConfig.addMartianWebSocketHandler(path, webSocketHandler);
+        this.tcpServerConfig.addWebSocketHandler(path, webSocketHandler);
         return this;
     }
 
