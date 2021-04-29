@@ -17,13 +17,13 @@
 <br/>
 
 <div align=center>
-一个异步非阻塞的网络编程包
+一个异步非阻塞的网络协议解析包
 </div>
 
 
 ## 项目简介
 
-Magician 是一个异步非阻塞的网络编程包，支持Http, WebSocket, UDP等协议
+Magician 是一个异步非阻塞的网络协议解析包，支持Http, WebSocket, UDP等协议
 
 ## 运行环境
 
@@ -48,7 +48,7 @@ JDK11+
 ## 创建http服务
 ### 一、创建Handler
 ```java
-public class DemoHandler implements MagicianHandler {
+public class DemoHandler implements MagicianHandler<MagicianRequest> {
 
     @Override
     public void request(MagicianRequest magicianRequest) {
