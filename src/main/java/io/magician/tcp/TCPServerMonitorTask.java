@@ -82,15 +82,18 @@ public class TCPServerMonitorTask implements EventTask {
                     if (!selectionKey.isValid()) {
                         continue;
                     }
+                    /* 连接事件 */
                     if (selectionKey.isAcceptable()) {
                         channel = ((ServerSocketChannel) selectionKey.channel()).accept();
                         channel.configureBlocking(false);
                         channel.register(selector, SelectionKey.OP_READ, new AttachmentModel());
-                    } else if (selectionKey.isReadable()) {
+                    }
+
+                    /* read事件 */
+                    if (selectionKey.isReadable()) {
                         channel = read(selectionKey);
                     }
                 } catch (Exception e){
-                    logger.warn("selector异常:{}", e.getMessage());
                     ChannelUtil.cancel(selectionKey);
                     ChannelUtil.close(channel);
                 }
