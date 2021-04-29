@@ -1,6 +1,7 @@
 package io.magician.tcp.attach;
 
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
+import io.magician.common.event.EventRunner;
 import io.magician.tcp.workers.Worker;
 
 /**
@@ -19,6 +20,11 @@ public class AttachmentModel {
      * 只有websocket连接 这个属性才有数据
      */
     private WebSocketSession webSocketSession;
+
+    /**
+     * 这个连接绑定的事件执行器
+     */
+    private EventRunner eventRunner;
 
     /**
      * 扩展字段
@@ -41,6 +47,14 @@ public class AttachmentModel {
 
     public void setWebSocketSession(WebSocketSession webSocketSession) {
         this.webSocketSession = webSocketSession;
+    }
+
+    public EventRunner getEventRunner() {
+        return eventRunner;
+    }
+
+    public void setEventRunner(EventRunner eventRunner) {
+        this.eventRunner = eventRunner;
     }
 
     public Object getExpand() {

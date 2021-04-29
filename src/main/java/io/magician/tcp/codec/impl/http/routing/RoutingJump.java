@@ -1,5 +1,6 @@
 package io.magician.tcp.codec.impl.http.routing;
 
+import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.codec.impl.http.parsing.param.ParamParsing;
@@ -17,11 +18,26 @@ import io.magician.tcp.codec.impl.websocket.parsing.WebSocketMessageWrite;
 public class RoutingJump {
 
     /**
+     * 配置类
+     */
+    private TCPServerConfig tcpServerConfig;
+
+    /**
+     * 参数解析
+     */
+    private ParamParsing paramParsing;
+
+    public RoutingJump(TCPServerConfig tcpServerConfig){
+        this.tcpServerConfig = tcpServerConfig;
+        paramParsing = new ParamParsing(this.tcpServerConfig);
+    }
+
+    /**
      * webSocket处理
      * @param httpExchange
      * @param webSocketHandler
      */
-    public static void websocket(MagicianHttpExchange httpExchange, WebSocketHandler webSocketHandler) throws Exception {
+    public void websocket(MagicianHttpExchange httpExchange, WebSocketHandler webSocketHandler) throws Exception {
         WebSocketSession socketSession = new WebSocketSession();
         socketSession.setMagicianHttpExchange(httpExchange);
         socketSession.setWebSocketHandler(webSocketHandler);
@@ -39,11 +55,11 @@ public class RoutingJump {
      * @param httpExchange
      * @throws Exception
      */
-    public static void http(MagicianHttpExchange httpExchange, MagicianHandler serverHandler) throws Exception {
+    public void http(MagicianHttpExchange httpExchange, MagicianHandler serverHandler) throws Exception {
         /* 执行handler */
         MagicianRequest magicianRequest = new MagicianRequest();
         magicianRequest.setMartianHttpExchange(httpExchange);
-        magicianRequest = ParamParsing.getMagicianRequest(magicianRequest);
+        magicianRequest = paramParsing.getMagicianRequest(magicianRequest);
 
         serverHandler.request(magicianRequest);
         /* 响应数据 */

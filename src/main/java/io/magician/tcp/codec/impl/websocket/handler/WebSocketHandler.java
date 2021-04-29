@@ -3,7 +3,7 @@ package io.magician.tcp.codec.impl.websocket.handler;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
 
 /**
- * socket联络器
+ * socket处理器
  */
 public interface WebSocketHandler {
 

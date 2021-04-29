@@ -4,9 +4,10 @@ import io.magician.common.util.ChannelUtil;
 import io.magician.common.util.ReadUtil;
 import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
-import io.magician.tcp.workers.WorkersCacheManager;
+import io.magician.common.event.EventGroup;
+import io.magician.common.event.EventTask;
 import io.magician.tcp.workers.Worker;
-import io.magician.tcp.workers.selector.WorkerSelector;
+import io.magician.tcp.workers.task.WorkerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,17 +18,26 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * 处理请求
+ * 监听Selector的任务
  */
-public class TCPServerMonitor {
+public class TCPServerMonitorTask implements EventTask {
 
-    private static Logger logger = LoggerFactory.getLogger(TCPServerMonitor.class);
+    private static Logger logger = LoggerFactory.getLogger(TCPServerMonitorTask.class);
 
-    /**
-     * 用Selector监控tcp连接
-     * @param serverSocketChannel
-     */
-    public static void doMonitor(ServerSocketChannel serverSocketChannel) throws Exception {
+    private ServerSocketChannel serverSocketChannel;
+    private TCPServerConfig tcpServerConfig;
+    private EventGroup ioEventGroup;
+    private EventGroup workerEventGroup;
+
+    public TCPServerMonitorTask(ServerSocketChannel serverSocketChannel, TCPServerConfig tcpServerConfig, EventGroup ioEventGroup, EventGroup workerEventGroup){
+        this.serverSocketChannel = serverSocketChannel;
+        this.tcpServerConfig = tcpServerConfig;
+        this.ioEventGroup = ioEventGroup;
+        this.workerEventGroup = workerEventGroup;
+    }
+
+    @Override
+    public void run() throws Exception {
         Selector selector = Selector.open();
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
@@ -64,6 +74,10 @@ public class TCPServerMonitor {
                     ChannelUtil.close(channel);
                 }
             }
+            if(ioEventGroup.getThreadPool().isShutdown()){
+                logger.error("ioEventGroup里的线程池关闭了，所以Selector也停止了");
+                return;
+            }
             selector.wakeup();
         }
     }
@@ -73,16 +87,16 @@ public class TCPServerMonitor {
      * @param selectionKey
      * @throws Exception
      */
-    private static SocketChannel read(SelectionKey selectionKey) throws Exception {
+    private SocketChannel read(SelectionKey selectionKey) throws Exception {
         SocketChannel channel = (SocketChannel) selectionKey.channel();
 
         /* 创建一个临时容器，将当前channel里的数据都暂存在里面，一起丢给worker */
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         /* 缓冲区，每轮循环读取的最大长度 */
-        ByteBuffer readBuffer = ByteBuffer.allocate(TCPServerConfig.getReadSize());
+        ByteBuffer readBuffer = ByteBuffer.allocate(tcpServerConfig.getReadSize());
 
-        /* 将这当前一个管子数据全部读出来 */
+        /* 将这当前一管子数据全部读出来 */
         while (true){
             int size = channel.read(readBuffer);
             /* 小于0 表示客户端已经断开了 */
@@ -119,10 +133,10 @@ public class TCPServerMonitor {
         worker.setSocketChannel(channel);
         worker.setSelectionKey(selectionKey);
 
-        WorkersCacheManager.put(channel, worker);
+        /* 往工作事件组 添加事件 */
+        AttachUtil.getRunner(attachmentModel, workerEventGroup)
+                .addEvent(new WorkerTask(worker, tcpServerConfig));
 
-        /* 通知worker选择器，有新数据到达 */
-        WorkerSelector.notifySelector();
         return channel;
     }
 }

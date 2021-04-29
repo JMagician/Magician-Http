@@ -1,5 +1,6 @@
 package io.magician.tcp.codec.impl.http.parsing.param;
 
+import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.codec.impl.http.model.MagicianFileUpLoad;
 import io.magician.tcp.codec.impl.http.parsing.param.formdata.HttpExchangeRequestContext;
 import io.magician.tcp.codec.impl.http.parsing.param.formdata.ParsingFormData;
@@ -25,13 +26,22 @@ import java.util.Map;
 public class ParamParsing {
 
     /**
+     * 配置类
+     */
+    private TCPServerConfig tcpServerConfig;
+
+    public ParamParsing(TCPServerConfig tcpServerConfig){
+        this.tcpServerConfig = tcpServerConfig;
+    }
+
+    /**
      * 从httpExchange中提取出所有的参数，并放置到MagicianRequest中
      *
      * @param request
      * @return 加工后的请求
      * @throws Exception 异常
      */
-    public static MagicianRequest getMagicianRequest(MagicianRequest request) throws Exception {
+    public MagicianRequest getMagicianRequest(MagicianRequest request) throws Exception {
         Map<String, MagicianFileUpLoad> files = new HashMap<>();
         Map<String, List<String>> magicianParams = new HashMap<>();
 
@@ -78,7 +88,7 @@ public class ParamParsing {
      * @return 数据
      * @throws Exception 异常
      */
-    private static String getParamStr(InputStream inputStream) throws Exception {
+    private String getParamStr(InputStream inputStream) throws Exception {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, CommonConstant.ENCODING);
         BufferedReader br = new BufferedReader(inputStreamReader);
         try {
@@ -106,7 +116,7 @@ public class ParamParsing {
      * @return 对象
      * @throws Exception 异常
      */
-    private static Map<String, List<String>> urlencoded(String paramStr, Map<String, List<String>> magicianParams, boolean hasDecode) throws Exception {
+    private Map<String, List<String>> urlencoded(String paramStr, Map<String, List<String>> magicianParams, boolean hasDecode) throws Exception {
         if (paramStr != null) {
             String[] paramsArray = paramStr.split("&");
             if (paramsArray == null || paramsArray.length < 1) {
@@ -143,7 +153,7 @@ public class ParamParsing {
      * @return 对象
      * @throws Exception 异常
      */
-    private static String raw(InputStream inputStream) throws Exception {
+    private String raw(InputStream inputStream) throws Exception {
         String paramStr = getParamStr(inputStream);
         if (paramStr == null || paramStr.trim().equals("")) {
             return null;
@@ -159,8 +169,8 @@ public class ParamParsing {
      * @return request的参数对象 和 request的文件参数对象
      * @throws Exception 异常
      */
-    private static Map<String, Object> formData(MagicianHttpExchange exchange, String contentType) throws Exception {
+    private Map<String, Object> formData(MagicianHttpExchange exchange, String contentType) throws Exception {
         UploadContext uploadContext = new HttpExchangeRequestContext(exchange, contentType);
-        return ParsingFormData.parsing(uploadContext);
+        return ParsingFormData.parsing(uploadContext, tcpServerConfig);
     }
 }

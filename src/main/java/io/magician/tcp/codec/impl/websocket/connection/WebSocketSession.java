@@ -81,8 +81,11 @@ public class WebSocketSession {
      * 发送二进制消息
      * @param message
      */
-    public void send(byte[] message) throws Exception {
+    public synchronized void send(byte[] message) throws Exception {
         SocketChannel channel = magicianHttpExchange.getSocketChannel();
+        if(channel == null || !channel.isOpen()){
+            throw new Exception("客户端已断开");
+        }
         byte[] boardCastData = new byte[2 + message.length];
         boardCastData[0] = (byte) 0x81;
         boardCastData[1] = (byte) message.length;
@@ -100,7 +103,7 @@ public class WebSocketSession {
      * @param message
      * @throws UnsupportedEncodingException
      */
-    public void send(String message) throws Exception {
+    public synchronized void send(String message) throws Exception {
         send(message.getBytes(CommonConstant.ENCODING));
     }
 }

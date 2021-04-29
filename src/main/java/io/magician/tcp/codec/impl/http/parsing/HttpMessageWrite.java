@@ -4,6 +4,8 @@ import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.common.constant.CommonConstant;
 import io.magician.tcp.codec.impl.http.constant.HttpConstant;
 import io.magician.common.util.ChannelUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,6 +15,8 @@ import java.util.Map;
  * 写入解析
  */
 public class HttpMessageWrite {
+
+    private Logger logger = LoggerFactory.getLogger(HttpMessageWrite.class);
 
     /**
      * 请求处理器
@@ -101,6 +105,7 @@ public class HttpMessageWrite {
                 magicianHttpExchange.getSocketChannel().write(byteBuffer);
             }
         } catch (Exception e) {
+            logger.error("往客户端写数据异常", e);
         } finally {
             ChannelUtil.destroy(magicianHttpExchange);
             ChannelUtil.closeOutputStream(magicianHttpExchange.getResponseBody());

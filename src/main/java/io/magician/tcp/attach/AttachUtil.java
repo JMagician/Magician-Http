@@ -1,5 +1,8 @@
 package io.magician.tcp.attach;
 
+import io.magician.common.event.EventGroup;
+import io.magician.common.event.EventRunner;
+
 import java.nio.channels.SelectionKey;
 
 /**
@@ -23,5 +26,20 @@ public class AttachUtil {
             attachmentModel = (AttachmentModel) obj;
         }
         return attachmentModel;
+    }
+
+    /**
+     * 从附件中获取EventRunner
+     * @param attachmentModel
+     * @param eventGroup
+     * @return
+     */
+    public static EventRunner getRunner(AttachmentModel attachmentModel, EventGroup eventGroup){
+        EventRunner eventRunner = attachmentModel.getEventRunner();
+        if(eventRunner == null){
+            eventRunner = eventGroup.getEventRunner();
+            attachmentModel.setEventRunner(eventRunner);
+        }
+        return eventRunner;
     }
 }

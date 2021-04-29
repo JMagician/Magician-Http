@@ -1,7 +1,8 @@
 package io.magician;
 
+import io.magician.common.event.EventGroup;
 import io.magician.tcp.TCPServer;
-import io.magician.udp.UDPServer;
+import io.magician.udp.UDPServerCreate;
 
 
 /**
@@ -19,10 +20,19 @@ public class Magician {
     }
 
     /**
+     * 构建一个tcp服务
+     * 默认采用http解码器
+     * @return
+     */
+    public static TCPServer createTCPServer(EventGroup ioEventGroup, EventGroup workerEventGroup){
+        return new TCPServer(ioEventGroup, workerEventGroup);
+    }
+
+    /**
      * 构建一个udp服务
      * @return
      */
-    public static UDPServer createUdpServer(){
-        return new UDPServer();
+    public static UDPServerCreate createUdpServer(){
+        return new UDPServerCreate();
     }
 }

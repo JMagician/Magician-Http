@@ -1,9 +1,8 @@
 package io.magician.tcp.codec.impl.http;
 
-import io.magician.common.constant.StatusEnums;
+import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
-import io.magician.tcp.workers.WorkersCacheManager;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.tcp.codec.impl.websocket.WebSocketCodec;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
@@ -28,6 +27,17 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
      * websocket解码器
      */
     private WebSocketCodec webSocketCodec = new WebSocketCodec();
+    /**
+     * 配置
+     */
+    private TCPServerConfig tcpServerConfig;
+
+    private RoutingParsing routingParsing;
+
+    public HttpProtocolCodec(TCPServerConfig tcpServerConfig){
+        this.tcpServerConfig = tcpServerConfig;
+        this.routingParsing = new RoutingParsing(this.tcpServerConfig);
+    }
 
     /**
      * 解析报文
@@ -62,7 +72,7 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
                  * 获取完整报文后清除缓存即可
                  * 后续的报文只会在下次请求才会发过来
                  */
-                WorkersCacheManager.clear(worker.getSocketChannel());
+                worker.clear();
             }
 
             return magicianHttpExchange;
@@ -76,7 +86,7 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
     public void handler(Object object) throws Exception {
         if(object instanceof MagicianHttpExchange){
             /* 走Http流程 */
-            RoutingParsing.parsing((MagicianHttpExchange)object);
+            routingParsing.parsing((MagicianHttpExchange)object);
         } else if(object instanceof WebSocketExchange){
             /* 走webSocket流程 */
             webSocketCodec.handler(object);
@@ -95,13 +105,7 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
         }
 
         AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(selectionKey);
-        /*
-         * 在用http建立连接的时候，会将session存入SelectionKey的附件，
-         * 所以如果附件没东西就不可能是WebSocket
-         */
-        if(attachmentModel == null){
-            return false;
-        }
+
         /* 如果附件里面的 WebSocketSession对象不为空，则肯定是webSocket */
         if(attachmentModel.getWebSocketSession() != null){
             return true;

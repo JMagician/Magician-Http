@@ -33,12 +33,12 @@ public class ParsingFormData {
      * @param uploadContext 请求对象
      * @return 参数和文件
      */
-    public static Map<String,Object> parsing(UploadContext uploadContext) throws Exception {
+    public static Map<String,Object> parsing(UploadContext uploadContext, TCPServerConfig tcpServerConfig) throws Exception {
         Map<String,Object> result = new HashMap<>();
         Map<String,List<String>> magicianParams = new HashMap<>();
         Map<String, MagicianFileUpLoad> files = new HashMap<>();
 
-        List<FileItem> fileItemList = getFileItem(uploadContext);
+        List<FileItem> fileItemList = getFileItem(uploadContext, tcpServerConfig);
 
         for(FileItem item : fileItemList){
             if(item.isFormField()){
@@ -70,15 +70,15 @@ public class ParsingFormData {
      * @return 返回
      * @throws Exception 异常
      */
-    public static List<FileItem> getFileItem(UploadContext uploadContext) throws Exception {
+    public static List<FileItem> getFileItem(UploadContext uploadContext, TCPServerConfig tcpServerConfig) throws Exception {
 
         FileItemFactory factory = new DiskFileItemFactory();
 
         FileUploadBase fileUploadBase = new HttpExchangeFileUpload();
         fileUploadBase.setFileItemFactory(factory);
 
-        fileUploadBase.setFileSizeMax(TCPServerConfig.getFileSizeMax());
-        fileUploadBase.setSizeMax(TCPServerConfig.getSizeMax());
+        fileUploadBase.setFileSizeMax(tcpServerConfig.getFileSizeMax());
+        fileUploadBase.setSizeMax(tcpServerConfig.getSizeMax());
 
         List<FileItem> fileItemList = fileUploadBase.parseRequest(uploadContext);
 

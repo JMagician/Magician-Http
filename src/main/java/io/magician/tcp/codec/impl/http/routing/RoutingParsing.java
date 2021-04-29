@@ -1,9 +1,9 @@
 package io.magician.tcp.codec.impl.http.routing;
 
+import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.codec.impl.http.model.HttpHeaders;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
-import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.codec.impl.websocket.constant.WebSocketConstant;
 import io.magician.tcp.codec.impl.http.constant.ReqMethod;
 import io.magician.tcp.handler.MagicianHandler;
@@ -16,14 +16,30 @@ import java.util.Map;
 public class RoutingParsing {
 
     /**
+     * 配置类
+     */
+    private TCPServerConfig tcpServerConfig;
+
+    /**
+     * 路由跳转
+     * 目前的主要职责是判断 http是否需要升级到webSocket
+     */
+    private RoutingJump routingJump;
+
+    public RoutingParsing(TCPServerConfig tcpServerConfig){
+        this.tcpServerConfig = tcpServerConfig;
+        routingJump = new RoutingJump(tcpServerConfig);
+    }
+
+    /**
      * 根据判断结果进行不同的处理
      * @param httpExchange
      * @throws Exception
      */
-    public static void parsing(MagicianHttpExchange httpExchange) throws Exception {
+    public void parsing(MagicianHttpExchange httpExchange) throws Exception {
 
-        Map<String, MagicianHandler> martianServerHandlerMap = TCPServerConfig.getMartianServerHandlerMap();
-        Map<String, WebSocketHandler> martianWebSocketHandlerMap = TCPServerConfig.getMartianWebSocketHandlerMap();
+        Map<String, MagicianHandler> martianServerHandlerMap = tcpServerConfig.getMartianServerHandlerMap();
+        Map<String, WebSocketHandler> martianWebSocketHandlerMap = tcpServerConfig.getMartianWebSocketHandlerMap();
 
         String uri = httpExchange.getRequestURI().toString();
         uri = getUri(uri);
@@ -33,7 +49,7 @@ public class RoutingParsing {
             WebSocketHandler webSocketHandler = martianWebSocketHandlerMap.get(uri);
             if(webSocketHandler != null){
                 /* 如果是socket就建立连接 */
-                RoutingJump.websocket(httpExchange, webSocketHandler);
+                routingJump.websocket(httpExchange, webSocketHandler);
                 return;
             }
             throw new Exception("没有找到对应的websocketHandler，handler:[" + uri + "]");
@@ -47,10 +63,10 @@ public class RoutingParsing {
         }
 
         if(rootServerHandler != null){
-            RoutingJump.http(httpExchange, rootServerHandler);
+            routingJump.http(httpExchange, rootServerHandler);
         }
         if(rouServerHandler != null){
-            RoutingJump.http(httpExchange, rouServerHandler);
+            routingJump.http(httpExchange, rouServerHandler);
         }
     }
 
@@ -59,7 +75,7 @@ public class RoutingParsing {
      * @param httpExchange
      * @return
      */
-    private static boolean isWebSocket(MagicianHttpExchange httpExchange){
+    private boolean isWebSocket(MagicianHttpExchange httpExchange){
         String method = httpExchange.getRequestMethod();
         if(!method.toUpperCase().equals(ReqMethod.GET.toString())){
             return false;
@@ -85,7 +101,7 @@ public class RoutingParsing {
      * @param uri
      * @return
      */
-    private static String getUri(String uri){
+    private String getUri(String uri){
         if(!uri.startsWith("/")){
             uri = "/"+uri;
         }

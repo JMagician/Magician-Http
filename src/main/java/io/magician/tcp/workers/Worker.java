@@ -81,6 +81,8 @@ public class Worker {
                 return null;
             }
             outputStream.write(this.pipeLine.toByteArray());
+            this.pipeLine.reset();
+
             return outputStream;
         }
     }
@@ -92,7 +94,7 @@ public class Worker {
      */
     public boolean isRead(){
         synchronized (this.pipeLine){
-            return this.pipeLine.size() > 0;
+            return this.pipeLine != null && this.pipeLine.size() > 0;
         }
     }
 
@@ -112,12 +114,21 @@ public class Worker {
     }
 
     /**
-     * 销毁连接
+     * 销毁worker
      */
     public void destroy(){
         ChannelUtil.close(socketChannel);
         ChannelUtil.cancel(selectionKey);
         pipeLine.reset();
+        clear();
+    }
+
+    /**
+     * 清理缓存
+     * 如果协议类型的性质 可以决定当前获取的数据 全部都是只给当前解码器用的
+     * 那么，在当前解码器获取完整数据后 可以直接清理缓存
+     */
+    public void clear(){
         outputStream.reset();
     }
 

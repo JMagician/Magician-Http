@@ -1,22 +1,50 @@
 package io.magician.tcp;
 
+import io.magician.common.event.EventGroup;
 import io.magician.tcp.handler.MagicianHandler;
 import io.magician.tcp.codec.ProtocolCodec;
 import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
-import io.magician.tcp.thread.WorkerSelectorThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.*;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
- * http服务创建
+ * tcp服务创建
  */
 public class TCPServer {
 
     private Logger log = LoggerFactory.getLogger(TCPServer.class);
+
+    private ServerSocketChannel serverSocketChannel;
+
+    private int port;
+    private int backLog;
+    private EventGroup ioEventGroup;
+    private EventGroup workerEventGroup;
+    private TCPServerConfig tcpServerConfig;
+
+    public TCPServer() {
+        this(
+            new EventGroup(1, Executors.newCachedThreadPool()),
+            new EventGroup(3, Executors.newCachedThreadPool())
+        );
+    }
+
+    public TCPServer(EventGroup ioEventGroup, EventGroup workerEventGroup){
+        try {
+            this.ioEventGroup = ioEventGroup;
+            this.workerEventGroup = workerEventGroup;
+            this.tcpServerConfig = new TCPServerConfig();
+
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(false);
+        } catch (Exception e){
+            log.error("打开serverSocketChannel，出现异常", e);
+        }
+    }
 
     /**
      * 绑定端口
@@ -24,7 +52,7 @@ public class TCPServer {
      * @return
      */
     public TCPServer bind(int port){
-        bind(port,100);
+        bind(port, 100);
         return this;
     }
 
@@ -35,71 +63,13 @@ public class TCPServer {
      * @return
      */
     public TCPServer bind(int port, int backLog){
-        TCPServerConfig.setPort(port);
-        TCPServerConfig.setBackLog(backLog);
+        this.port = port;
+        this.backLog = backLog;
         return this;
     }
 
-    /**
-     * 设置读取超时时间,
-     * 暂时没用到
-     * @param readTimeout
-     * @return
-     */
-    @Deprecated
-    public TCPServer readTimeout(long readTimeout){
-        TCPServerConfig.setReadTimeout(readTimeout);
-        return this;
-    }
-    /**
-     * 设置写入超时时间
-     * 暂时没用到
-     * @param writeTimeout
-     * @return
-     */
-    @Deprecated
-    public TCPServer writeTimeout(long writeTimeout){
-        TCPServerConfig.setWriteTimeout(writeTimeout);
-        return this;
-    }
-
-    /**
-     * 设置每次读取大小
-     * @param readSize
-     * @return
-     */
-    public TCPServer readSize(int readSize){
-        TCPServerConfig.setReadSize(readSize);
-        return this;
-    }
-
-    /**
-     * 单个文件限制
-     * @param fileSizeMax
-     * @return
-     */
-    public TCPServer fileSizeMax(long fileSizeMax){
-        TCPServerConfig.setFileSizeMax(fileSizeMax);
-        return this;
-    }
-
-    /**
-     * 文件总大小限制
-     * @param sizeMax
-     * @return
-     */
-    public TCPServer sizeMax(long sizeMax){
-        TCPServerConfig.setSizeMax(sizeMax);
-        return this;
-    }
-
-    /**
-     * 设置允许几个线程同时解析数据
-     * @param executor
-     * @return
-     */
-    public TCPServer threadPool(Executor executor){
-        TCPServerConfig.setThreadPool(executor);
+    public TCPServer config(TCPServerConfig tcpServerConfig){
+        this.tcpServerConfig = tcpServerConfig;
         return this;
     }
 
@@ -109,27 +79,27 @@ public class TCPServer {
      * @return
      */
     public TCPServer protocolCodec(ProtocolCodec protocolCodec){
-        TCPServerConfig.setProtocolCodec(protocolCodec);
+        this.tcpServerConfig.setProtocolCodec(protocolCodec);
         return this;
     }
 
     /**
-     * 设置联络器
+     * 设置处理器
      * @param magicianHandler
      * @return
      */
     public TCPServer httpHandler(String path, MagicianHandler magicianHandler) throws Exception {
-        TCPServerConfig.addMartianServerHandler(path, magicianHandler);
+        this.tcpServerConfig.addMartianServerHandler(path, magicianHandler);
         return this;
     }
 
     /**
-     * 设置联络器
+     * 设置处理器
      * @param webSocketHandler
      * @return
      */
     public TCPServer webSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
-        TCPServerConfig.addMartianWebSocketHandler(path, webSocketHandler);
+        this.tcpServerConfig.addMartianWebSocketHandler(path, webSocketHandler);
         return this;
     }
 
@@ -140,17 +110,14 @@ public class TCPServer {
     public void start() throws Exception {
 
         /* 开始监听端口 */
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.configureBlocking(false);
-        serverSocketChannel.bind(new InetSocketAddress(TCPServerConfig.getPort()), TCPServerConfig.getBackLog());
+        serverSocketChannel.bind(new InetSocketAddress(port), backLog);
+
+        /* 开启NIOSelector监听器 */
+        ioEventGroup
+                .getEventRunner()
+                .addEvent(new TCPServerMonitorTask(serverSocketChannel, tcpServerConfig, ioEventGroup, workerEventGroup));
 
         /* 标识服务是否已经启动 */
         log.info("启动成功");
-
-        /* 开启workerSelector监听器 */
-        new WorkerSelectorThread().start();
-
-        /* 开启NIOSelector监听器 */
-        TCPServerMonitor.doMonitor(serverSocketChannel);
     }
 }
