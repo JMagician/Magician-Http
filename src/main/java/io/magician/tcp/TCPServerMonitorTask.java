@@ -120,15 +120,11 @@ public class TCPServerMonitorTask implements EventTask {
         /* 将这当前这一管子数据全部读出来 */
         while (true){
             int size = channel.read(readBuffer);
-            /* 小于0 表示客户端已经断开了 */
+            /* 小于0 表示客户端已经断开了，直接释放channel和key */
             if(size < 0){
-                /* 如果客户端已经断开，并且之前的循环也没读到数据，那就直接释放channel和key */
-                if(outputStream.size() < 1){
-                    ChannelUtil.cancel(selectionKey);
-                    ChannelUtil.close(channel);
-                    return null;
-                }
-                break;
+                ChannelUtil.cancel(selectionKey);
+                ChannelUtil.close(channel);
+                return null;
             }
 
             /* 等于0 表示当前这一管子数据已经读完，跳出循环即可 */
