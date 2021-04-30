@@ -100,6 +100,8 @@ public class TCPServerMonitorTask implements EventTask {
             }
             if(ioEventGroup.getThreadPool().isShutdown()){
                 logger.error("ioEventGroup里的线程池关闭了，所以Selector也停止了");
+                selector.close();
+                serverSocketChannel.close();
                 return;
             }
             selector.wakeup();
