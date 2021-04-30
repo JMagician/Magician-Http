@@ -46,9 +46,7 @@ public class EventRunner {
      * @param eventTask
      */
     public void addEvent(EventTask eventTask){
-        if(!queue.contains(eventTask)){
-            queue.add(eventTask);
-        }
+        queue.add(eventTask);
     }
 
     /**

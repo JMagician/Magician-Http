@@ -10,8 +10,6 @@ import io.magician.tcp.codec.ProtocolCodec;
 import io.magician.tcp.workers.Worker;
 import io.magician.tcp.codec.impl.http.parsing.HttpMessageParsing;
 import io.magician.tcp.codec.impl.http.routing.RoutingParsing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.channels.SelectionKey;
@@ -20,8 +18,6 @@ import java.nio.channels.SelectionKey;
  * HTTP协议解析器
  */
 public class HttpProtocolCodec implements ProtocolCodec<Object> {
-
-    private Logger logger = LoggerFactory.getLogger(HttpMessageParsing.class);
 
     /**
      * websocket解码器
@@ -55,7 +51,7 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
         } else {
             /* 解析Http报文 */
             ByteArrayOutputStream outputStream = worker.getOutputStream();
-            if(outputStream == null){
+            if(outputStream == null || outputStream.size() < 1){
                 return null;
             }
 

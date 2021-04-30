@@ -1,6 +1,5 @@
 package io.magician.tcp.workers.task;
 
-import io.magician.common.constant.StatusEnums;
 import io.magician.tcp.TCPServerConfig;
 import io.magician.common.event.EventTask;
 import io.magician.tcp.workers.Worker;
@@ -41,50 +40,36 @@ public class WorkerTask implements EventTask {
     @Override
     public void run() {
         try{
+
             /* 获取协议解析器 */
             ProtocolCodec protocolCodec = tcpServerConfig.getProtocolCodec();
             if(protocolCodec == null){
                 return;
             }
+            Object resultObj = null;
 
-            /* 解析数据包 */
-            Object obj = protocolCodec.codecData(worker);
-            if(obj == null){
-                return;
+            /*
+             * 因为 EventRunner 如果空闲了，可以去其他EventRunner窃取任务
+             * 而一旦窃取了任务，就意味着一个连接的多个事件 可能会出现并发执行，导致顺序被打乱
+             * 执行顺序乱了就会导致 数据错乱，所以这里需要加个锁
+             * 保证 每个连接的事件 按顺序执行（worker内部保证了取数据的顺序和存入的顺序一致）
+             */
+            synchronized (worker){
+                /* 解析数据包 */
+                resultObj = protocolCodec.codecData(worker);
+
+                if(resultObj == null){
+                    return;
+                }
             }
 
             /* 对于已经读完整的数据，传入handler执行业务逻辑 */
-            protocolCodec.handler(obj);
+            protocolCodec.handler(resultObj);
         } catch (Exception e){
             logger.error("WorkerThread出现异常", e);
             if(worker != null){
                 worker.destroy();
             }
-        } finally {
-            /* 设置成WAIT状态，允许下次执行 */
-            if(worker != null){
-                worker.setStatusEnums(StatusEnums.WAIT);
-            }
         }
-    }
-
-    /**
-     * 因为一个连接可能会出现很多个read事件
-     * 但是每个read事件的数据 都会被同步到Worker对象里面去
-     * 所以，如果队列里已经有一个任务了，就不需要再往里面添加了
-     * 这个方法 主要用来防止一个队列出现两个处理同一段数据的任务，对资源造成浪费的
-     * @param obj
-     * @return
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if(obj == null){
-            return false;
-        }
-        WorkerTask workerTask = (WorkerTask) obj;
-        if(workerTask.worker == this.worker){
-            return true;
-        }
-        return false;
     }
 }

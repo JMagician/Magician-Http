@@ -1,6 +1,5 @@
 package io.magician.tcp.workers;
 
-import io.magician.common.constant.StatusEnums;
 import io.magician.common.util.ChannelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 工作者，每个连接对应一个对象
@@ -19,7 +19,7 @@ public class Worker {
     /**
      * 流水线，selector从channel读到了数据 都会追加进来
      */
-    private volatile ByteArrayOutputStream pipeLine = new ByteArrayOutputStream();
+    private volatile LinkedBlockingQueue<byte[]> pipeLine = new LinkedBlockingQueue();
 
     /**
      * 数据缓存，解码器解码的时候会将流水线上的数据都合并到这里
@@ -40,14 +40,6 @@ public class Worker {
     private volatile SelectionKey selectionKey;
 
     /**
-     * worker状态，默认是等待工作
-     * 如果RUNNING 状态，那么NIOSelector只会将数据追加到pipeLine，而WorkerSelector不会将这个worker放入线程池
-     * 如果是WAIT 状态，那么selector将数据追加到pipeLine后，WorkerSelector还会将它放入线程池
-     * 等执行这个worker的线程完成后，会将这个字段重新改为WAIT状态
-     */
-    private volatile StatusEnums statusEnums = StatusEnums.WAIT;
-
-    /**
      * 添加数据到流水线
      * @param byteArrayOutputStream
      * @throws Exception
@@ -56,17 +48,14 @@ public class Worker {
         if (byteArrayOutputStream == null || byteArrayOutputStream.size() < 1) {
             return;
         }
-
-        synchronized (this.pipeLine) {
-            try {
-                if (this.pipeLine == null) {
-                    this.pipeLine = new ByteArrayOutputStream();
-                }
-
-                this.pipeLine.write(byteArrayOutputStream.toByteArray());
-            } catch (Exception e){
-                logger.error("给Worker追加新数据异常", e);
+        try {
+            if (this.pipeLine == null) {
+                this.pipeLine = new LinkedBlockingQueue();
             }
+
+            this.pipeLine.add(byteArrayOutputStream.toByteArray());
+        } catch (Exception e){
+            logger.error("给Worker追加新数据异常", e);
         }
     }
 
@@ -76,15 +65,14 @@ public class Worker {
      * @throws Exception
      */
     public ByteArrayOutputStream getOutputStream() throws Exception {
-        synchronized (this.pipeLine) {
-            if(this.pipeLine == null || this.pipeLine.size() < 1){
-                return null;
-            }
-            outputStream.write(this.pipeLine.toByteArray());
-            this.pipeLine.reset();
-
+        if(this.pipeLine == null || this.pipeLine.size() < 1){
             return outputStream;
         }
+
+        byte[] first = this.pipeLine.poll();
+        outputStream.write(first);
+
+        return outputStream;
     }
 
     /**
@@ -93,17 +81,21 @@ public class Worker {
      * @return
      */
     public boolean isRead(){
-        synchronized (this.pipeLine){
-            return this.pipeLine != null && this.pipeLine.size() > 0;
-        }
+        return this.pipeLine != null && this.pipeLine.size() > 0;
     }
 
     /**
      * 从缓存中去除已经被业务使用的那部分数据
      * @param skip
+     * @return false 没有剩余数据了，
      * @throws Exception
      */
     public void skipOutputStream(int skip) throws Exception {
+        if(skip >= outputStream.size()){
+            outputStream.reset();
+            return;
+        }
+
         byte[] dataBytes = outputStream.toByteArray();
         byte[] newBytes = new byte[dataBytes.length - skip];
 
@@ -119,7 +111,7 @@ public class Worker {
     public void destroy(){
         ChannelUtil.close(socketChannel);
         ChannelUtil.cancel(selectionKey);
-        pipeLine.reset();
+        pipeLine.clear();
         clear();
     }
 
@@ -146,13 +138,5 @@ public class Worker {
 
     public void setSelectionKey(SelectionKey selectionKey) {
         this.selectionKey = selectionKey;
-    }
-
-    public StatusEnums getStatusEnums() {
-        return statusEnums;
-    }
-
-    public void setStatusEnums(StatusEnums statusEnums) {
-        this.statusEnums = statusEnums;
     }
 }

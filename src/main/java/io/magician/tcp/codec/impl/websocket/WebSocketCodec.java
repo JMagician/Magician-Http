@@ -30,7 +30,7 @@ public class WebSocketCodec implements ProtocolCodec<Object> {
         AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(worker.getSelectionKey());
 
         ByteArrayOutputStream outputStream = worker.getOutputStream();
-        if(outputStream == null){
+        if(outputStream == null || outputStream.size() < 1){
             return null;
         }
 
