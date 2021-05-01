@@ -44,6 +44,7 @@ public class WorkerTask implements EventTask {
             /* 获取协议解析器 */
             ProtocolCodec protocolCodec = tcpServerConfig.getProtocolCodec();
             if(protocolCodec == null){
+                logger.error("请配置协议解码器");
                 return;
             }
             Object resultObj = null;
