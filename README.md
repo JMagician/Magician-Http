@@ -45,7 +45,7 @@ JDK11+
 </dependency>
 ```
 
-## 一、创建TCP服务(默认为http解码器)
+## 一、创建TCP服务(默认使用http解码器)
 ### 创建Handler
 ```java
 public class DemoHandler implements MagicianHandler<MagicianRequest> {
