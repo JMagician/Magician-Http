@@ -11,7 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 工作者，每个连接对应一个对象
- * 每个连接的事件都是按顺序执行的，同一个连接的多个事件，从取数据 - 解码结束 都不会存在并发
+ * 每个连接的事件都是按顺序执行的，同一个连接的每一个事件，从取数据 - 解码结束 都不会存在并发
  * 所以worker是线程安全的
  */
 public class Worker {
@@ -80,8 +80,9 @@ public class Worker {
     }
 
     /**
-     * 解码器每次读取了pipeLine 都会清空它
+     * 每个事件执行的时候都会从pipeLine 消费掉一个数据
      * 所以只要pipeLine不为空，就说明有新数据可用
+     * 目前此方法没有地方用到
      * @return
      */
     public boolean isRead(){
