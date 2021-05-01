@@ -104,7 +104,7 @@ public class MagicianRequest {
      */
     public String getContentType(){
         try {
-            if(getMethod().toUpperCase().equals(ReqMethod.GET.toString())){
+            if(ReqMethod.GET.getCode().equals(getMethod())){
                 return "N";
             }
             String contentType = httpExchange.getContentType();

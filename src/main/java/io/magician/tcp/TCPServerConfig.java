@@ -109,7 +109,7 @@ public class TCPServerConfig {
 
     public void addWebSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
         if(path.equals("/")){
-            throw new Exception("webSocket不可以监听根路径");
+            throw new Exception("webSocketHandler不可以监听根路径");
         }
         path = path.toUpperCase();
         if(magicianHandlerMap.containsKey(path)

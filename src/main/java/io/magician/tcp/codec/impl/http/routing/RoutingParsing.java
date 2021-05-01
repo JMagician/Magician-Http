@@ -76,8 +76,7 @@ public class RoutingParsing {
      * @return
      */
     private boolean isWebSocket(MagicianHttpExchange httpExchange){
-        String method = httpExchange.getRequestMethod();
-        if(!method.toUpperCase().equals(ReqMethod.GET.toString())){
+        if(!ReqMethod.GET.getCode().equals(httpExchange.getRequestMethod())){
             return false;
         }
 

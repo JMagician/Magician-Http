@@ -106,7 +106,7 @@ public class MagicianHttpExchange {
     }
 
     public void setRequestMethod(String requestMethod) {
-        this.requestMethod = requestMethod;
+        this.requestMethod = requestMethod.toUpperCase();
     }
 
     public void setHttpVersion(String httpVersion) {

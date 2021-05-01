@@ -11,6 +11,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 工作者，每个连接对应一个对象
+ * 每个连接的事件都是按顺序执行的，同一个连接的多个事件，从取数据 - 解码结束 都不会存在并发
+ * 所以worker是线程安全的
  */
 public class Worker {
 
@@ -22,9 +24,8 @@ public class Worker {
     private volatile LinkedBlockingQueue<byte[]> pipeLine = new LinkedBlockingQueue();
 
     /**
-     * 数据缓存，解码器解码的时候会将流水线上的数据都合并到这里
+     * 数据缓存，解码器解码的时候会将流水线上的数据按顺序合并到这里
      * 如果里面已经包含了一个完整的报文，那么就将这个完整报文拿走去执行业务逻辑，留下剩余数据，实现拆包
-     * 这个缓存只有解码器会用，同一个连接，同时只会有一个线程运行解码器，所以这个缓存是线程安全的
      */
     private volatile ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -33,6 +34,7 @@ public class Worker {
      * 比如: 响应数据
      */
     private volatile SocketChannel socketChannel;
+
     /**
      * NIO原生key，留给后面的业务逻辑用的
      * 比如: 添加附件
@@ -70,7 +72,9 @@ public class Worker {
         }
 
         byte[] first = this.pipeLine.poll();
-        outputStream.write(first);
+        if(first != null && first.length > 0){
+            outputStream.write(first);
+        }
 
         return outputStream;
     }
@@ -117,7 +121,7 @@ public class Worker {
 
     /**
      * 清理缓存
-     * 如果协议类型的性质 可以决定当前获取的数据 全部都是只给当前解码器用的
+     * 如果协议类型的性质 可以保证当前获取的数据 都是同一次请求内的报文
      * 那么，在当前解码器获取完整数据后 可以直接清理缓存
      */
     public void clear(){

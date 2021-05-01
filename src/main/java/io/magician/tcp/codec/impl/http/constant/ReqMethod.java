@@ -8,5 +8,18 @@ package io.magician.tcp.codec.impl.http.constant;
  */
 public enum ReqMethod {
 
-    POST, GET, PUT, DELETE, HEAD, OPTIONS, TRACE, CONNECT
+    POST("POST"), GET("GET"),
+    PUT("PUT"), DELETE("DELETE"),
+    HEAD("HEAD"), OPTIONS("OPTIONS"),
+    TRACE("TRACE"), CONNECT("CONNECT");
+
+    private String code;
+
+    ReqMethod(String code){
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 }

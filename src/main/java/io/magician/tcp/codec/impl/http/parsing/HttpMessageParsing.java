@@ -47,7 +47,7 @@ public class HttpMessageParsing extends ReadFields {
         headLength = parseHeader(length);
 
         /* 如果是get请求，那么头读完也就结束了 */
-        if(ReqMethod.GET.toString().toUpperCase().equals(magicianHttpExchange.getRequestMethod().toUpperCase())){
+        if(ReqMethod.GET.getCode().equals(magicianHttpExchange.getRequestMethod())){
             return magicianHttpExchange;
         }
 

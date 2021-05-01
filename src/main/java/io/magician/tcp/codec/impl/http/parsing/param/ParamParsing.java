@@ -46,7 +46,7 @@ public class ParamParsing {
         Map<String, List<String>> magicianParams = new HashMap<>();
 
         MagicianHttpExchange httpExchange = request.getMartianHttpExchange();
-        if (httpExchange.getRequestMethod().toUpperCase().equals(ReqMethod.GET.toString())) {
+        if (ReqMethod.GET.getCode().equals(httpExchange.getRequestMethod())) {
             /* 从get请求中获取参数 */
             String paramStr = httpExchange.getRequestURI().getQuery();
             magicianParams = urlencoded(paramStr, magicianParams, true);
