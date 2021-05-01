@@ -45,7 +45,7 @@ JDK11+
 </dependency>
 ```
 
-## 创建TCP服务(默认为http解码器)
+## 一、创建TCP服务(默认为http解码器)
 ### 创建Handler
 ```java
 public class DemoHandler implements MagicianHandler<MagicianRequest> {
@@ -97,7 +97,7 @@ tcpServer.bind(8080);
 tcpServer.bind(8088);
 ```
 
-## 创建WebSocket
+## 二、创建WebSocket
 只需要在创建http服务的时候加一个handler即可
 ```java
 Magician.createTCPServer()
@@ -106,7 +106,7 @@ Magician.createTCPServer()
                     .bind(8080);
 ```
 
-## 创建UDP服务
+## 三、创建UDP服务
 ```java
 Magician.createUdpServer()
                 .handler(outputStream -> {
