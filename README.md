@@ -77,7 +77,6 @@ workerEventGroup.setSteal(EventEnum.STEAL.YES);
 Magician.createTCPServer(ioEventGroup, workerEventGroup)
                     .httpHandler("/", new DemoHandler())
                     .bind(8080);
-                                                                            .bind(8080);
 ```
 
 ### 创建服务(监听多端口)
