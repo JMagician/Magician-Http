@@ -45,8 +45,8 @@ JDK11+
 </dependency>
 ```
 
-## 创建http服务
-### 一、创建Handler
+## 创建TCP服务(默认为http解码器)
+### 创建Handler
 ```java
 public class DemoHandler implements MagicianHandler<MagicianRequest> {
 
@@ -59,30 +59,51 @@ public class DemoHandler implements MagicianHandler<MagicianRequest> {
 }
 ```
 
-### 二、创建服务
+### 创建服务(默认线程池配置)
 ```java
-Magician.createTCPServer().bind(8080)
+Magician.createTCPServer()
                     .httpHandler("/", new DemoHandler())
-                    .start();
+                    .bind(8080);
 ```
 
-### 也可以合并为一步
+### 创建服务(自定义线程池配置)
 ```java
-Magician.createTCPServer().httpHandler("/", req -> {
+EventGroup ioEventGroup = new EventGroup(1, Executors.newCachedThreadPool());
+EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool());
 
-                        req.getResponse()
-                           .sendJson(200, "{'status':'ok'}");
+// 当前EventRunner没任务的时候，允许从其他EventRunner窃取任务
+workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
-                    }).bind(8080).start();
+Magician.createTCPServer(ioEventGroup, workerEventGroup)
+                    .httpHandler("/", new DemoHandler())
+                    .bind(8080);
+                                                                            .bind(8080);
+```
+
+### 创建服务(监听多端口)
+```java
+// 监听几个端口，ioEventGroup的第一个参数就写几
+EventGroup ioEventGroup = new EventGroup(2, Executors.newCachedThreadPool());
+EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool());
+
+// 当前EventRunner没任务的时候，允许从其他EventRunner窃取任务
+workerEventGroup.setSteal(EventEnum.STEAL.YES);
+
+TCPServer tcpServer = Magician
+                         .createTCPServer(ioEventGroup, workerEventGroup)
+                         .httpHandler("/", new DemoHandler())
+
+tcpServer.bind(8080);
+tcpServer.bind(8088);
 ```
 
 ## 创建WebSocket
 只需要在创建http服务的时候加一个handler即可
 ```java
-Magician.createTCPServer().bind(8080)
+Magician.createTCPServer()
                     .httpHandler("/", new DemoHandler())
                     .webSocketHandler("/websocket", new DemoSocketHandler())
-                    .start();
+                    .bind(8080);
 ```
 
 ## 创建UDP服务
@@ -91,7 +112,7 @@ Magician.createUdpServer()
                 .handler(outputStream -> {
                     // outputStream 是ByteArrayOutputStream类型的
                     // 它是客户端发过来的数据，自行解析即可
-                }).bind(8088).start();
+                }).bind(8088);
 ```
 除了这种写法，也可以单独创建handler，在这里add进去
 

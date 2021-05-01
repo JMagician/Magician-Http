@@ -16,17 +16,6 @@ public class UDPServer {
     private Logger log = LoggerFactory.getLogger(UDPServer.class);
 
     /**
-     * 绑定端口
-     *
-     * @param port
-     * @return
-     */
-    public UDPServer bind(int port) {
-        UDPServerConfig.setPort(port);
-        return this;
-    }
-
-    /**
      * 设置线程池
      *
      * @param executor
@@ -62,11 +51,11 @@ public class UDPServer {
     /**
      * 启动UDP服务
      */
-    public void start() throws Exception {
+    public void bind(int port) throws Exception {
 
         DatagramChannel dc = DatagramChannel.open();
         dc.configureBlocking(false);
-        dc.bind(new InetSocketAddress(UDPServerConfig.getPort()));
+        dc.bind(new InetSocketAddress(port));
 
         Selector select = Selector.open();
         dc.register(select, SelectionKey.OP_READ);

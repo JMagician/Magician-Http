@@ -124,6 +124,7 @@ public class TCPServerMonitorTask implements EventTask {
         SocketChannel channel = (SocketChannel) selectionKey.channel();
         while (true){
             int size = channel.read(readBuffer);
+
             /* 小于0 表示客户端已经断开了，直接释放channel和key */
             if(size < 0){
                 ChannelUtil.cancel(selectionKey);

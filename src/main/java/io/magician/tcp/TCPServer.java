@@ -19,18 +19,6 @@ public class TCPServer {
     private Logger log = LoggerFactory.getLogger(TCPServer.class);
 
     /**
-     * 用来监听端口的通道
-     */
-    private ServerSocketChannel serverSocketChannel;
-    /**
-     * 端口号
-     */
-    private int port = 8080;
-    /**
-     * 连接数
-     */
-    private int backLog = 100;
-    /**
      * 连接超时时间
      */
     private int soTimeout = 10000;
@@ -54,84 +42,63 @@ public class TCPServer {
      */
     public TCPServer() {
         this(
-            new EventGroup(1, Executors.newCachedThreadPool()),
-            new EventGroup(3, Executors.newCachedThreadPool())
+                new EventGroup(1, Executors.newCachedThreadPool()),
+                new EventGroup(3, Executors.newCachedThreadPool())
         );
     }
 
     /**
      * 自定义事件组合，创建服务用于监听端口
+     *
      * @param ioEventGroup
      * @param workerEventGroup
      */
-    public TCPServer(EventGroup ioEventGroup, EventGroup workerEventGroup){
+    public TCPServer(EventGroup ioEventGroup, EventGroup workerEventGroup) {
         try {
             this.ioEventGroup = ioEventGroup;
             this.workerEventGroup = workerEventGroup;
             this.tcpServerConfig = new TCPServerConfig();
-
-            serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.socket().setSoTimeout(soTimeout);
-            serverSocketChannel.configureBlocking(false);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("打开serverSocketChannel，出现异常", e);
         }
     }
 
     /**
-     * 绑定端口
-     * @param port
-     * @return
-     */
-    public TCPServer bind(int port){
-        bind(port, 100);
-        return this;
-    }
-
-    /**
-     * 绑定端口，设置最大连接数
-     * @param port
-     * @param backLog
-     * @return
-     */
-    public TCPServer bind(int port, int backLog){
-        this.port = port;
-        this.backLog = backLog;
-        return this;
-    }
-
-    /**
      * 连接超时时间
+     *
      * @param soTimeout
      * @return
      */
-    public TCPServer soTimeout(int soTimeout){
+    public TCPServer soTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
         return this;
     }
 
     /**
      * 添加配置
+     *
      * @param tcpServerConfig
      * @return
      */
-    public TCPServer config(TCPServerConfig tcpServerConfig){
+    public TCPServer config(TCPServerConfig tcpServerConfig) {
         this.tcpServerConfig = tcpServerConfig;
         return this;
     }
 
     /**
      * 设置协议解析器
+     *
      * @param protocolCodec
      * @return
      */
-    public TCPServer protocolCodec(ProtocolCodec protocolCodec){
+    public TCPServer protocolCodec(ProtocolCodec protocolCodec) {
         this.tcpServerConfig.setProtocolCodec(protocolCodec);
         return this;
     }
 
     /**
      * 设置处理器
+     *
      * @param magicianHandler
      * @return
      */
@@ -142,6 +109,7 @@ public class TCPServer {
 
     /**
      * 设置处理器
+     *
      * @param webSocketHandler
      * @return
      */
@@ -152,11 +120,27 @@ public class TCPServer {
 
     /**
      * 开启服务
+     *
+     * @param port
      * @throws Exception
      */
-    public void start() throws Exception {
+    public void bind(int port) throws Exception {
+        bind(port, 1000);
+    }
+
+    /**
+     * 开启服务
+     *
+     * @param port
+     * @param backLog
+     * @throws Exception
+     */
+    public void bind(int port, int backLog) throws Exception {
 
         /* 开始监听端口 */
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        serverSocketChannel.socket().setSoTimeout(soTimeout);
+        serverSocketChannel.configureBlocking(false);
         serverSocketChannel.bind(new InetSocketAddress(port), backLog);
 
         /* 开启NIOSelector监听器 */
@@ -165,6 +149,6 @@ public class TCPServer {
                 .addEvent(new TCPServerMonitorTask(serverSocketChannel, tcpServerConfig, ioEventGroup, workerEventGroup));
 
         /* 标识服务是否已经启动 */
-        log.info("启动TCP服务成功");
+        log.info("启动TCP服务成功, [port:" + port + "]");
     }
 }

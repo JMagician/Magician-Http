@@ -11,11 +11,6 @@ import java.util.concurrent.Executors;
 public class UDPServerConfig {
 
     /**
-     * 端口号
-     */
-    private static int port;
-
-    /**
      * 业务线程池
      */
     private static Executor threadPool;
@@ -29,14 +24,6 @@ public class UDPServerConfig {
      * 联络器
      */
     private static MagicianUDPHandler magicianUDPHandler;
-
-    public static int getPort() {
-        return port;
-    }
-
-    public static void setPort(int port) {
-        UDPServerConfig.port = port;
-    }
 
     public static Executor getThreadPool() {
         if(threadPool == null){
