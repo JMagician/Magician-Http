@@ -28,7 +28,7 @@ public class AttachmentModel {
 
     /**
      * 扩展字段
-     * 如果后期添加新的解码器，可能需要保存其他附件
+     * 如果用户自定义解码器，可能需要保存其他附件
      * 所以预留这个字段
      */
     private Object expand;
