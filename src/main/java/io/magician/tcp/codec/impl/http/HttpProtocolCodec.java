@@ -59,18 +59,18 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
             magicianHttpExchange.setSocketChannel(worker.getSocketChannel());
             magicianHttpExchange.setSelectionKey(worker.getSelectionKey());
 
+            /* 解析报文，如果报文不完整就返回null，让本次事件停止 */
             magicianHttpExchange = new HttpMessageParsing(
                     magicianHttpExchange,
                     outputStream
             ).completed();
 
-            /* 如果报文读完整了，就返回magicianHttpExchange，让业务可以往下走 */
+            /*
+             * http要等前一个响应后才能发送下一个请求，所以不会出现粘包
+             * 获取完整报文后清除缓存即可
+             * 后续的报文只会在下次请求才会发过来
+             */
             if(magicianHttpExchange != null){
-                /*
-                 * http要等前一个响应后才能发送下一个请求，所以不会出现粘包
-                 * 获取完整报文后清除缓存即可
-                 * 后续的报文只会在下次请求才会发过来
-                 */
                 worker.clear();
             }
 
