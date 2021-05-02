@@ -1,5 +1,7 @@
 package io.magician.tcp.codec.impl.http.routing;
 
+import io.magician.common.constant.CommonConstant;
+import io.magician.common.util.ChannelUtil;
 import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.codec.impl.http.model.HttpHeaders;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
@@ -43,6 +45,10 @@ public class RoutingParsing {
 
         String uri = httpExchange.getRequestURI().toString();
         uri = getUri(uri);
+        if(uri.equals(CommonConstant.FAVICON_ICO)){
+            ChannelUtil.destroy(httpExchange);
+            return;
+        }
 
         /* 判断是否为webSocket */
         if(isWebSocket(httpExchange)){
