@@ -62,7 +62,7 @@ public class DemoHandler implements MagicianHandler<MagicianRequest> {
 ### 创建服务(默认线程池配置)
 ```java
 Magician.createTCPServer()
-                    .httpHandler("/", new DemoHandler())
+                    .handler("/", new DemoHandler())
                     .bind(8080);
 ```
 
@@ -75,7 +75,7 @@ EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool()
 workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
 Magician.createTCPServer(ioEventGroup, workerEventGroup)
-                    .httpHandler("/", new DemoHandler())
+                    .handler("/", new DemoHandler())
                     .bind(8080);
 ```
 
@@ -90,7 +90,7 @@ workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
 TCPServer tcpServer = Magician
                          .createTCPServer(ioEventGroup, workerEventGroup)
-                         .httpHandler("/", new DemoHandler())
+                         .handler("/", new DemoHandler())
 
 tcpServer.bind(8080);
 tcpServer.bind(8088);
@@ -100,7 +100,7 @@ tcpServer.bind(8088);
 只需要在创建http服务的时候加一个handler即可
 ```java
 Magician.createTCPServer()
-                    .httpHandler("/", new DemoHandler())
+                    .handler("/", new DemoHandler())
                     .webSocketHandler("/websocket", new DemoSocketHandler())
                     .bind(8080);
 ```
