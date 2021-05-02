@@ -118,7 +118,7 @@ public class TCPServerMonitorTask implements EventTask {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         /* 缓冲区，每轮循环读取的最大长度 */
-        ByteBuffer readBuffer = ByteBuffer.allocate(tcpServerConfig.getReadSize());
+        ByteBuffer readBuffer = ByteBuffer.allocateDirect(tcpServerConfig.getReadSize());
 
         /* 将这当前这一管子数据全部读出来 */
         SocketChannel channel = (SocketChannel) selectionKey.channel();

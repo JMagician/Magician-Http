@@ -54,13 +54,9 @@ public class TCPServer {
      * @param workerEventGroup
      */
     public TCPServer(EventGroup ioEventGroup, EventGroup workerEventGroup) {
-        try {
-            this.ioEventGroup = ioEventGroup;
-            this.workerEventGroup = workerEventGroup;
-            this.tcpServerConfig = new TCPServerConfig();
-        } catch (Exception e) {
-            log.error("打开serverSocketChannel，出现异常", e);
-        }
+        this.ioEventGroup = ioEventGroup;
+        this.workerEventGroup = workerEventGroup;
+        this.tcpServerConfig = new TCPServerConfig();
     }
 
     /**
