@@ -25,7 +25,7 @@ public class TCPServerMonitorTask implements EventTask {
     private static Logger logger = LoggerFactory.getLogger(TCPServerMonitorTask.class);
 
     /**
-     * 通道，每个连接对应一个
+     * 通道，每个端口对应一个
      */
     private ServerSocketChannel serverSocketChannel;
     /**
