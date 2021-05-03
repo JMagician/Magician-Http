@@ -19,6 +19,7 @@ public class WorkerTask implements EventTask {
      * 每个连接对应一个，主要用于缓存报文，给解码器使用
      */
     private Worker worker;
+    
     /**
      * 配置类
      */
