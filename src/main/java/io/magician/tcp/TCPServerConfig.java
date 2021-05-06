@@ -98,6 +98,14 @@ public class TCPServerConfig {
         return webSocketHandlerMap;
     }
 
+    public void setMagicianHandlerMap(Map<String, MagicianHandler> magicianHandlerMap) {
+        this.magicianHandlerMap = magicianHandlerMap;
+    }
+
+    public void setWebSocketHandlerMap(Map<String, WebSocketHandler> webSocketHandlerMap) {
+        this.webSocketHandlerMap = webSocketHandlerMap;
+    }
+
     public void addMagicianHandler(String path, MagicianHandler magicianHandler) throws Exception {
         path = path.toUpperCase();
         if(magicianHandlerMap.containsKey(path)

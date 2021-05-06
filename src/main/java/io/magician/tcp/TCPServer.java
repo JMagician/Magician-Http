@@ -77,6 +77,10 @@ public class TCPServer {
      * @return
      */
     public TCPServer config(TCPServerConfig tcpServerConfig) {
+        tcpServerConfig.setMagicianHandlerMap(this.tcpServerConfig.getMagicianHandlerMap());
+        tcpServerConfig.setWebSocketHandlerMap(this.tcpServerConfig.getWebSocketHandlerMap());
+        tcpServerConfig.setProtocolCodec(this.tcpServerConfig.getProtocolCodec());
+
         this.tcpServerConfig = tcpServerConfig;
         return this;
     }
