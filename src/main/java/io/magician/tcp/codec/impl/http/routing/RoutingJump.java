@@ -46,8 +46,8 @@ public class RoutingJump {
         AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(httpExchange.getSelectionKey());
         attachmentModel.setWebSocketSession(socketSession);
 
-        socketSession.getWebSocketHandler().onOpen(socketSession);
         WebSocketMessageWrite.builder(socketSession).completed();
+        webSocketHandler.onOpen(socketSession);
     }
 
     /**
