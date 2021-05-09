@@ -45,12 +45,19 @@ public class HttpConstant {
      */
     public static final String CONNECTION = "Connection";
     /**
+     * 连接状态
+     */
+    public static final String CONNECTION_UP = "CONNECTION";
+    /**
+     * 保持连接
+     */
+    public static final String KEEP_ALIVE = "keep-alive";
+    /**
      * 连接状态:关闭
      */
     public static final String CONNECTION_CLOSE = "close";
-
     /**
-     * 协议标记
+     * 连接状态:保持场链接
      */
-    public static final String TARGET = "HTTP/";
+    public static final String CONNECTION_KEEP_ALIVE = "KEEP-ALIVE";
 }

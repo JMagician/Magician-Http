@@ -27,6 +27,11 @@ public class AttachmentModel {
     private EventRunner eventRunner;
 
     /**
+     * 创建时间
+     */
+    private Long createTime = System.currentTimeMillis();
+
+    /**
      * 扩展字段
      * 如果用户自定义解码器，可能需要保存其他附件
      * 所以预留这个字段
@@ -55,6 +60,14 @@ public class AttachmentModel {
 
     public void setEventRunner(EventRunner eventRunner) {
         this.eventRunner = eventRunner;
+    }
+
+    public Long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
     }
 
     public Object getExpand() {

@@ -114,14 +114,22 @@ public class TCPServerMonitorTask implements EventTask {
      * @throws Exception
      */
     private SocketChannel read(SelectionKey selectionKey) throws Exception {
+        /* 将这当前这一管子数据全部读出来 */
+        SocketChannel channel = (SocketChannel) selectionKey.channel();
+
+        /* 如果连接已关闭，则释放 */
+        if(!channel.isOpen()){
+            ChannelUtil.cancel(selectionKey);
+            ChannelUtil.close(channel);
+            return channel;
+        }
+
         /* 创建一个临时容器，将当前channel里的数据都暂存在里面，一起丢给worker */
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         /* 缓冲区，每轮循环读取的最大长度 */
         ByteBuffer readBuffer = ByteBuffer.allocateDirect(tcpServerConfig.getReadSize());
 
-        /* 将这当前这一管子数据全部读出来 */
-        SocketChannel channel = (SocketChannel) selectionKey.channel();
         while (true){
             int size = channel.read(readBuffer);
 

@@ -107,7 +107,13 @@ public class HttpMessageWrite {
         } catch (Exception e) {
             logger.error("往客户端写数据异常", e);
         } finally {
-            ChannelUtil.destroy(magicianHttpExchange);
+            String connectionValue = magicianHttpExchange.getResponseHeaders().get(HttpConstant.CONNECTION);
+            if(connectionValue == null
+                    || connectionValue.equals(HttpConstant.CONNECTION_CLOSE)){
+                /* 如果响应头里面通知了客户端关闭连接，那么服务端必须关闭连接 */
+                ChannelUtil.destroy(magicianHttpExchange);
+            }
+
             ChannelUtil.closeOutputStream(magicianHttpExchange.getResponseBody());
         }
     }
@@ -125,6 +131,16 @@ public class HttpMessageWrite {
         buffer.append(HttpConstant.CONTENT_LENGTH + ": " + length);
         buffer.append(HttpConstant.CARRIAGE_RETURN);
 
+        String connection = getConnectionValue();
+        if(connection != null
+                && connection.toUpperCase().equals(HttpConstant.CONNECTION_KEEP_ALIVE)){
+            /* 如果有keep-alive请求头，就通知客户端此连接已保留 */
+            magicianHttpExchange.getResponseHeaders().put(HttpConstant.CONNECTION, HttpConstant.KEEP_ALIVE);
+        } else {
+            /* 如果没有keep-alive请求头，就通知客户端连接已关闭 */
+            magicianHttpExchange.getResponseHeaders().put(HttpConstant.CONNECTION, HttpConstant.CONNECTION_CLOSE);
+        }
+
         /* 加载自定义头 */
         for(Map.Entry<String, String> entry : magicianHttpExchange.getResponseHeaders().entrySet()){
             String value = entry.getValue();
@@ -136,5 +152,15 @@ public class HttpMessageWrite {
         }
         buffer.append(HttpConstant.CARRIAGE_RETURN);
         return buffer;
+    }
+
+    /**
+     * 获取connection请求头的value
+     * @return
+     */
+    private String getConnectionValue(){
+        return magicianHttpExchange
+                .getRequestHeaders()
+                .get(HttpConstant.CONNECTION_UP);
     }
 }
