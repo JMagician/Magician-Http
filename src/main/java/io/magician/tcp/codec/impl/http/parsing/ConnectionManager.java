@@ -1,7 +1,6 @@
 package io.magician.tcp.codec.impl.http.parsing;
 
 import io.magician.common.util.ChannelUtil;
-import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
