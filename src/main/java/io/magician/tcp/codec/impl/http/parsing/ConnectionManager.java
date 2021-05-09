@@ -78,7 +78,6 @@ public class ConnectionManager {
                     connectionMap.remove(entry.getKey());
                     ChannelUtil.close(entry.getKey());
                     ChannelUtil.cancel(entry.getValue().getWorker().getSelectionKey());
-                    System.out.println(entry.getValue().getWorker().getSelectionKey());
                 }
             }
         }, new Date(), 1000);
