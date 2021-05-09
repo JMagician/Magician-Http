@@ -38,6 +38,10 @@ public class TCPServerConfig {
      */
     private long sizeMax = 10*1024*1024;
     /**
+     * 长连接超时时间
+     */
+    private long keepTimeout = 10000;
+    /**
      * 协议解析器
      */
     private ProtocolCodec protocolCodec = new HttpProtocolCodec(this);
@@ -125,6 +129,14 @@ public class TCPServerConfig {
             throw new Exception("已经存在地址为["+path+"]的handler");
         }
         this.webSocketHandlerMap.put(path, webSocketHandler);
+    }
+
+    public long getKeepTimeout() {
+        return keepTimeout;
+    }
+
+    public void setKeepTimeout(long keepTimeout) {
+        this.keepTimeout = keepTimeout;
     }
 
     public ProtocolCodec getProtocolCodec() {

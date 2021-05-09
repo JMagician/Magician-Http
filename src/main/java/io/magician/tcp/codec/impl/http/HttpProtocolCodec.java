@@ -3,6 +3,7 @@ package io.magician.tcp.codec.impl.http;
 import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
+import io.magician.tcp.codec.impl.http.parsing.ConnectionManager;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.tcp.codec.impl.websocket.WebSocketCodec;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
@@ -36,6 +37,9 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
     public HttpProtocolCodec(TCPServerConfig tcpServerConfig){
         this.tcpServerConfig = tcpServerConfig;
         this.routingParsing = new RoutingParsing(this.tcpServerConfig);
+
+        /* 启动清理长连接的任务 */
+        ConnectionManager.processClear(this.tcpServerConfig);
     }
 
     /**

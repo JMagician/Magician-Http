@@ -112,6 +112,8 @@ public class HttpMessageWrite {
                     || connectionValue.equals(HttpConstant.CONNECTION_CLOSE)){
                 /* 如果响应头里面通知了客户端关闭连接，那么服务端必须关闭连接 */
                 ChannelUtil.destroy(magicianHttpExchange);
+            } else {
+                ConnectionManager.addConnection(magicianHttpExchange);
             }
 
             ChannelUtil.closeOutputStream(magicianHttpExchange.getResponseBody());

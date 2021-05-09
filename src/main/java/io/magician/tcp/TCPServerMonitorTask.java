@@ -156,6 +156,7 @@ public class TCPServerMonitorTask implements EventTask {
 
         /* 获取附件 */
         AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(selectionKey);
+        attachmentModel.setCreateTime(System.currentTimeMillis());
 
         /* 将读到的数据添加到worker的流水线，给协议层处理 */
         Worker worker = attachmentModel.getWorker();
