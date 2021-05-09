@@ -133,7 +133,7 @@ public class HttpMessageWrite {
 
         String connection = getConnectionValue();
         if(connection != null
-                && connection.toUpperCase().equals(HttpConstant.CONNECTION_KEEP_ALIVE)){
+                && connection.toUpperCase().equals(HttpConstant.KEEP_ALIVE_UP)){
             /* 如果有keep-alive请求头，就通知客户端此连接已保留 */
             magicianHttpExchange.getResponseHeaders().put(HttpConstant.CONNECTION, HttpConstant.KEEP_ALIVE);
         } else {
