@@ -39,7 +39,8 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
         this.routingParsing = new RoutingParsing(this.tcpServerConfig);
 
         /* 启动清理长连接的任务 */
-        ConnectionManager.processClear(this.tcpServerConfig);
+        ConnectionManager.setTimeout(this.tcpServerConfig.getKeepTimeout());
+        ConnectionManager.processClear();
     }
 
     /**

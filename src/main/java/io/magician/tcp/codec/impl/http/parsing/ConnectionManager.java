@@ -29,6 +29,14 @@ public class ConnectionManager {
     private static Map<SocketChannel, AttachmentModel> connectionMap = new ConcurrentHashMap<>();
 
     /**
+     * 设置超时时间
+     * @param timeout
+     */
+    public static void setTimeout(long timeout) {
+        ConnectionManager.timeout = timeout;
+    }
+
+    /**
      * 添加长连接
      * @param magicianHttpExchange
      */
@@ -45,13 +53,11 @@ public class ConnectionManager {
     /**
      * 定时清理长连接
      */
-    public static void processClear(TCPServerConfig tcpServerConfig){
+    public static void processClear(){
         if(timer != null){
             return;
         }
         timer = new Timer();
-        timeout = tcpServerConfig.getKeepTimeout();
-
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
