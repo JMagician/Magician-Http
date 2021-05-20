@@ -115,6 +115,9 @@ Magician.createUdpServer()
 ```
 除了这种写法，也可以单独创建handler，在这里add进去
 
+## TFB测试结果（第二轮，持续优化中）
+![image](https://user-images.githubusercontent.com/39583360/119000098-6175ce00-b9bd-11eb-9e1d-dcc82c0c135f.png)
+
 ## 开发资源
 - 开发文档: [http://magician-io.com/docs/index.html](http://magician-io.com/docs/index.html)
 - 使用示例: [https://github.com/yuyenews/Magician-Example](https://github.com/yuyenews/Magician-Example)
