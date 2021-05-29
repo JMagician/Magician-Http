@@ -76,6 +76,7 @@ public class MagicianHttpExchange {
         requestHeaders = new HttpHeaders();
         responseHeaders = new HttpHeaders();
 
+        responseHeaders.put("Server", "Magician");
         sendText = HttpConstant.NO_DATA;
         statusCode = 200;
     }
