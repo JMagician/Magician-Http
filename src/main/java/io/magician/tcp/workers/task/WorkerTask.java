@@ -58,7 +58,9 @@ public class WorkerTask implements EventTask {
              */
             synchronized (worker){
                 /* 解析数据包 */
-                resultObj = protocolCodec.codecData(worker);
+                if(worker.getSocketChannel().isOpen()){
+                    resultObj = protocolCodec.codecData(worker);
+                }
 
                 if(resultObj == null){
                     return;
