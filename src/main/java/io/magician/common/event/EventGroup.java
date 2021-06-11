@@ -5,6 +5,7 @@ import io.magician.common.constant.EventEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,6 +37,7 @@ public class EventGroup {
 
     /**
      * 获取线程池
+     *
      * @return
      */
     public ExecutorService getThreadPool() {
@@ -44,13 +46,32 @@ public class EventGroup {
 
     /**
      * 创建一个事件执行器组合
+     *
+     * @param size
+     */
+    public EventGroup(int size, ExecutorService executorService) {
+        init(size, executorService);
+    }
+
+    /**
+     * 创建一个事件执行器组合
+     *
+     * @param size
+     */
+    public EventGroup(int size) {
+        init(size, Executors.newCachedThreadPool());
+    }
+
+    /**
+     * 初始化
+     *
      * @param size
      * @param executorService
      */
-    public EventGroup(int size, ExecutorService executorService){
+    private void init(int size, ExecutorService executorService) {
         this.eventRunnerList = new ArrayList<>(size);
         this.executorService = executorService;
-        for(int i=0;i<size;i++){
+        for (int i = 0; i < size; i++) {
             EventRunner eventRunner = new EventRunner(this);
             eventRunnerList.add(eventRunner);
             eventRunner.process();
@@ -59,10 +80,11 @@ public class EventGroup {
 
     /**
      * 轮询获取这个组合里的事件执行器
+     *
      * @return
      */
-    public EventRunner getEventRunner(){
-        int index = atomicInteger.getAndUpdate((val) ->{
+    public EventRunner getEventRunner() {
+        int index = atomicInteger.getAndUpdate((val) -> {
             int newVal = val + 1;
             return (eventRunnerList.size() == newVal) ? 0 : newVal;
         });
@@ -74,23 +96,24 @@ public class EventGroup {
     /**
      * 窃取其他事件执行器里的任务
      * 用于在某个事件执行器空闲后，帮助其他执行器消费队列
+     *
      * @return EventTask 对象
      */
     public EventTask stealTask() {
         /* 获取任务最多的EventRunner */
         EventRunner maxQueueEventRunner = null;
-        for(EventRunner eventRunner : eventRunnerList) {
-            if(eventRunner == null || eventRunner.getQueue().size() < 1){
+        for (EventRunner eventRunner : eventRunnerList) {
+            if (eventRunner == null || eventRunner.getQueue().size() < 1) {
                 continue;
             }
 
-            if(maxQueueEventRunner == null || eventRunner.getQueue().size() > maxQueueEventRunner.getQueue().size()) {
+            if (maxQueueEventRunner == null || eventRunner.getQueue().size() > maxQueueEventRunner.getQueue().size()) {
                 maxQueueEventRunner = eventRunner;
                 continue;
             }
         }
 
-        if(maxQueueEventRunner == null) {
+        if (maxQueueEventRunner == null) {
             return null;
         }
 

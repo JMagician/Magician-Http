@@ -42,8 +42,8 @@ public class TCPServer {
      */
     public TCPServer() {
         this(
-                new EventGroup(1, Executors.newCachedThreadPool()),
-                new EventGroup(3, Executors.newCachedThreadPool())
+                new EventGroup(1),
+                new EventGroup(3)
         );
     }
 
