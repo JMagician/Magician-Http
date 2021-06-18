@@ -17,27 +17,27 @@
 <br/>
 
 <div align=center>
-一个异步非阻塞的网络协议解析包
+An asynchronous non-blocking network protocol analysis package
 </div>
 
 
-## 项目简介
+## Project Description
 
-Magician 是一个异步非阻塞的网络协议解析包，支持Http, WebSocket, UDP等协议
+Magician is an asynchronous non-blocking network protocol analysis package, supports TCP, UDP protocol, built-in Http, WebSocket decoder
 
-## 运行环境
+## Run environment
 
 JDK11+
 
-## 导入依赖
+## Import dependencies
 ```xml
 <dependency>
     <groupId>com.github.yuyenews</groupId>
     <artifactId>Magician</artifactId>
-    <version>最新版</version>
+    <version>last version</version>
 </dependency>
 
-<!-- 这个是日志包，支持任意可以跟slf4j桥接的包 -->
+<!-- This is the log package, which supports any package that can be bridged with slf4j -->
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-jdk14</artifactId>
@@ -45,33 +45,33 @@ JDK11+
 </dependency>
 ```
 
-## 一、创建TCP服务(默认使用http解码器)
-### 创建Handler
+## 1. create a TCP service (using http decoder by default)
+### Create Handler
 ```java
 public class DemoHandler implements MagicianHandler<MagicianRequest> {
 
     @Override
     public void request(MagicianRequest magicianRequest) {
-        // 响应数据
+        // response data
         magicianRequest.getResponse()
                 .sendJson(200, "{'status':'ok'}");
     }
 }
 ```
 
-### 创建服务(默认线程池配置)
+### Create TCP Server (Default thread pool configuration)
 ```java
 Magician.createTCPServer()
                     .handler("/", new DemoHandler())
                     .bind(8080);
 ```
 
-### 创建服务(自定义线程池配置)
+### Create TCP Server (custom thread pool configuration)
 ```java
 EventGroup ioEventGroup = new EventGroup(1, Executors.newCachedThreadPool());
 EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool());
 
-// 当前EventRunner没任务的时候，允许从其他EventRunner窃取任务
+// When the current EventRunner has no tasks, it is allowed to steal tasks from other EventRunners
 workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
 Magician.createTCPServer(ioEventGroup, workerEventGroup)
@@ -79,13 +79,13 @@ Magician.createTCPServer(ioEventGroup, workerEventGroup)
                     .bind(8080);
 ```
 
-### 创建服务(监听多端口)
+### Create TCP Server (Listen on multiple ports)
 ```java
-// 监听几个端口，ioEventGroup的第一个参数就写几
+// Listen to n ports, write n as the first parameter of ioEventGroup
 EventGroup ioEventGroup = new EventGroup(2, Executors.newCachedThreadPool());
 EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool());
 
-// 当前EventRunner没任务的时候，允许从其他EventRunner窃取任务
+// When the current EventRunner has no tasks, it is allowed to steal tasks from other EventRunners
 workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
 TCPServer tcpServer = Magician
@@ -96,8 +96,8 @@ tcpServer.bind(8080);
 tcpServer.bind(8088);
 ```
 
-## 二、创建WebSocket
-只需要在创建http服务的时候加一个handler即可
+## 2. Create WebSocket
+Just add a handler when creating the http service
 ```java
 Magician.createTCPServer()
                     .handler("/", new DemoHandler())
@@ -105,20 +105,20 @@ Magician.createTCPServer()
                     .bind(8080);
 ```
 
-## 三、创建UDP服务
+## 3. Create UDP Server
 ```java
 Magician.createUdpServer()
                 .handler(outputStream -> {
-                    // outputStream 是ByteArrayOutputStream类型的
-                    // 它是客户端发过来的数据，自行解析即可
+                    // outputStream is of type ByteArrayOutputStream
+                    // It is the data sent by the client, you can parse it by yourself
                 }).bind(8088);
 ```
-除了这种写法，也可以单独创建handler，在这里add进去
+In addition to this way of writing, you can also create a separate handler, add here
 
-## TFB测试结果（第二轮，持续优化中）
+## TFB test results (second round, continuous optimization)
 ![image](https://user-images.githubusercontent.com/39583360/119000098-6175ce00-b9bd-11eb-9e1d-dcc82c0c135f.png)
 
 [TFB地址](https://www.techempower.com/benchmarks/#section=test&runid=63f03f07-c45e-4772-806e-908fa02c448f&hw=ph&test=json&l=zijbpb-e7&a=2)
-## 开发资源
-- 开发文档: [http://magician-io.com/docs/index.html](http://magician-io.com/docs/index.html)
-- 使用示例: [https://github.com/yuyenews/Magician-Example](https://github.com/yuyenews/Magician-Example)
+## Documentation and examples
+- Document: [http://magician-io.com/docs/en/index.html](http://magician-io.com/docs/index.html)
+- example: [https://github.com/yuyenews/Magician-Example](https://github.com/yuyenews/Magician-Example)
