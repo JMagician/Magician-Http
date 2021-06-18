@@ -121,4 +121,4 @@ In addition to this way of writing, you can also create a separate handler, add 
 [TFB地址](https://www.techempower.com/benchmarks/#section=test&runid=63f03f07-c45e-4772-806e-908fa02c448f&hw=ph&test=json&l=zijbpb-e7&a=2)
 ## Documentation and examples
 - Document: [http://magician-io.com/docs/en/index.html](http://magician-io.com/docs/index.html)
-- example: [https://github.com/yuyenews/Magician-Example](https://github.com/yuyenews/Magician-Example)
+- Example: [https://github.com/yuyenews/Magician-Example](https://github.com/yuyenews/Magician-Example)
