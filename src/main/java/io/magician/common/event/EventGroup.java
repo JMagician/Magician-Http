@@ -124,6 +124,15 @@ public class EventGroup {
         }
     }
 
+    /**
+     * 停止线程池（停止后，这个事件组对应的功能就会全部停止）
+     */
+    public void shutdown(){
+        if(!this.executorService.isShutdown()){
+            this.executorService.shutdown();
+        }
+    }
+
     public EventEnum.STEAL getSteal() {
         return steal;
     }
