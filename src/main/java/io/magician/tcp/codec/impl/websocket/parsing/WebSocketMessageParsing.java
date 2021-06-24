@@ -52,9 +52,14 @@ public class WebSocketMessageParsing {
             return null;
         }
 
-        byte payloadLength = (byte) (bytesData[1] & 0x7f);
+        int payloadLength = (bytesData[1] & 0x7f);
         if(payloadLength < 1){
             return null;
+        }
+        if(payloadLength == 126){
+            // TODO 需要研究下怎么获取数据长度
+        } else if(payloadLength == 127){
+            // TODO 需要研究下怎么获取数据长度
         }
 
         if(bytesData.length < (payloadLength + 6)){
