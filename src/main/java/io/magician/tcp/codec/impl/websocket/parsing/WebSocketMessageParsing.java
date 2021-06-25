@@ -52,21 +52,23 @@ public class WebSocketMessageParsing {
             return null;
         }
 
+        int formIndex = 6;
+
         int payloadLength = (bytesData[1] & 0x7f);
         if(payloadLength < 1){
             return null;
         }
         if(payloadLength == 126){
-            // TODO 需要研究下怎么获取数据长度
+            // TODO
         } else if(payloadLength == 127){
-            // TODO 需要研究下怎么获取数据长度
+            // TODO
         }
 
-        if(bytesData.length < (payloadLength + 6)){
+        if(bytesData.length < (payloadLength + formIndex)){
             return null;
         }
-        byte[] mask = Arrays.copyOfRange(bytesData, 2, 6);
-        byte[] payloadData = Arrays.copyOfRange(bytesData, 6, payloadLength + 6);
+        byte[] mask = Arrays.copyOfRange(bytesData, 2, formIndex);
+        byte[] payloadData = Arrays.copyOfRange(bytesData, formIndex, payloadLength + formIndex);
 
         if(payloadData.length < payloadLength){
             return null;
@@ -79,7 +81,7 @@ public class WebSocketMessageParsing {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(payloadData);
 
-        webSocketExchange.setLength(6 + outputStream.size());
+        webSocketExchange.setLength(formIndex + outputStream.size());
         webSocketExchange.setOutputStream(outputStream);
         webSocketExchange.setWebSocketEnum(WebSocketEnum.MESSAGE);
 
