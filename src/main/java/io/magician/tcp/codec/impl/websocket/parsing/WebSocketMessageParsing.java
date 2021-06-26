@@ -52,8 +52,6 @@ public class WebSocketMessageParsing {
             return null;
         }
 
-        int formIndex = 6;
-
         int payloadLength = (bytesData[1] & 0x7f);
         if(payloadLength < 1){
             return null;
@@ -64,11 +62,12 @@ public class WebSocketMessageParsing {
             // TODO
         }
 
-        if(bytesData.length < (payloadLength + formIndex)){
+        int maskEndIndex = 6;
+        if(bytesData.length < (payloadLength + maskEndIndex)){
             return null;
         }
-        byte[] mask = Arrays.copyOfRange(bytesData, 2, formIndex);
-        byte[] payloadData = Arrays.copyOfRange(bytesData, formIndex, payloadLength + formIndex);
+        byte[] mask = Arrays.copyOfRange(bytesData, 4, maskEndIndex);
+        byte[] payloadData = Arrays.copyOfRange(bytesData, maskEndIndex, payloadLength + maskEndIndex);
 
         if(payloadData.length < payloadLength){
             return null;
@@ -81,10 +80,30 @@ public class WebSocketMessageParsing {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         outputStream.write(payloadData);
 
-        webSocketExchange.setLength(formIndex + outputStream.size());
+        webSocketExchange.setLength(maskEndIndex + outputStream.size());
         webSocketExchange.setOutputStream(outputStream);
         webSocketExchange.setWebSocketEnum(WebSocketEnum.MESSAGE);
 
         return webSocketExchange;
+    }
+
+    public static int bytesToInt16(byte[] src) {
+
+
+        int value = (int) ((src[0]&0xFF)
+                | ((src[1]<<8) & 0xFF00));
+//
+//        int value = ((src[0] & 0xFF)
+//                | ((src[1] & 0xFF)<<8));
+//                | ((src[2] & 0xFF)<<16));
+        return value;
+    }
+
+    public static int bytesToInt64(byte[] src) {
+        int value;
+        value = (int) ((src[0] & 0xFF)
+                | ((src[1] & 0xFF)<<8)
+                | ((src[2] & 0xFF)<<16));
+        return value;
     }
 }
