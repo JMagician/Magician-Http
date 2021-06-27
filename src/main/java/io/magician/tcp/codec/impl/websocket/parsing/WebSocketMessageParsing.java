@@ -1,5 +1,6 @@
 package io.magician.tcp.codec.impl.websocket.parsing;
 
+import io.magician.common.util.ByteUtil;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
 import io.magician.tcp.codec.impl.websocket.constant.WebSocketEnum;
 
@@ -23,16 +24,18 @@ public class WebSocketMessageParsing {
 
     /**
      * 构造函数
+     *
      * @param outputStream
      * @param webSocketExchange
      */
-    public WebSocketMessageParsing(ByteArrayOutputStream outputStream, WebSocketExchange webSocketExchange){
+    public WebSocketMessageParsing(ByteArrayOutputStream outputStream, WebSocketExchange webSocketExchange) {
         this.outputStream = outputStream;
         this.webSocketExchange = webSocketExchange;
     }
 
     /**
      * 解析报文
+     *
      * @return
      * @throws Exception
      */
@@ -51,25 +54,31 @@ public class WebSocketMessageParsing {
         if (bytesData.length < 2) {
             return null;
         }
-
         int payloadLength = (bytesData[1] & 0x7f);
-        if(payloadLength < 1){
+        if (payloadLength < 1) {
             return null;
-        }
-        if(payloadLength == 126){
-            // TODO
-        } else if(payloadLength == 127){
-            // TODO
         }
 
-        int maskEndIndex = 6;
-        if(bytesData.length < (payloadLength + maskEndIndex)){
+        int maskStartIndex = 2;
+
+        if (payloadLength == 126) {
+            byte[] len = getLength(bytesData, 2, 2);
+            payloadLength = ByteUtil.bytes2Int(len, 0, len.length);
+            maskStartIndex = 4;
+        } else if (payloadLength == 127) {
+            byte[] len = getLength(bytesData, 2, 8);
+            payloadLength = ByteUtil.bytes2Int(len, 0, len.length);
+            maskStartIndex = 10;
+        }
+
+        int maskEndIndex = maskStartIndex + 4;
+        if (bytesData.length < (payloadLength + maskEndIndex)) {
             return null;
         }
-        byte[] mask = Arrays.copyOfRange(bytesData, 4, maskEndIndex);
+        byte[] mask = Arrays.copyOfRange(bytesData, maskStartIndex, maskEndIndex);
         byte[] payloadData = Arrays.copyOfRange(bytesData, maskEndIndex, payloadLength + maskEndIndex);
 
-        if(payloadData.length < payloadLength){
+        if (payloadData.length < payloadLength) {
             return null;
         }
 
@@ -87,23 +96,21 @@ public class WebSocketMessageParsing {
         return webSocketExchange;
     }
 
-    public static int bytesToInt16(byte[] src) {
-
-
-        int value = (int) ((src[0]&0xFF)
-                | ((src[1]<<8) & 0xFF00));
-//
-//        int value = ((src[0] & 0xFF)
-//                | ((src[1] & 0xFF)<<8));
-//                | ((src[2] & 0xFF)<<16));
-        return value;
-    }
-
-    public static int bytesToInt64(byte[] src) {
-        int value;
-        value = (int) ((src[0] & 0xFF)
-                | ((src[1] & 0xFF)<<8)
-                | ((src[2] & 0xFF)<<16));
-        return value;
+    /**
+     * 获取websocket数据长度
+     *
+     * @param bytesData
+     * @param start
+     * @param size
+     * @return
+     */
+    private byte[] getLength(byte[] bytesData, int start, int size) {
+        int index = 0;
+        byte[] len = new byte[size];
+        for (int i = start; i < (start + size); i++) {
+            len[index] = bytesData[i];
+            index++;
+        }
+        return len;
     }
 }
