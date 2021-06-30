@@ -9,17 +9,11 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * webSocket会话
  */
 public class WebSocketSession {
-
-    /**
-     * 计数器用来控制每个session只能有一个线程读取
-     */
-    private CountDownLatch countDownLatch;
 
     /**
      * ID，UUID生成，每个session唯一
@@ -39,27 +33,7 @@ public class WebSocketSession {
     public WebSocketSession(long writeTimeout){
         this.id = UUID.randomUUID().toString();
         this.writeTimeout = writeTimeout;
-        countDownLatch = new CountDownLatch(0);
     }
-
-    /**
-     * 准备读取数据
-     * @throws Exception
-     */
-    public synchronized void readyRead() throws Exception {
-        countDownLatch.await();
-        countDownLatch = new CountDownLatch(1);
-    }
-
-    /**
-     * 读取完毕
-     */
-    public void readEnd() {
-        if(countDownLatch.getCount() > 0){
-            countDownLatch.countDown();
-        }
-    }
-
 
     public MagicianHttpExchange getMagicianHttpExchange() {
         return magicianHttpExchange;
