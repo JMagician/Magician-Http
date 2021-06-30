@@ -29,6 +29,10 @@ Magician is an asynchronous non-blocking network protocol analysis package, supp
 
 JDK11+
 
+---
+
+If you want to use it on a lower version of the JDK, you can download the source code of this repository and compile it yourself.
+
 ## Import dependencies
 ```xml
 <dependency>
