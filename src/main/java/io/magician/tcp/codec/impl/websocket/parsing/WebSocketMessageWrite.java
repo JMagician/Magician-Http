@@ -41,7 +41,7 @@ public class WebSocketMessageWrite {
 
         /* 转成ByteBuffer */
         byte[] bytes = buffer.toString().getBytes(CommonConstant.ENCODING);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(bytes.length);
         byteBuffer.put(bytes);
 
         byteBuffer.flip();

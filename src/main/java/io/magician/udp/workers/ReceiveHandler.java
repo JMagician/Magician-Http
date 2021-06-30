@@ -25,7 +25,7 @@ public class ReceiveHandler {
     public static void receive(DatagramChannel datagramChannel){
         try{
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ByteBuffer byteBuffer = ByteBuffer.allocate(UDPServerConfig.getReadSize());
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(UDPServerConfig.getReadSize());
 
             datagramChannel.receive(byteBuffer);
             ReadUtil.byteBufferToOutputStream(byteBuffer, outputStream);
