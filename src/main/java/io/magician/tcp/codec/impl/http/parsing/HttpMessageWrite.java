@@ -59,7 +59,7 @@ public class HttpMessageWrite {
         byte[] bytes = buffer.toString().getBytes(CommonConstant.ENCODING);
 
         /* 加载要响应的数据 */
-        ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length + magicianHttpExchange.getResponseBody().size());
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(bytes.length + magicianHttpExchange.getResponseBody().size());
         byteBuffer.put(bytes);
         byteBuffer.put(magicianHttpExchange.getResponseBody().toByteArray());
 
@@ -86,7 +86,7 @@ public class HttpMessageWrite {
 
         /* 转成ByteBuffer */
         byte[] bytes = buffer.toString().getBytes(CommonConstant.ENCODING);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(bytes.length);
         byteBuffer.put(bytes);
 
         byteBuffer.flip();
