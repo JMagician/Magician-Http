@@ -21,9 +21,7 @@ public class TCPServerConfig {
     private long readTimeout = 10000;
     /**
      * 写入超时时间
-     * 暂时没用到
      */
-    @Deprecated
     private long writeTimeout = 10000;
     /**
      * 每次读取大小
@@ -54,10 +52,12 @@ public class TCPServerConfig {
      */
     private Map<String, WebSocketHandler> webSocketHandlerMap = new HashMap<>();
 
+    @Deprecated
     public long getReadTimeout() {
         return readTimeout;
     }
 
+    @Deprecated
     public void setReadTimeout(long readTimeout) {
         this.readTimeout = readTimeout;
     }

@@ -38,7 +38,7 @@ public class RoutingJump {
      * @param webSocketHandler
      */
     public void websocket(MagicianHttpExchange httpExchange, WebSocketHandler webSocketHandler) throws Exception {
-        WebSocketSession socketSession = new WebSocketSession();
+        WebSocketSession socketSession = new WebSocketSession(tcpServerConfig.getWriteTimeout());
         socketSession.setMagicianHttpExchange(httpExchange);
         socketSession.setWebSocketHandler(webSocketHandler);
 
@@ -63,6 +63,6 @@ public class RoutingJump {
 
         serverHandler.request(magicianRequest);
         /* 响应数据 */
-        HttpMessageWrite.builder(httpExchange).completed();
+        HttpMessageWrite.builder(httpExchange, tcpServerConfig).completed();
     }
 }

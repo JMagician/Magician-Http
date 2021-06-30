@@ -1,5 +1,6 @@
 package io.magician.tcp.codec.impl.http.parsing;
 
+import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.common.constant.CommonConstant;
 import io.magician.tcp.codec.impl.http.constant.HttpConstant;
@@ -24,13 +25,19 @@ public class HttpMessageWrite {
     private MagicianHttpExchange magicianHttpExchange;
 
     /**
+     * 配置
+     */
+    private TCPServerConfig tcpServerConfig;
+
+    /**
      * 构建一个解析器
      * @param magicianHttpExchange
      * @return
      */
-    public static HttpMessageWrite builder(MagicianHttpExchange magicianHttpExchange){
+    public static HttpMessageWrite builder(MagicianHttpExchange magicianHttpExchange, TCPServerConfig tcpServerConfig){
         HttpMessageWrite httpMessageWrite = new HttpMessageWrite();
         httpMessageWrite.magicianHttpExchange = magicianHttpExchange;
+        httpMessageWrite.tcpServerConfig = tcpServerConfig;
         return httpMessageWrite;
     }
 
@@ -101,8 +108,9 @@ public class HttpMessageWrite {
      */
     private void doWrite(ByteBuffer byteBuffer) {
         try {
-            while (byteBuffer.hasRemaining()){
-                magicianHttpExchange.getSocketChannel().write(byteBuffer);
+            boolean success = ChannelUtil.write(byteBuffer, magicianHttpExchange.getSocketChannel(), tcpServerConfig.getWriteTimeout());
+            if(!success){
+                ChannelUtil.destroy(magicianHttpExchange);
             }
         } catch (Exception e) {
             logger.error("往客户端写数据异常", e);

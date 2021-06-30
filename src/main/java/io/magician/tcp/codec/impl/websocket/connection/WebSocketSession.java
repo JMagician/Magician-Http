@@ -1,6 +1,7 @@
 package io.magician.tcp.codec.impl.websocket.connection;
 
 import io.magician.common.constant.CommonConstant;
+import io.magician.common.util.ChannelUtil;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
 
@@ -33,8 +34,11 @@ public class WebSocketSession {
      */
     private WebSocketHandler webSocketHandler;
 
-    public WebSocketSession(){
+    private long writeTimeout;
+
+    public WebSocketSession(long writeTimeout){
         this.id = UUID.randomUUID().toString();
+        this.writeTimeout = writeTimeout;
         countDownLatch = new CountDownLatch(0);
     }
 
@@ -93,9 +97,7 @@ public class WebSocketSession {
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(boardCastData);
 
-        while (byteBuffer.hasRemaining()){
-            channel.write(byteBuffer);
-        }
+        ChannelUtil.write(byteBuffer, channel, writeTimeout);
     }
 
     /**

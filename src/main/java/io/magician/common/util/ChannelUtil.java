@@ -3,6 +3,7 @@ package io.magician.common.util;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
@@ -59,5 +60,29 @@ public class ChannelUtil {
             }
         } catch (Exception e){
         }
+    }
+
+    /**
+     * 往channel写数据
+     * @param byteBuffer
+     * @param channel
+     * @throws Exception
+     */
+    public static boolean write(ByteBuffer byteBuffer, SocketChannel channel, long writeTimeout) throws Exception {
+        long start = System.currentTimeMillis();
+        int count=0;
+
+        while (byteBuffer.hasRemaining()){
+            int result = channel.write(byteBuffer);
+
+            /* 如果出现了5次写入失败 并且已经超过了写入超时时间，直接掐断 */
+            if(result < 1){
+                count++;
+                if(count > 5 && (System.currentTimeMillis() - start) > writeTimeout){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
