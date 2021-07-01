@@ -93,7 +93,7 @@ public class ByteUtil {
      * @param len
      * @return
      */
-    public static int bytes2Int(byte[] b, int start, int len) {
+    public static int bytesToInt(byte[] b, int start, int len) {
         int sum = 0;
         int end = start + len;
         for (int i = start; i < end; i++) {
@@ -102,5 +102,19 @@ public class ByteUtil {
             sum += n;
         }
         return sum;
+    }
+
+    /**
+     * int转byte[]
+     * @param n
+     * @param len
+     * @return
+     */
+    public static byte[] intToBytes(int n, int len) {
+        byte[] b = new byte[len];
+        for (int i = len; i > 0; i--) {
+            b[(i - 1)] = ((byte) (n >> 8 * (len - i) & 0xFF));
+        }
+        return b;
     }
 }

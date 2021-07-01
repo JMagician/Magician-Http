@@ -63,11 +63,11 @@ public class WebSocketMessageParsing {
 
         if (payloadLength == 126) {
             byte[] len = getLength(bytesData, 2, 2);
-            payloadLength = ByteUtil.bytes2Int(len, 0, len.length);
+            payloadLength = ByteUtil.bytesToInt(len, 0, len.length);
             maskStartIndex = 4;
         } else if (payloadLength == 127) {
             byte[] len = getLength(bytesData, 2, 8);
-            payloadLength = ByteUtil.bytes2Int(len, 0, len.length);
+            payloadLength = ByteUtil.bytesToInt(len, 0, len.length);
             maskStartIndex = 10;
         }
 
