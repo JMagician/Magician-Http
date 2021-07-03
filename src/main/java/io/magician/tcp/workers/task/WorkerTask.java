@@ -67,7 +67,7 @@ public class WorkerTask implements EventTask {
                 }
             }
 
-            /* 对于已经读完整的数据，传入handler执行业务逻辑 */
+            /* 将已经读完整的数据，传入handler执行业务逻辑 */
             protocolCodec.handler(resultObj);
         } catch (Exception e){
             logger.error("WorkerThread出现异常", e);
