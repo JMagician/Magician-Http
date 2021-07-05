@@ -59,7 +59,7 @@ public class WorkerTask implements EventTask {
             synchronized (worker){
                 /* 解析数据包 */
                 if(worker.getSocketChannel().isOpen()){
-                    resultObj = protocolCodec.codecData(worker);
+                    resultObj = protocolCodec.codecData(worker, this.tcpServerConfig);
                 }
 
                 if(resultObj == null){
@@ -68,7 +68,7 @@ public class WorkerTask implements EventTask {
             }
 
             /* 将已经读完整的数据，传入handler执行业务逻辑 */
-            protocolCodec.handler(resultObj);
+            protocolCodec.handler(resultObj, this.tcpServerConfig);
         } catch (Exception e){
             logger.error("WorkerThread出现异常", e);
             if(worker != null){
