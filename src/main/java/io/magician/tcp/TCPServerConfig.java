@@ -42,7 +42,7 @@ public class TCPServerConfig {
     /**
      * 协议解析器
      */
-    private ProtocolCodec protocolCodec = new HttpProtocolCodec(this);
+    private ProtocolCodec protocolCodec = new HttpProtocolCodec();
     /**
      * 处理器
      */
@@ -141,7 +141,7 @@ public class TCPServerConfig {
 
     public ProtocolCodec getProtocolCodec() {
         if(this.protocolCodec == null){
-            return new HttpProtocolCodec(this);
+            return new HttpProtocolCodec();
         }
         return protocolCodec;
     }

@@ -23,31 +23,22 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
      * websocket解码器
      */
     private WebSocketCodec webSocketCodec = new WebSocketCodec();
-    /**
-     * 配置
-     */
-    private TCPServerConfig tcpServerConfig;
 
     /**
      * 用于分析当前http请求是否需要升级为webSocket
      */
-    private RoutingParsing routingParsing;
-
-    public HttpProtocolCodec(TCPServerConfig tcpServerConfig){
-        this.tcpServerConfig = tcpServerConfig;
-        this.routingParsing = new RoutingParsing(this.tcpServerConfig);
-    }
+    private static RoutingParsing routingParsing;
 
     /**
      * 解析报文
      * @param worker
      * @return
      */
-    public Object codecData(Worker worker) throws Exception {
+    public Object codecData(Worker worker, TCPServerConfig tcpServerConfig) throws Exception {
         boolean webSocket = isWebSocket(worker);
         if(webSocket){
             /* 解析webSocket报文 */
-            return webSocketCodec.codecData(worker);
+            return webSocketCodec.codecData(worker, tcpServerConfig);
         } else {
             /* 解析Http报文 */
             ByteArrayOutputStream outputStream = worker.getOutputStream();
@@ -82,13 +73,16 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
      * 执行handler
      * @param object
      */
-    public void handler(Object object) throws Exception {
+    public void handler(Object object, TCPServerConfig tcpServerConfig) throws Exception {
         if(object instanceof MagicianHttpExchange){
             /* 走Http流程 */
-            routingParsing.parsing((MagicianHttpExchange)object);
+            if(HttpProtocolCodec.routingParsing == null){
+                HttpProtocolCodec.routingParsing = new RoutingParsing(tcpServerConfig);
+            }
+            HttpProtocolCodec.routingParsing.parsing((MagicianHttpExchange)object);
         } else if(object instanceof WebSocketExchange){
             /* 走webSocket流程 */
-            webSocketCodec.handler(object);
+            webSocketCodec.handler(object, tcpServerConfig);
         }
     }
 
