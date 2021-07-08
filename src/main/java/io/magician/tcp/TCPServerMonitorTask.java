@@ -125,7 +125,7 @@ public class TCPServerMonitorTask implements EventTask {
         }
 
         /* 创建一个临时容器，将当前channel里的数据都暂存在里面，一起丢给worker */
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
 
         /* 缓冲区，每轮循环读取的最大长度 */
         ByteBuffer readBuffer = ByteBuffer.allocateDirect(tcpServerConfig.getReadSize());

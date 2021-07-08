@@ -70,8 +70,7 @@ public class RoutingParsing {
 
         if(rootServerHandler != null){
             routingJump.http(httpExchange, rootServerHandler);
-        }
-        if(rouServerHandler != null){
+        } else if(rouServerHandler != null){
             routingJump.http(httpExchange, rouServerHandler);
         }
     }

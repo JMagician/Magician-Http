@@ -19,6 +19,11 @@ public class Worker {
     private Logger logger = LoggerFactory.getLogger(Worker.class);
 
     /**
+     * 附件
+     */
+    private Object attach;
+
+    /**
      * 流水线，selector从channel读到了数据 都会追加进来
      */
     private volatile LinkedBlockingQueue<byte[]> pipeLine = new LinkedBlockingQueue();
@@ -27,7 +32,7 @@ public class Worker {
      * 数据缓存，解码器解码的时候会将流水线上的数据按顺序合并到这里
      * 如果里面已经包含了一个完整的报文，那么就将这个完整报文拿走去执行业务逻辑，留下剩余数据，实现拆包
      */
-    private volatile ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    private volatile ByteArrayOutputStream outputStream = new ByteArrayOutputStream(2048);
 
     /**
      * NIO原生管道，留给后面的业务逻辑用的
@@ -40,6 +45,25 @@ public class Worker {
      * 比如: 添加附件
      */
     private volatile SelectionKey selectionKey;
+
+    /**
+     * 获取附件
+     * @return
+     */
+    public <A> A getAttach(Class<A> cls) {
+        if(attach == null){
+            return null;
+        }
+        return (A)attach;
+    }
+
+    /**
+     * 设置附件
+     * @param attach
+     */
+    public void setAttach(Object attach) {
+        this.attach = attach;
+    }
 
     /**
      * 添加数据到流水线

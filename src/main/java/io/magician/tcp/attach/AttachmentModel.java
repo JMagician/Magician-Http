@@ -13,7 +13,7 @@ public class AttachmentModel {
      * 工作者
      * 每个连接对应一个，用来保存数据
      */
-    private Worker worker = new Worker();
+    private Worker worker;
 
     /**
      * websocket会话
@@ -37,6 +37,10 @@ public class AttachmentModel {
      * 所以预留这个字段
      */
     private Object expand;
+
+    public AttachmentModel(){
+        worker = new Worker();
+    }
 
     public Worker getWorker() {
         return worker;

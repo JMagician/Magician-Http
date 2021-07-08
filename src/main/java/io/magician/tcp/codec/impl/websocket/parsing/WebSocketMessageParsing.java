@@ -13,33 +13,12 @@ import java.util.Arrays;
 public class WebSocketMessageParsing {
 
     /**
-     * 报文数据
-     */
-    private ByteArrayOutputStream outputStream;
-
-    /**
-     * webSocket数据中转器
-     */
-    private WebSocketExchange webSocketExchange;
-
-    /**
-     * 构造函数
-     *
-     * @param outputStream
-     * @param webSocketExchange
-     */
-    public WebSocketMessageParsing(ByteArrayOutputStream outputStream, WebSocketExchange webSocketExchange) {
-        this.outputStream = outputStream;
-        this.webSocketExchange = webSocketExchange;
-    }
-
-    /**
      * 解析报文
      *
      * @return
      * @throws Exception
      */
-    public WebSocketExchange completed() throws Exception {
+    public static WebSocketExchange completed(ByteArrayOutputStream outputStream, WebSocketExchange webSocketExchange) throws Exception {
 
         byte[] bytesData = outputStream.toByteArray();
         if (bytesData.length < 1) {
@@ -86,11 +65,11 @@ public class WebSocketMessageParsing {
             payloadData[i] = (byte) (payloadData[i] ^ mask[i % 4]);
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        outputStream.write(payloadData);
+        ByteArrayOutputStream message = new ByteArrayOutputStream();
+        message.write(payloadData);
 
-        webSocketExchange.setLength(maskEndIndex + outputStream.size());
-        webSocketExchange.setOutputStream(outputStream);
+        webSocketExchange.setLength(maskEndIndex + message.size());
+        webSocketExchange.setOutputStream(message);
         webSocketExchange.setWebSocketEnum(WebSocketEnum.MESSAGE);
 
         return webSocketExchange;
@@ -104,7 +83,7 @@ public class WebSocketMessageParsing {
      * @param size
      * @return
      */
-    private byte[] getLength(byte[] bytesData, int start, int size) {
+    private static byte[] getLength(byte[] bytesData, int start, int size) {
         int index = 0;
         byte[] len = new byte[size];
         for (int i = start; i < (start + size); i++) {

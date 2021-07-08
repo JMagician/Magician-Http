@@ -4,6 +4,8 @@ import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
+import io.magician.tcp.codec.impl.websocket.cache.WebSocketParsingCacheManager;
+import io.magician.tcp.codec.impl.websocket.cache.WebSocketParsingModel;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
 import io.magician.tcp.codec.impl.websocket.constant.WebSocketEnum;
@@ -35,21 +37,17 @@ public class WebSocketCodec implements ProtocolCodec<Object> {
             return null;
         }
 
-        WebSocketExchange webSocketExchange = new WebSocketExchange();
-        if (attachmentModel != null) {
-            webSocketExchange.setWebSocketSession(attachmentModel.getWebSocketSession());
-        }
+        WebSocketParsingModel webSocketParsingModel = WebSocketParsingCacheManager.getWebSocketParsingCacheModel(worker, attachmentModel);
+        WebSocketExchange webSocketExchange = webSocketParsingModel.getWebSocketExchange();
 
-        webSocketExchange = new WebSocketMessageParsing(
-                outputStream,
-                webSocketExchange
-        ).completed();
+        webSocketExchange = WebSocketMessageParsing.completed(outputStream, webSocketExchange);
 
         /* 如果拿到了一个完整的报文，就从缓存中去除这段数据 */
         if (webSocketExchange != null) {
             ByteArrayOutputStream content = webSocketExchange.getOutputStream();
             if(content != null){
                 worker.skipOutputStream(webSocketExchange.getLength());
+                WebSocketParsingCacheManager.clear(worker);
             }
         }
         return webSocketExchange;

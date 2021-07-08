@@ -3,6 +3,8 @@ package io.magician.tcp.codec.impl.http;
 import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
+import io.magician.tcp.codec.impl.http.cache.HttpParsingCacheManager;
+import io.magician.tcp.codec.impl.http.model.HttpParsingCacheModel;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.tcp.codec.impl.websocket.WebSocketCodec;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
@@ -46,15 +48,11 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
                 return null;
             }
 
-            MagicianHttpExchange magicianHttpExchange = new MagicianHttpExchange();
-            magicianHttpExchange.setSocketChannel(worker.getSocketChannel());
-            magicianHttpExchange.setSelectionKey(worker.getSelectionKey());
+            HttpParsingCacheModel httpParsingCacheModel = HttpParsingCacheManager.getHttpParsingCacheModel(worker);
+            MagicianHttpExchange magicianHttpExchange = httpParsingCacheModel.getMagicianHttpExchange();
 
             /* 解析报文，如果报文不完整就返回null，让本次事件停止 */
-            magicianHttpExchange = new HttpMessageParsing(
-                    magicianHttpExchange,
-                    outputStream
-            ).completed();
+            magicianHttpExchange = HttpMessageParsing.completed(magicianHttpExchange, outputStream, worker);
 
             /*
              * http要等前一个响应后才能发送下一个请求，所以不会出现粘包
@@ -62,6 +60,7 @@ public class HttpProtocolCodec implements ProtocolCodec<Object> {
              * 后续的报文只会在下次请求才会发过来
              */
             if(magicianHttpExchange != null){
+                HttpParsingCacheManager.clear(worker);
                 worker.clear();
             }
 
