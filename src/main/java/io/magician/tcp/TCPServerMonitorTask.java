@@ -1,5 +1,6 @@
 package io.magician.tcp;
 
+import io.magician.common.event.EventRunner;
 import io.magician.common.util.ChannelUtil;
 import io.magician.common.util.ReadUtil;
 import io.magician.tcp.attach.AttachUtil;
@@ -7,7 +8,7 @@ import io.magician.tcp.attach.AttachmentModel;
 import io.magician.common.event.EventGroup;
 import io.magician.common.event.EventTask;
 import io.magician.tcp.workers.Worker;
-import io.magician.tcp.workers.task.WorkerTask;
+import io.magician.tcp.workers.task.CodecTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,8 +165,8 @@ public class TCPServerMonitorTask implements EventTask {
         worker.setSelectionKey(selectionKey);
 
         /* 往工作事件组 添加事件 */
-        AttachUtil.getRunner(attachmentModel, workerEventGroup)
-                .addEvent(new WorkerTask(worker, tcpServerConfig));
+        EventRunner eventRunner = AttachUtil.getRunner(attachmentModel, workerEventGroup);
+        eventRunner.addEvent(new CodecTask(worker, eventRunner, tcpServerConfig));
 
         return channel;
     }

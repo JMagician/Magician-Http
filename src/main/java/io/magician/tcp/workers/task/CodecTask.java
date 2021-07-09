@@ -1,5 +1,6 @@
 package io.magician.tcp.workers.task;
 
+import io.magician.common.event.EventRunner;
 import io.magician.tcp.TCPServerConfig;
 import io.magician.common.event.EventTask;
 import io.magician.tcp.workers.Worker;
@@ -8,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 执行请求的任务
+ * 解析报文的任务
  */
-public class WorkerTask implements EventTask {
+public class CodecTask implements EventTask {
 
-    private Logger logger = LoggerFactory.getLogger(WorkerTask.class);
+    private Logger logger = LoggerFactory.getLogger(CodecTask.class);
 
     /**
      * 一个工作者
@@ -26,20 +27,26 @@ public class WorkerTask implements EventTask {
     private TCPServerConfig tcpServerConfig;
 
     /**
+     * 事件执行器
+     */
+    private EventRunner eventRunner;
+
+    /**
      * 创建一个业务任务
      * @param worker
      * @param tcpServerConfig
      */
-    public WorkerTask(Worker worker, TCPServerConfig tcpServerConfig) {
+    public CodecTask(Worker worker, EventRunner eventRunner, TCPServerConfig tcpServerConfig) {
         this.worker = worker;
+        this.eventRunner = eventRunner;
         this.tcpServerConfig = tcpServerConfig;
     }
 
     /**
-     * 轮询执行队列里的任务
+     * 执行解析任务
      */
     @Override
-    public void run() {
+    public void run() throws Exception {
         try{
 
             /* 获取协议解析器 */
@@ -67,10 +74,11 @@ public class WorkerTask implements EventTask {
                 }
             }
 
-            /* 将已经读完整的数据，传入handler执行业务逻辑 */
-            protocolCodec.handler(resultObj, this.tcpServerConfig);
+            /* 往工作事件组添加任务，用来根据已经解析出来的数据 执行业务逻辑 */
+            eventRunner.addEvent(new HandlerTask(resultObj, protocolCodec, worker, this.tcpServerConfig));
+
         } catch (Exception e){
-            logger.error("WorkerThread出现异常", e);
+            logger.error("解析报文出现异常", e);
             if(worker != null){
                 worker.destroy();
             }
