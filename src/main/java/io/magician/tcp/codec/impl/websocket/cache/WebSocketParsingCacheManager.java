@@ -4,6 +4,9 @@ import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketExchange;
 import io.magician.tcp.workers.Worker;
 
+/**
+ * WebSocket解析器附件管理
+ */
 public class WebSocketParsingCacheManager {
 
     /**
