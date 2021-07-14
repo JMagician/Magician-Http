@@ -9,6 +9,9 @@ import io.magician.tcp.handler.WebSocketBaseHandler;
 
 import java.util.Set;
 
+/**
+ * 加载TCP所需资源
+ */
 public class LoadTCPResource {
 
     /**
