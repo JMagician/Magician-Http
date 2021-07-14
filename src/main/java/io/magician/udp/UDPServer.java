@@ -1,6 +1,6 @@
 package io.magician.udp;
 
-import io.magician.udp.handler.MagicianUDPHandler;
+import io.magician.udp.load.LoadUDPResource;
 import io.magician.udp.workers.ReceiveHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +38,13 @@ public class UDPServer {
     }
 
     /**
-     * 读完数据后的联络器
+     * 扫描需要的资源
      *
-     * @param magicianUDPHandler
+     * @param packageName
      * @return
      */
-    public UDPServer handler(MagicianUDPHandler magicianUDPHandler) {
-        UDPServerConfig.setMagicianUDPHandler(magicianUDPHandler);
+    public UDPServer scan(String packageName) throws Exception {
+        LoadUDPResource.loadHandler(packageName);
         return this;
     }
 

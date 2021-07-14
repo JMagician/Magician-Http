@@ -1,9 +1,8 @@
 package io.magician.tcp;
 
 import io.magician.common.event.EventGroup;
-import io.magician.tcp.handler.MagicianHandler;
 import io.magician.tcp.codec.ProtocolCodec;
-import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
+import io.magician.tcp.load.LoadTCPResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,24 +95,12 @@ public class TCPServer {
     }
 
     /**
-     * 设置处理器
-     *
-     * @param magicianHandler
+     * 扫描所需资源
+     * @param packageName
      * @return
      */
-    public TCPServer handler(String path, MagicianHandler magicianHandler) throws Exception {
-        this.tcpServerConfig.addMagicianHandler(path, magicianHandler);
-        return this;
-    }
-
-    /**
-     * 设置处理器
-     *
-     * @param webSocketHandler
-     * @return
-     */
-    public TCPServer webSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
-        this.tcpServerConfig.addWebSocketHandler(path, webSocketHandler);
+    public TCPServer scan(String packageName) throws Exception {
+        LoadTCPResource.loadHandler(packageName, this.tcpServerConfig);
         return this;
     }
 

@@ -1,9 +1,9 @@
 package io.magician.tcp;
 
-import io.magician.tcp.handler.MagicianHandler;
+import io.magician.tcp.handler.TCPBaseHandler;
 import io.magician.tcp.codec.ProtocolCodec;
 import io.magician.tcp.codec.impl.http.HttpProtocolCodec;
-import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
+import io.magician.tcp.handler.WebSocketBaseHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,11 +46,11 @@ public class TCPServerConfig {
     /**
      * 处理器
      */
-    private Map<String, MagicianHandler> magicianHandlerMap = new HashMap<>();
+    private Map<String, TCPBaseHandler> magicianHandlerMap = new HashMap<>();
     /**
      * webSocket处理器
      */
-    private Map<String, WebSocketHandler> webSocketHandlerMap = new HashMap<>();
+    private Map<String, WebSocketBaseHandler> webSocketHandlerMap = new HashMap<>();
 
     @Deprecated
     public long getReadTimeout() {
@@ -94,32 +94,32 @@ public class TCPServerConfig {
         this.sizeMax = sizeMax;
     }
 
-    public Map<String, MagicianHandler> getMagicianHandlerMap() {
+    public Map<String, TCPBaseHandler> getMagicianHandlerMap() {
         return magicianHandlerMap;
     }
 
-    public Map<String, WebSocketHandler> getWebSocketHandlerMap() {
+    public Map<String, WebSocketBaseHandler> getWebSocketHandlerMap() {
         return webSocketHandlerMap;
     }
 
-    public void setMagicianHandlerMap(Map<String, MagicianHandler> magicianHandlerMap) {
+    public void setMagicianHandlerMap(Map<String, TCPBaseHandler> magicianHandlerMap) {
         this.magicianHandlerMap = magicianHandlerMap;
     }
 
-    public void setWebSocketHandlerMap(Map<String, WebSocketHandler> webSocketHandlerMap) {
+    public void setWebSocketHandlerMap(Map<String, WebSocketBaseHandler> webSocketHandlerMap) {
         this.webSocketHandlerMap = webSocketHandlerMap;
     }
 
-    public void addMagicianHandler(String path, MagicianHandler magicianHandler) throws Exception {
+    public void addMagicianHandler(String path, TCPBaseHandler tcpBaseHandler) throws Exception {
         path = path.toUpperCase();
         if(magicianHandlerMap.containsKey(path)
                 || webSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为["+path+"]的handler");
         }
-        this.magicianHandlerMap.put(path, magicianHandler);
+        this.magicianHandlerMap.put(path, tcpBaseHandler);
     }
 
-    public void addWebSocketHandler(String path, WebSocketHandler webSocketHandler) throws Exception {
+    public void addWebSocketHandler(String path, WebSocketBaseHandler webSocketBaseHandler) throws Exception {
         if(path.equals("/")){
             throw new Exception("webSocketHandler不可以监听根路径");
         }
@@ -128,7 +128,7 @@ public class TCPServerConfig {
                 || webSocketHandlerMap.containsKey(path)){
             throw new Exception("已经存在地址为["+path+"]的handler");
         }
-        this.webSocketHandlerMap.put(path, webSocketHandler);
+        this.webSocketHandlerMap.put(path, webSocketBaseHandler);
     }
 
     public long getKeepTimeout() {

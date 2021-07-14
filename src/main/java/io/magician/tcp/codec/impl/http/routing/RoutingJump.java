@@ -5,11 +5,11 @@ import io.magician.tcp.attach.AttachUtil;
 import io.magician.tcp.attach.AttachmentModel;
 import io.magician.tcp.codec.impl.http.parsing.param.ParamParsing;
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
-import io.magician.tcp.handler.MagicianHandler;
+import io.magician.tcp.handler.TCPBaseHandler;
 import io.magician.tcp.codec.impl.http.parsing.HttpMessageWrite;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
 import io.magician.tcp.codec.impl.http.request.MagicianRequest;
-import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
+import io.magician.tcp.handler.WebSocketBaseHandler;
 import io.magician.tcp.codec.impl.websocket.parsing.WebSocketMessageWrite;
 
 /**
@@ -35,19 +35,19 @@ public class RoutingJump {
     /**
      * webSocket处理
      * @param httpExchange
-     * @param webSocketHandler
+     * @param webSocketBaseHandler
      */
-    public void websocket(MagicianHttpExchange httpExchange, WebSocketHandler webSocketHandler) throws Exception {
+    public void websocket(MagicianHttpExchange httpExchange, WebSocketBaseHandler webSocketBaseHandler) throws Exception {
         WebSocketSession socketSession = new WebSocketSession(tcpServerConfig.getWriteTimeout());
         socketSession.setMagicianHttpExchange(httpExchange);
-        socketSession.setWebSocketHandler(webSocketHandler);
+        socketSession.setWebSocketBaseHandler(webSocketBaseHandler);
 
         /* 将session加入附件 */
         AttachmentModel attachmentModel = AttachUtil.getAttachmentModel(httpExchange.getSelectionKey());
         attachmentModel.setWebSocketSession(socketSession);
 
         WebSocketMessageWrite.builder(socketSession).completed();
-        webSocketHandler.onOpen(socketSession);
+        webSocketBaseHandler.onOpen(socketSession);
     }
 
     /**
@@ -55,7 +55,7 @@ public class RoutingJump {
      * @param httpExchange
      * @throws Exception
      */
-    public void http(MagicianHttpExchange httpExchange, MagicianHandler serverHandler) throws Exception {
+    public void http(MagicianHttpExchange httpExchange, TCPBaseHandler serverHandler) throws Exception {
         /* 执行handler */
         MagicianRequest magicianRequest = new MagicianRequest();
         magicianRequest.setMartianHttpExchange(httpExchange);

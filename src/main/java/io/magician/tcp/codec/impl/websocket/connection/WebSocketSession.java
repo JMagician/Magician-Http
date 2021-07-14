@@ -4,7 +4,7 @@ import io.magician.common.constant.CommonConstant;
 import io.magician.common.util.ByteUtil;
 import io.magician.common.util.ChannelUtil;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
-import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
+import io.magician.tcp.handler.WebSocketBaseHandler;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -27,7 +27,7 @@ public class WebSocketSession {
     /**
      * 这个session要用的handler
      */
-    private WebSocketHandler webSocketHandler;
+    private WebSocketBaseHandler webSocketBaseHandler;
 
     private long writeTimeout;
 
@@ -44,12 +44,12 @@ public class WebSocketSession {
         this.magicianHttpExchange = magicianHttpExchange;
     }
 
-    public WebSocketHandler getWebSocketHandler() {
-        return webSocketHandler;
+    public WebSocketBaseHandler getWebSocketBaseHandler() {
+        return webSocketBaseHandler;
     }
 
-    public void setWebSocketHandler(WebSocketHandler webSocketHandler) {
-        this.webSocketHandler = webSocketHandler;
+    public void setWebSocketBaseHandler(WebSocketBaseHandler webSocketBaseHandler) {
+        this.webSocketBaseHandler = webSocketBaseHandler;
     }
 
     public String getId() {

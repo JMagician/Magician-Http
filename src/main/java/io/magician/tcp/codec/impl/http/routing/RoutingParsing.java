@@ -5,10 +5,10 @@ import io.magician.common.util.ChannelUtil;
 import io.magician.tcp.TCPServerConfig;
 import io.magician.tcp.codec.impl.http.model.HttpHeaders;
 import io.magician.tcp.codec.impl.http.request.MagicianHttpExchange;
-import io.magician.tcp.codec.impl.websocket.handler.WebSocketHandler;
+import io.magician.tcp.handler.WebSocketBaseHandler;
 import io.magician.tcp.codec.impl.websocket.constant.WebSocketConstant;
 import io.magician.tcp.codec.impl.http.constant.ReqMethod;
-import io.magician.tcp.handler.MagicianHandler;
+import io.magician.tcp.handler.TCPBaseHandler;
 
 import java.util.Map;
 
@@ -40,8 +40,8 @@ public class RoutingParsing {
      */
     public void parsing(MagicianHttpExchange httpExchange) throws Exception {
 
-        Map<String, MagicianHandler> magicianHandlerMap = tcpServerConfig.getMagicianHandlerMap();
-        Map<String, WebSocketHandler> webSocketHandlerMap = tcpServerConfig.getWebSocketHandlerMap();
+        Map<String, TCPBaseHandler> magicianHandlerMap = tcpServerConfig.getMagicianHandlerMap();
+        Map<String, WebSocketBaseHandler> webSocketHandlerMap = tcpServerConfig.getWebSocketHandlerMap();
 
         String uri = httpExchange.getRequestURI().toString();
         uri = getUri(uri);
@@ -52,18 +52,18 @@ public class RoutingParsing {
 
         /* 判断是否为webSocket */
         if(isWebSocket(httpExchange)){
-            WebSocketHandler webSocketHandler = webSocketHandlerMap.get(uri);
-            if(webSocketHandler != null){
+            WebSocketBaseHandler webSocketBaseHandler = webSocketHandlerMap.get(uri);
+            if(webSocketBaseHandler != null){
                 /* 如果是socket就建立连接 */
-                routingJump.websocket(httpExchange, webSocketHandler);
+                routingJump.websocket(httpExchange, webSocketBaseHandler);
                 return;
             }
             throw new Exception("没有找到对应的websocketHandler，handler:[" + uri + "]");
         }
 
         /* 不是webSocket的话，就当http处理 */
-        MagicianHandler rootServerHandler = magicianHandlerMap.get("/");
-        MagicianHandler rouServerHandler = magicianHandlerMap.get(uri);
+        TCPBaseHandler rootServerHandler = magicianHandlerMap.get("/");
+        TCPBaseHandler rouServerHandler = magicianHandlerMap.get(uri);
         if(rootServerHandler == null && rouServerHandler == null){
             throw new Exception("没有找到对应的httpHandler，handler:[" + uri + "]");
         }

@@ -1,7 +1,7 @@
 package io.magician.udp.workers;
 
 import io.magician.common.util.ReadUtil;
-import io.magician.udp.handler.MagicianUDPHandler;
+import io.magician.udp.handler.UDPBaseHandler;
 import io.magician.udp.UDPServerConfig;
 import io.magician.udp.workers.thread.UDPHandlerThread;
 import org.slf4j.Logger;
@@ -44,8 +44,8 @@ public class ReceiveHandler {
      */
     public static void completed(ByteArrayOutputStream outputStream) {
         try{
-            MagicianUDPHandler magicianUDPHandler = UDPServerConfig.getMagicianUDPHandler();
-            magicianUDPHandler.receive(outputStream);
+            UDPBaseHandler udpBaseHandler = UDPServerConfig.getUdpBaseHandler();
+            udpBaseHandler.receive(outputStream);
         } catch (Exception e){
             logger.error("MagicianUDPHandler出现异常", e);
         }

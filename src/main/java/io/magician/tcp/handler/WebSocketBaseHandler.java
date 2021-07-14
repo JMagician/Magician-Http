@@ -1,11 +1,11 @@
-package io.magician.tcp.codec.impl.websocket.handler;
+package io.magician.tcp.handler;
 
 import io.magician.tcp.codec.impl.websocket.connection.WebSocketSession;
 
 /**
  * socket处理器
  */
-public interface WebSocketHandler {
+public interface WebSocketBaseHandler {
 
     /**
      * 发起连接时调用

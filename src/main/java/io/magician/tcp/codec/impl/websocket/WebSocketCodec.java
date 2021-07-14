@@ -68,7 +68,7 @@ public class WebSocketCodec implements ProtocolCodec<Object> {
 
         if(webSocketExchange.getWebSocketEnum().equals(WebSocketEnum.CLOSE)){
             /* 关闭socket */
-            webSocketSession.getWebSocketHandler().onClose(webSocketSession);
+            webSocketSession.getWebSocketBaseHandler().onClose(webSocketSession);
             MagicianHttpExchange magicianHttpExchange = webSocketSession.getMagicianHttpExchange();
             magicianHttpExchange.getSelectionKey().attach(null);
             ChannelUtil.destroy(magicianHttpExchange);
@@ -78,7 +78,7 @@ public class WebSocketCodec implements ProtocolCodec<Object> {
             if(outputStream == null || outputStream.size() < 1){
                 return;
             }
-            webSocketSession.getWebSocketHandler()
+            webSocketSession.getWebSocketBaseHandler()
                     .onMessage(
                             outputStream.toString(CommonConstant.ENCODING),
                             webSocketSession

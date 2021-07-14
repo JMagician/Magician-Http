@@ -52,7 +52,8 @@ If you want to use it on a lower version of the JDK, you can download the source
 ## 1. create a TCP service (using http decoder by default)
 ### Create Handler
 ```java
-public class DemoHandler implements MagicianHandler<MagicianRequest> {
+@TCPHandler(path="/")
+public class DemoHandler implements TCPBaseHandler<MagicianRequest> {
 
     @Override
     public void request(MagicianRequest magicianRequest) {
@@ -65,9 +66,7 @@ public class DemoHandler implements MagicianHandler<MagicianRequest> {
 
 ### Create TCP Server (Default thread pool configuration)
 ```java
-Magician.createTCPServer()
-                    .handler("/", new DemoHandler())
-                    .bind(8080);
+Magician.createTCPServer().scan("The package name of the handler").bind(8080);
 ```
 
 ### Create TCP Server (custom thread pool configuration)
@@ -79,7 +78,7 @@ EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool()
 workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
 Magician.createTCPServer(ioEventGroup, workerEventGroup)
-                    .handler("/", new DemoHandler())
+                    .scan("The package name of the handler")
                     .bind(8080);
 ```
 
@@ -94,7 +93,7 @@ workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
 TCPServer tcpServer = Magician
                          .createTCPServer(ioEventGroup, workerEventGroup)
-                         .handler("/", new DemoHandler())
+                         .scan("The package name of the handler")
 
 tcpServer.bind(8080);
 tcpServer.bind(8088);
@@ -104,18 +103,16 @@ tcpServer.bind(8088);
 Just add a handler when creating the http service
 ```java
 Magician.createTCPServer()
-                    .handler("/", new DemoHandler())
-                    .webSocketHandler("/websocket", new DemoSocketHandler())
+                    .scan("The package name of the handler")
+                    .webSocketBaseHandler("/websocket", new DemoSocketHandler())
                     .bind(8080);
 ```
 
 ## 3. Create UDP Server
 ```java
 Magician.createUdpServer()
-                .handler(outputStream -> {
-                    // outputStream is of type ByteArrayOutputStream
-                    // It is the data sent by the client, you can parse it by yourself
-                }).bind(8088);
+                .scan("The package name of the handler")
+                .bind(8088);
 ```
 In addition to this way of writing, you can also create a separate handler, add here
 

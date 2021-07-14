@@ -1,6 +1,6 @@
 package io.magician.udp;
 
-import io.magician.udp.handler.MagicianUDPHandler;
+import io.magician.udp.handler.UDPBaseHandler;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -23,7 +23,7 @@ public class UDPServerConfig {
     /**
      * 联络器
      */
-    private static MagicianUDPHandler magicianUDPHandler;
+    private static UDPBaseHandler udpBaseHandler;
 
     public static Executor getThreadPool() {
         if(threadPool == null){
@@ -36,12 +36,12 @@ public class UDPServerConfig {
         UDPServerConfig.threadPool = threadPool;
     }
 
-    public static MagicianUDPHandler getMagicianUDPHandler() {
-        return magicianUDPHandler;
+    public static UDPBaseHandler getUdpBaseHandler() {
+        return udpBaseHandler;
     }
 
-    public static void setMagicianUDPHandler(MagicianUDPHandler magicianUDPHandler) {
-        UDPServerConfig.magicianUDPHandler = magicianUDPHandler;
+    public static void setUdpBaseHandler(UDPBaseHandler udpBaseHandler) {
+        UDPServerConfig.udpBaseHandler = udpBaseHandler;
     }
 
     public static int getReadSize() {

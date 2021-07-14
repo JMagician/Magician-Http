@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * 自定义联络器接口
  */
-public interface MagicianUDPHandler {
+public interface UDPBaseHandler {
 
     /**
      * 接收数据的方法
