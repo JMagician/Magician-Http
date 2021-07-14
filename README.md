@@ -124,6 +124,20 @@ public class DemoSocketHandler implements WebSocketBaseHandler {
 ```
 
 ## 3. Create UDP Server
+
+### Create Handler
+```java
+@UDPHandler
+public class DemoUDPHandler implements UDPBaseHandler {
+
+    @Override
+    public void receive(ByteArrayOutputStream byteArrayOutputStream) {
+
+    }
+}
+```
+
+### Create UDP Server
 ```java
 Magician.createUdpServer()
                 .scan("The package name of the handler")
