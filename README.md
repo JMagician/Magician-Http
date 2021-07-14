@@ -66,7 +66,9 @@ public class DemoHandler implements TCPBaseHandler<MagicianRequest> {
 
 ### Create TCP Server (Default thread pool configuration)
 ```java
-Magician.createTCPServer().scan("The package name of the handler").bind(8080);
+Magician.createTCPServer()
+                    .scan("The package name of the handler")
+                    .bind(8080);
 ```
 
 ### Create TCP Server (custom thread pool configuration)
@@ -91,8 +93,7 @@ EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool()
 // When the current EventRunner has no tasks, it is allowed to steal tasks from other EventRunners
 workerEventGroup.setSteal(EventEnum.STEAL.YES);
 
-TCPServer tcpServer = Magician
-                         .createTCPServer(ioEventGroup, workerEventGroup)
+TCPServer tcpServer = Magician.createTCPServer(ioEventGroup, workerEventGroup)
                          .scan("The package name of the handler")
 
 tcpServer.bind(8080);
@@ -102,10 +103,24 @@ tcpServer.bind(8088);
 ## 2. Create WebSocket
 Just add a handler when creating the http service
 ```java
-Magician.createTCPServer()
-                    .scan("The package name of the handler")
-                    .webSocketBaseHandler("/websocket", new DemoSocketHandler())
-                    .bind(8080);
+@WebSocketHandler(path = "/websocket")
+public class DemoSocketHandler implements WebSocketBaseHandler {
+   
+    @Override
+    public void onOpen(WebSocketSession webSocketSession) {
+     
+    }
+   
+    @Override
+    public void onClose(WebSocketSession webSocketSession) {
+        
+    }
+
+    @Override
+    public void onMessage(String message, WebSocketSession webSocketSession) {
+
+    }
+}
 ```
 
 ## 3. Create UDP Server
