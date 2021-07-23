@@ -149,6 +149,15 @@ In addition to this way of writing, you can also create a separate handler, add 
 ![image](https://user-images.githubusercontent.com/39583360/119000098-6175ce00-b9bd-11eb-9e1d-dcc82c0c135f.png)
 
 [TFB地址](https://www.techempower.com/benchmarks/#section=test&runid=63f03f07-c45e-4772-806e-908fa02c448f&hw=ph&test=json&l=zijbpb-e7&a=2)
+
+
+## More components
+
+- [Magician-Web](https://github.com/yuyenews/Magician-Web)
+- [Magician-JDBC](https://github.com/yuyenews/Magician-JDBC)
+- [Magician-Transaction](https://github.com/yuyenews/Magician-Transaction)
+- [Martian](https://github.com/yuyenews/Martian)
+
 ## Documentation and examples
 - Document: [http://magician-io.com/docs/en/index.html](http://magician-io.com/docs/en/index.html)
 - Example: [https://github.com/yuyenews/Magician-Example](https://github.com/yuyenews/Magician-Example)
