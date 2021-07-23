@@ -143,7 +143,6 @@ Magician.createUdpServer()
                 .scan("The package name of the handler")
                 .bind(8088);
 ```
-In addition to this way of writing, you can also create a separate handler, add here
 
 ## More components
 
