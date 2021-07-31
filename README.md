@@ -1,7 +1,7 @@
 <br/>
 
 <div align=center>
-<img width="260px;" src="http://magician-io.com/img/logo-white.png"/>
+<img width="260px;" src="https://user-images.githubusercontent.com/39583360/127732354-23e3dfbf-de92-450a-890b-2b491de30fd8.png"/>
 </div>
 
 <br/>
