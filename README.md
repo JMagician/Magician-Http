@@ -154,9 +154,7 @@ Use these components to easily develop web projects
 - [Martian](https://github.com/yuyenews/Martian)
 
 ## TFB test results (second round, continuous optimization)
-![image](https://user-images.githubusercontent.com/39583360/119000098-6175ce00-b9bd-11eb-9e1d-dcc82c0c135f.png)
-
-[TFB地址](https://www.techempower.com/benchmarks/#section=test&runid=63f03f07-c45e-4772-806e-908fa02c448f&hw=ph&test=json&l=zijbpb-e7&a=2)
+![image](https://user-images.githubusercontent.com/39583360/127732256-8b7c55a1-227a-4b8b-a0f6-d7e515f12fd3.png)
 
 ## Documentation and examples
 - Document: [http://magician-io.com/docs/en/index.html](http://magician-io.com/docs/en/index.html)
