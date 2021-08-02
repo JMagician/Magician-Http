@@ -159,5 +159,5 @@ Use these components to easily develop web projects
 ![image](https://user-images.githubusercontent.com/39583360/127732256-8b7c55a1-227a-4b8b-a0f6-d7e515f12fd3.png)
 
 ## Documentation and examples
-- Document: [http://magician-io.com/docs/en/index.html](http://magician-io.com/docs/en/index.html)
-- Example: [https://github.com/yuyenews/Magician-Example](https://github.com/yuyenews/Magician-Example)
+[Document](http://magician-io.com/docs/en/index.html) | 
+[Example](https://github.com/yuyenews/Magician-Example)
