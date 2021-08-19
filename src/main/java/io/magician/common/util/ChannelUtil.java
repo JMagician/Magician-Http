@@ -69,20 +69,22 @@ public class ChannelUtil {
      * @throws Exception
      */
     public static boolean write(ByteBuffer byteBuffer, SocketChannel channel, long writeTimeout) throws Exception {
-        long start = System.currentTimeMillis();
-        int count=0;
+        synchronized (channel){
+            long start = System.currentTimeMillis();
+            int count=0;
 
-        while (byteBuffer.hasRemaining()){
-            int result = channel.write(byteBuffer);
+            while (byteBuffer.hasRemaining()){
+                int result = channel.write(byteBuffer);
 
-            /* 如果出现了5次写入失败 并且已经超过了写入超时时间，直接掐断 */
-            if(result < 1){
-                count++;
-                if(count > 5 && (System.currentTimeMillis() - start) > writeTimeout){
-                    return false;
+                /* 如果出现了5次写入失败 并且已经超过了写入超时时间，直接掐断 */
+                if(result < 1){
+                    count++;
+                    if(count > 5 && (System.currentTimeMillis() - start) > writeTimeout){
+                        return false;
+                    }
                 }
             }
+            return true;
         }
-        return true;
     }
 }
