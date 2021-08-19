@@ -122,7 +122,7 @@ public class TCPServerMonitorTask implements EventTask {
         if(!channel.isOpen()){
             ChannelUtil.cancel(selectionKey);
             ChannelUtil.close(channel);
-            return channel;
+            return null;
         }
 
         /* 创建一个临时容器，将当前channel里的数据都暂存在里面，一起丢给worker */
