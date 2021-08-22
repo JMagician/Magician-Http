@@ -160,4 +160,5 @@ Use these components to easily develop web projects
 
 ## Documentation and examples
 [Document](http://magician-io.com/docs/en/index.html) | 
-[Example](https://github.com/yuyenews/Magician-Example)
+[Example](https://github.com/yuyenews/Magician-Example) | 
+[Kotlin-Explme](https://github.com/yuyenews/Magician-Kolin-Explme)
