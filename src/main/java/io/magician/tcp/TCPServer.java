@@ -2,12 +2,15 @@ package io.magician.tcp;
 
 import io.magician.common.event.EventGroup;
 import io.magician.tcp.codec.ProtocolCodec;
+import io.magician.tcp.handler.TCPBaseHandler;
+import io.magician.tcp.handler.WebSocketBaseHandler;
 import io.magician.tcp.load.LoadTCPResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.*;
+import java.util.Map;
 
 /**
  * tcp服务创建
@@ -74,9 +77,18 @@ public class TCPServer {
      * @param tcpServerConfig
      * @return
      */
-    public TCPServer config(TCPServerConfig tcpServerConfig) {
-        tcpServerConfig.setMagicianHandlerMap(this.tcpServerConfig.getMagicianHandlerMap());
-        tcpServerConfig.setWebSocketHandlerMap(this.tcpServerConfig.getWebSocketHandlerMap());
+    public TCPServer config(TCPServerConfig tcpServerConfig) throws Exception {
+        Map<String, TCPBaseHandler> magicianHandlerMap = this.tcpServerConfig.getMagicianHandlerMap();
+        Map<String, WebSocketBaseHandler> webSocketHandlerMap = this.tcpServerConfig.getWebSocketHandlerMap();
+
+        for (Map.Entry<String, TCPBaseHandler> entry : magicianHandlerMap.entrySet()) {
+            tcpServerConfig.addMagicianHandler(entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<String, WebSocketBaseHandler> entry : webSocketHandlerMap.entrySet()) {
+            tcpServerConfig.addWebSocketHandler(entry.getKey(), entry.getValue());
+        }
+
         tcpServerConfig.setProtocolCodec(this.tcpServerConfig.getProtocolCodec());
 
         this.tcpServerConfig = tcpServerConfig;
