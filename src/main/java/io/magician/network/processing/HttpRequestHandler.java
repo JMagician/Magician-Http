@@ -1,6 +1,7 @@
 package io.magician.network.processing;
 
 import io.magician.application.distribution.Distribution;
+import io.magician.common.cache.MagicianHandlerCache;
 import io.magician.common.constant.CommonConstant;
 import io.magician.common.constant.HttpConstant;
 import io.magician.common.constant.WebSocketConstant;
@@ -25,19 +26,6 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception {
         if (obj instanceof FullHttpRequest) {
             FullHttpRequest fullHttpRequest = (FullHttpRequest)obj;
-
-            if (isWebSocket(fullHttpRequest)) {
-                WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(fullHttpRequest), null, true, Integer.MAX_VALUE);
-                WebSocketServerHandshaker webSocketServerHandshaker = wsFactory.newHandshaker(fullHttpRequest);
-                if (webSocketServerHandshaker == null) {
-                    WebSocketServerHandshakerFactory
-                            .sendUnsupportedVersionResponse(channelHandlerContext.channel());
-                } else {
-                    webSocketServerHandshaker.handshake(channelHandlerContext.channel(), fullHttpRequest);
-                }
-
-                return;
-            }
 
             HttpExchange exchange = new HttpExchange();
             exchange.setUrl(fullHttpRequest.uri());
@@ -134,35 +122,5 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
             return false;
         }
         return contentType.startsWith(HttpConstant.CONTENT_TYPE_JSON) || contentType.equals(HttpConstant.CONTENT_TYPE_JSON);
-    }
-
-    /**
-     * 是否是webSocket
-     * @param fullHttpRequest
-     * @return
-     */
-    private static boolean isWebSocket(FullHttpRequest fullHttpRequest){
-        if(!HttpMethod.GET.equals(fullHttpRequest.method())){
-            return false;
-        }
-
-        HttpHeaders httpHeaders = fullHttpRequest.headers();
-        String upgrade = httpHeaders.get(WebSocketConstant.UPGRADE);
-        String connection = httpHeaders.get(WebSocketConstant.CONNECTION);
-        String swKey = httpHeaders.get(WebSocketConstant.SEC_WEBSOCKET_KEY);
-        if(upgrade == null || connection == null || swKey == null){
-            return false;
-        }
-
-        if(!WebSocketConstant.UPGRADE.equals(connection)){
-            return false;
-        }
-
-        return true;
-    }
-
-    private static String getWebSocketLocation(FullHttpRequest req) {
-        String location = req.headers().get(HttpHeaderNames.HOST) + req.uri();
-        return "ws://" + location;
     }
 }

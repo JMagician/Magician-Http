@@ -3,9 +3,14 @@ package io.magician.application.distribution;
 import io.magician.application.request.MagicianRequest;
 import io.magician.application.request.MagicianResponse;
 import io.magician.common.cache.MagicianHandlerCache;
+import io.magician.common.constant.WebSocketConstant;
 import io.magician.network.handler.HttpBaseHandler;
 import io.magician.network.processing.HttpExchange;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.websocketx.*;
 
 /**
@@ -26,6 +31,23 @@ public class Distribution {
             response.setHttpExchange(exchange);
 
             String path = getPath(request);
+
+
+            if (isWebSocket(request)) {
+                WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(getWebSocketLocation(request.getHttpExchange().getFullHttpRequest()), null, true, Integer.MAX_VALUE);
+                WebSocketServerHandshaker webSocketServerHandshaker = wsFactory.newHandshaker(request.getHttpExchange().getFullHttpRequest());
+                if (webSocketServerHandshaker == null) {
+                    WebSocketServerHandshakerFactory
+                            .sendUnsupportedVersionResponse(request.getHttpExchange().getChannelHandlerContext().channel());
+                } else {
+                    webSocketServerHandshaker.handshake(request.getHttpExchange().getChannelHandlerContext().channel(), request.getHttpExchange().getFullHttpRequest());
+                }
+                String channelId = request.getHttpExchange().getChannelHandlerContext().channel().id().asLongText();
+                MagicianHandlerCache.addHandshakerMap(channelId, webSocketServerHandshaker);
+                MagicianHandlerCache.addWebSocketBaseHandlerMap(channelId, MagicianHandlerCache.getWebSocketHandler(getPath(request)));
+                return;
+            }
+
 
             HttpBaseHandler httpBaseHandler = MagicianHandlerCache.getHttpHandler(path);
             if (httpBaseHandler != null) {
@@ -61,12 +83,46 @@ public class Distribution {
     }
 
     /**
+     * 是否是webSocket
+     * @param request
+     * @return
+     */
+    private static boolean isWebSocket(MagicianRequest request){
+        if(!HttpMethod.GET.equals(request.getMethod())){
+            return false;
+        }
+
+        HttpHeaders httpHeaders = request.getRequestHeaders();
+        String upgrade = httpHeaders.get(WebSocketConstant.UPGRADE);
+        String connection = httpHeaders.get(WebSocketConstant.CONNECTION);
+        String swKey = httpHeaders.get(WebSocketConstant.SEC_WEBSOCKET_KEY);
+        if(upgrade == null || connection == null || swKey == null){
+            return false;
+        }
+
+        if(!WebSocketConstant.UPGRADE.equals(connection)){
+            return false;
+        }
+
+        return true;
+    }
+
+    private static String getWebSocketLocation(FullHttpRequest req) {
+        String location = req.headers().get(HttpHeaderNames.HOST) + req.uri();
+        return "ws://" + location;
+    }
+
+    /**
      * 处理webSocket
      * @return
      */
     public static void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
+        String channelId = ctx.channel().id().asLongText();
+
+        // todo 搞一个session
         if (frame instanceof CloseWebSocketFrame) {
-//            webSocketServerHandshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+            WebSocketServerHandshaker webSocketServerHandshaker = MagicianHandlerCache.getHandshakerMap(channelId);
+            webSocketServerHandshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
         }
         if (frame instanceof PingWebSocketFrame) {
