@@ -14,4 +14,7 @@ public class CommonConstant {
      * 浏览器图标名称
      */
     public static final String FAVICON_ICO = "/FAVICON.ICO";
+
+    public static final String ERROR_MSG = "{\"code\":{code}, \"msg\":\"{msg}\"}";
+
 }
