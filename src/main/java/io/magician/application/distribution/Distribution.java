@@ -122,7 +122,7 @@ public class Distribution {
 
         WebSocketBaseHandler webSocketBaseHandler = MagicianHandlerCache.getWebSocketBaseHandlerrMap(channelId);
 
-        // todo 搞一个session
+        // todo 搞一个websocketSession
         if (frame instanceof CloseWebSocketFrame) {
             webSocketBaseHandler.onClose();
 
