@@ -43,7 +43,7 @@ If you want to use it on a lower version of the JDK, you can download the source
 <dependency>
     <groupId>com.github.yuyenews</groupId>
     <artifactId>Magician</artifactId>
-    <version>last version</version>
+    <version>2.0</version>
 </dependency>
 
 <!-- This is the log package, which supports any package that can be bridged with slf4j -->
