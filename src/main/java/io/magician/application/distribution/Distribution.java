@@ -5,6 +5,7 @@ import io.magician.application.request.MagicianResponse;
 import io.magician.common.cache.MagicianHandlerCache;
 import io.magician.common.constant.WebSocketConstant;
 import io.magician.network.handler.HttpBaseHandler;
+import io.magician.network.handler.WebSocketBaseHandler;
 import io.magician.network.processing.HttpExchange;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -119,8 +120,12 @@ public class Distribution {
     public static void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
         String channelId = ctx.channel().id().asLongText();
 
+        WebSocketBaseHandler webSocketBaseHandler = MagicianHandlerCache.getWebSocketBaseHandlerrMap(channelId);
+
         // todo 搞一个session
         if (frame instanceof CloseWebSocketFrame) {
+            webSocketBaseHandler.onClose();
+
             WebSocketServerHandshaker webSocketServerHandshaker = MagicianHandlerCache.getHandshakerMap(channelId);
             webSocketServerHandshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
@@ -130,8 +135,7 @@ public class Distribution {
             return;
         }
         if (frame instanceof TextWebSocketFrame) {
-            System.out.println(ctx.name() + "\t" + ((TextWebSocketFrame) frame).text());
-
+            webSocketBaseHandler.onMessage(((TextWebSocketFrame) frame).text());
             return;
         }
         if (frame instanceof BinaryWebSocketFrame) {
