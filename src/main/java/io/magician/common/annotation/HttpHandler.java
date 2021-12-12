@@ -5,5 +5,11 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface UDPHandler {
+public @interface HttpHandler {
+
+    /**
+     * 路径
+     * @return
+     */
+    String path();
 }

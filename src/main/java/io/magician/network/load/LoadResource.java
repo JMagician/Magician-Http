@@ -1,6 +1,6 @@
 package io.magician.network.load;
 
-import io.magician.common.annotation.TCPHandler;
+import io.magician.common.annotation.HttpHandler;
 import io.magician.common.annotation.WebSocketHandler;
 import io.magician.common.cache.MagicianHandlerCache;
 import io.magician.common.util.ScanUtil;
@@ -25,7 +25,7 @@ public class LoadResource {
 
         for(String className : packageSet){
             Class<?> cls = Class.forName(className);
-            TCPHandler tcpHandler = cls.getAnnotation(TCPHandler.class);
+            HttpHandler tcpHandler = cls.getAnnotation(HttpHandler.class);
             WebSocketHandler webSocketHandler = cls.getAnnotation(WebSocketHandler.class);
             if(tcpHandler != null && webSocketHandler != null){
                 throw new Exception("handler只能是TCP或者WebSocket，不可以两个都配，类名:" + className);

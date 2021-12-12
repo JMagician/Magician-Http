@@ -17,13 +17,18 @@
 <br/>
 
 <div align=center>
-An asynchronous non-blocking network protocol analysis package
+master分支处于更新中状态，现在的最新源码在 NIO分支上，需要的话可以去NIO上拉取
+master属于2.0版本的开发中代码，目前已完成90%，还剩websocket没完成
+2.0 将底层全部抛弃了，全部转向了netty，尽请期待哦
+
+The master branch is in an updated state, the latest source code is now on the NIO branch, you can pull it from NIO if you need it
+master is part of the 2.0 version of the code under development, and is currently 90% complete, with the websocket still to be completed.
+2.0 has dumped all the underlying layers and moved to netty, so look forward to that!
 </div>
 
 
 ## Project Description
 
-Magician is an asynchronous non-blocking network protocol analysis package, supports TCP, UDP protocol, built-in Http, WebSocket decoder
 
 ## Run environment
 
@@ -49,14 +54,14 @@ If you want to use it on a lower version of the JDK, you can download the source
 </dependency>
 ```
 
-## 1. create a TCP service (using http decoder by default)
+## 1. create HTTP service
 ### Create Handler
 ```java
 @TCPHandler(path="/")
-public class DemoHandler implements TCPBaseHandler<MagicianRequest> {
+public class DemoHandler implements TCPBaseHandler {
 
     @Override
-    public void request(MagicianRequest magicianRequest) {
+    public void request(MagicianRequest magicianRequest, MagicianResponse response) {
         // response data
         magicianRequest.getResponse()
                 .sendJson(200, "{'status':'ok'}");
@@ -64,40 +69,11 @@ public class DemoHandler implements TCPBaseHandler<MagicianRequest> {
 }
 ```
 
-### Create TCP Server (Default thread pool configuration)
+### Create HTTP Server (Default thread pool configuration)
 ```java
-Magician.createTCPServer()
+Magician.createHttp()
                     .scan("The package name of the handler")
                     .bind(8080);
-```
-
-### Create TCP Server (custom thread pool configuration)
-```java
-EventGroup ioEventGroup = new EventGroup(1, Executors.newCachedThreadPool());
-EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool());
-
-// When the current EventRunner has no tasks, it is allowed to steal tasks from other EventRunners
-workerEventGroup.setSteal(EventEnum.STEAL.YES);
-
-Magician.createTCPServer(ioEventGroup, workerEventGroup)
-                    .scan("The package name of the handler")
-                    .bind(8080);
-```
-
-### Create TCP Server (Listen on multiple ports)
-```java
-// Listen to n ports, write n as the first parameter of ioEventGroup
-EventGroup ioEventGroup = new EventGroup(2, Executors.newCachedThreadPool());
-EventGroup workerEventGroup = new EventGroup(10, Executors.newCachedThreadPool());
-
-// When the current EventRunner has no tasks, it is allowed to steal tasks from other EventRunners
-workerEventGroup.setSteal(EventEnum.STEAL.YES);
-
-TCPServer tcpServer = Magician.createTCPServer(ioEventGroup, workerEventGroup)
-                         .scan("The package name of the handler")
-
-tcpServer.bind(8080);
-tcpServer.bind(8088);
 ```
 
 ## 2. Create WebSocket
@@ -121,27 +97,6 @@ public class DemoSocketHandler implements WebSocketBaseHandler {
 
     }
 }
-```
-
-## 3. Create UDP Server
-
-### Create Handler
-```java
-@UDPHandler
-public class DemoUDPHandler implements UDPBaseHandler {
-
-    @Override
-    public void receive(ByteArrayOutputStream byteArrayOutputStream) {
-
-    }
-}
-```
-
-### Create UDP Server
-```java
-Magician.createUdpServer()
-                .scan("The package name of the handler")
-                .bind(8088);
 ```
 
 ## More components
