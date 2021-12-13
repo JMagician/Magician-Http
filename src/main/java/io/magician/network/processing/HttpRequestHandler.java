@@ -1,11 +1,10 @@
 package io.magician.network.processing;
 
 import io.magician.application.distribution.Distribution;
-import io.magician.common.cache.MagicianHandlerCache;
 import io.magician.common.constant.CommonConstant;
 import io.magician.common.constant.HttpConstant;
-import io.magician.common.constant.WebSocketConstant;
 import io.magician.network.processing.enums.ParamType;
+import io.magician.network.processing.exchange.HttpExchange;
 import io.magician.network.processing.model.ParamModel;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,18 +12,20 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.multipart.*;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 处理请求
+ */
 public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception {
         if (obj instanceof FullHttpRequest) {
+            // 处理http请求
             FullHttpRequest fullHttpRequest = (FullHttpRequest)obj;
 
             HttpExchange exchange = new HttpExchange();
@@ -38,16 +39,16 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 
             Distribution.execute(exchange);
         } else if (obj instanceof WebSocketFrame) {
+            // 处理websocket消息
             WebSocketFrame webSocketFrame = (WebSocketFrame)obj;
             Distribution.handleWebSocketFrame(channelHandlerContext, webSocketFrame);
         }
-
     }
 
     /**
      * 解析请求参数
-     * @return 包含所有请求参数的键值对, 如果没有参数, 则返回空Map
      *
+     * @return 包含所有请求参数的键值对, 如果没有参数, 则返回空Map
      */
     public HttpExchange parse(FullHttpRequest fullReq, HttpExchange exchange) throws Exception {
         HttpMethod method = fullReq.method();

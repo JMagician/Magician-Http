@@ -2,7 +2,7 @@ package io.magician.application.request;
 
 import io.magician.common.constant.CommonConstant;
 import io.magician.common.constant.HttpConstant;
-import io.magician.network.processing.HttpExchange;
+import io.magician.network.processing.exchange.HttpExchange;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;

@@ -25,14 +25,14 @@ public class LoadResource {
 
         for(String className : packageSet){
             Class<?> cls = Class.forName(className);
-            HttpHandler tcpHandler = cls.getAnnotation(HttpHandler.class);
+            HttpHandler httpHandler = cls.getAnnotation(HttpHandler.class);
             WebSocketHandler webSocketHandler = cls.getAnnotation(WebSocketHandler.class);
-            if(tcpHandler != null && webSocketHandler != null){
-                throw new Exception("handler只能是TCP或者WebSocket，不可以两个都配，类名:" + className);
+            if(httpHandler != null && webSocketHandler != null){
+                throw new Exception("handler只能是HTTP或者WebSocket，不可以两个都配，类名:" + className);
             }
 
-            if(tcpHandler != null){
-                MagicianHandlerCache.addHttpHandler(tcpHandler.path(), (HttpBaseHandler) cls.getDeclaredConstructor().newInstance());
+            if(httpHandler != null){
+                MagicianHandlerCache.addHttpHandler(httpHandler.path(), (HttpBaseHandler) cls.getDeclaredConstructor().newInstance());
             }
 
             if(webSocketHandler != null){

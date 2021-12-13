@@ -5,10 +5,19 @@ import io.magician.network.processing.enums.ParamType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 参数实体
+ */
 public class ParamModel {
 
+    /**
+     * 参数类型，文件，其他
+     */
     private ParamType type;
 
+    /**
+     * 参数值集合
+     */
     private List value;
 
     public ParamType getType() {

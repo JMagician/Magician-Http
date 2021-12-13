@@ -1,7 +1,7 @@
 package io.magician.application.request;
 
 import io.magician.common.constant.HttpConstant;
-import io.magician.network.processing.HttpExchange;
+import io.magician.network.processing.exchange.HttpExchange;
 import io.magician.network.processing.enums.ParamType;
 import io.magician.network.processing.model.ParamModel;
 import io.netty.handler.codec.http.HttpHeaders;
