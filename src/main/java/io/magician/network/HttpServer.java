@@ -9,10 +9,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
 public class HttpServer {
+
+    private Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
     /**
      * 扫描handler
@@ -40,7 +44,7 @@ public class HttpServer {
                 .childHandler(new HttpServerInitializer());
 
         ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
-        System.out.println("启动HTTP服务成功, port: [" + port + "]");
+        logger.info("启动HTTP服务成功, port: [{}]", port);
         f.channel().closeFuture().sync();
     }
 }

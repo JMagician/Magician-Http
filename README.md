@@ -1,44 +1,30 @@
-<br/>
+<h1> 
+    <a href="https://magician-io.com">Magician</a> ·
+    <img src="https://img.shields.io/badge/licenes-MIT-brightgreen.svg"/>
+    <img src="https://img.shields.io/badge/jdk-11+-brightgreen.svg"/>
+    <img src="https://img.shields.io/badge/maven-3.5.4+-brightgreen.svg"/>
+    <img src="https://img.shields.io/badge/release-master-brightgreen.svg"/>
+</h1>
 
-<div align=center>
-<img width="260px;" src="https://user-images.githubusercontent.com/39583360/127732354-23e3dfbf-de92-450a-890b-2b491de30fd8.png"/>
-</div>
-
-<br/>
-
-<div align=center>
-
-<img src="https://img.shields.io/badge/licenes-MIT-brightgreen.svg"/>
-<img src="https://img.shields.io/badge/jdk-11+-brightgreen.svg"/>
-<img src="https://img.shields.io/badge/maven-3.5.4+-brightgreen.svg"/>
-<img src="https://img.shields.io/badge/release-master-brightgreen.svg"/>
-
-</div>
-<br/>
-
-<div align=center>
-</div>
-
-- master分支处于更新中状态，现在的最新源码在 NIO分支上，需要的话可以去NIO上拉取
-- master属于2.0版本的开发中代码，目前已完成90%，还剩websocket没完成
-- 2.0 将底层全部抛弃了，全部转向了netty，尽请期待哦
-
-- The master branch is in an updated state, the latest source code is now on the NIO branch, you can pull it from NIO if you need it
-- master is part of the 2.0 version of the code under development, and is currently 90% complete, with the websocket still to be completed.
-- 2.0 has dumped all the underlying layers and moved to netty, so look forward to that!
-
-## Project Description
+Magician 是一个基于Netty开发的小型 HTTP服务包，可以非常方便的启动一个http服务，同时也支持WebSocket，注解式Handler配置
 
 
-## Run environment
+## 运行环境
 
 JDK11+
 
 ---
 
-If you want to use it on a lower version of the JDK, you can download the source code of this repository and compile it yourself.
+中央库的Jar包 最低支持JDK11，但是源码最低可以支持jdk8，如果您需要在8上运行，可以下载最新的tag，自行编译
 
-## Import dependencies
+## 文档
+
+这个版本的文档还没出，尽请期待，不过可以跟着示例玩一下试试
+[https://magician-io.com](https://magician-io.com)
+
+## 示例
+
+### 导入依赖
 ```xml
 <dependency>
     <groupId>com.github.yuyenews</groupId>
@@ -46,7 +32,7 @@ If you want to use it on a lower version of the JDK, you can download the source
     <version>2.0</version>
 </dependency>
 
-<!-- This is the log package, which supports any package that can be bridged with slf4j -->
+<!-- 这是日志包，必须有，不然控制台看不到东西，支持任意可以看slf4j桥接的日志包 -->
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-jdk14</artifactId>
@@ -54,11 +40,13 @@ If you want to use it on a lower version of the JDK, you can download the source
 </dependency>
 ```
 
-## 1. create HTTP service
-### Create Handler
+### 创建http服务
+
+创建一个 Handler
+
 ```java
-@TCPHandler(path="/")
-public class DemoHandler implements TCPBaseHandler {
+@HttpHandler(path="/")
+public class DemoHandler implements HttpBaseHandler {
 
     @Override
     public void request(MagicianRequest magicianRequest, MagicianResponse response) {
@@ -69,14 +57,15 @@ public class DemoHandler implements TCPBaseHandler {
 }
 ```
 
-### Create HTTP Server (Default thread pool configuration)
+创建http服务
+
 ```java
 Magician.createHttp()
-                    .scan("The package name of the handler")
+                    .scan("handler所在的包名")
                     .bind(8080);
 ```
 
-## 2. Create WebSocket
+### 创建 WebSocket
 Just add a handler when creating the http service
 ```java
 @WebSocketHandler(path = "/websocket")
@@ -99,21 +88,9 @@ public class DemoSocketHandler implements WebSocketBaseHandler {
 }
 ```
 
-## More components
+## 更多组件
 
-Use these components to easily develop web projects
-
-![image](https://user-images.githubusercontent.com/39583360/127818314-350cb46b-4103-4b09-9722-dad38633cddd.png)
+可以利用这些组件方便的开发web项目
 
 [Magician-Web](https://github.com/yuyenews/Magician-Web) | 
-[Magician-JDBC](https://github.com/yuyenews/Magician-JDBC) | 
-[Magician-Transaction](https://github.com/yuyenews/Magician-Transaction) | 
-[Martian](https://github.com/yuyenews/Martian)
-
-## TFB test results (second round, continuous optimization)
-![image](https://user-images.githubusercontent.com/39583360/127732256-8b7c55a1-227a-4b8b-a0f6-d7e515f12fd3.png)
-
-## Documentation and examples
-[Document](http://magician-io.com/docs/en/index.html) | 
-[Example](https://github.com/yuyenews/Magician-Example) | 
-[Kotlin-Example](https://github.com/yuyenews/Magician-Kotlin-Example)
+[Magician-JDBC](https://github.com/yuyenews/Magician-JDBC)
