@@ -66,6 +66,10 @@ public class MagicianRequest {
         }
     }
 
+    /**
+     * 获取所有参数
+     * @return
+     */
     public Map<String, List> getMagicianParams() {
         Map<String, ParamModel> paramMap = httpExchange.getParam();
         if (paramMap == null) {
@@ -83,17 +87,51 @@ public class MagicianRequest {
         return params;
     }
 
+    /**
+     * 获取json传参
+     * @return
+     */
     public String getJsonParam() {
         return httpExchange.getJsonParam();
     }
 
+    /**
+     * 获取所有文件
+     * @return
+     */
     public Map<String, List<MixedFileUpload>> getFileMap() {
         return files;
     }
 
+    /**
+     * 按请求name获取对应的所有文件
+     * @param name
+     * @return
+     */
     public List<MixedFileUpload> getFiles(String name){
+        if(files == null){
+            return null;
+        }
         return files.get(name);
     }
+
+    /**
+     * 按请求name获取对应的一个文件
+     * @param name
+     * @return
+     */
+    public MixedFileUpload getFile(String name){
+        if(files == null){
+            return null;
+        }
+
+        List<MixedFileUpload> mixedFileUploadList = files.get(name);
+        if(mixedFileUploadList == null){
+            return null;
+        }
+        return mixedFileUploadList.get(0);
+    }
+
 
     /**
      * 获取一个参数
