@@ -89,7 +89,8 @@ public class Distribution {
 
             response.sendErrorMsg(404, "没有此handler:[" + path + "]");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("处理请求出现异常", e);
+            exchange.getChannelHandlerContext().close();
         }
     }
 
@@ -129,7 +130,7 @@ public class Distribution {
             return false;
         }
 
-        if(connection.indexOf(WebSocketConstant.UPGRADE) == -1){
+        if(connection.toUpperCase().indexOf(WebSocketConstant.UPGRADE.toUpperCase()) == -1){
             return false;
         }
 
