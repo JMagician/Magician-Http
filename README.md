@@ -6,32 +6,33 @@
     <img src="https://img.shields.io/badge/release-master-brightgreen.svg"/>
 </h1>
 
-Magician 是一个基于Netty开发的小型 HTTP服务包，可以非常方便的启动一个http服务，同时也支持WebSocket，注解式Handler配置
+Magician is a small HTTP service package based on Netty that makes it very easy to start an http service, and also supports WebSocket, using annotated configuration Handler.
 
+If you want to develop an http service with netty but find it cumbersome, then Magician may help you.
 
-## 运行环境
+## Running environment
 
 JDK11+
 
 ---
 
-中央库的Jar包 最低支持JDK11，但是源码最低可以支持jdk8，如果您需要在8上运行，可以下载最新的tag，自行编译
+The Jar package for the maven central library supports at least JDK11, but the source code can support at least jdk8, if you need to run on 8, you can download the latest tag and compile it yourself
 
-## 文档
+## Documentation
 
 [https://magician-io.com](https://magician-io.com)
 
-## 示例
+## Example
 
-### 导入依赖
+### Importing dependencies
 ```xml
 <dependency>
     <groupId>com.github.yuyenews</groupId>
     <artifactId>Magician</artifactId>
-    <version>2.0</version>
+    <version>2.0.1</version>
 </dependency>
 
-<!-- 这是日志包，必须有，不然控制台看不到东西，支持任意可以看slf4j桥接的日志包 -->
+<!-- This is the logging package, you must have it or the console will not see anything, any logging package that can bridge with slf4j is supported -->
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-jdk14</artifactId>
@@ -39,9 +40,9 @@ JDK11+
 </dependency>
 ```
 
-### 创建http服务
+### Creating an http service
 
-创建一个 Handler
+Create a Handler
 
 ```java
 @HttpHandler(path="/")
@@ -56,7 +57,7 @@ public class DemoHandler implements HttpBaseHandler {
 }
 ```
 
-创建http服务
+Start the http service
 
 ```java
 Magician.createHttp()
@@ -64,8 +65,8 @@ Magician.createHttp()
                     .bind(8080);
 ```
 
-### 创建 WebSocket
-Just add a handler when creating the http service
+### Creating WebSocket
+
 ```java
 @WebSocketHandler(path = "/websocket")
 public class DemoSocketHandler implements WebSocketBaseHandler {
@@ -87,9 +88,9 @@ public class DemoSocketHandler implements WebSocketBaseHandler {
 }
 ```
 
-## 更多组件
+## More components
 
-可以利用这些组件方便的开发web项目
+These components can be used to develop web projects easily
 
 [Magician-Web](https://github.com/yuyenews/Magician-Web) | 
 [Magician-JDBC](https://github.com/yuyenews/Magician-JDBC)
