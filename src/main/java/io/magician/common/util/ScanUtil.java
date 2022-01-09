@@ -30,7 +30,7 @@ public class ScanUtil {
         String[] packages = packageName.split(",");
         packageSet = new HashSet<>();
         for(String packageItem : packages){
-            packageSet.add(packageItem);
+            packageSet.add(packageItem.trim());
         }
 
         return scanClassList(packageSet);
