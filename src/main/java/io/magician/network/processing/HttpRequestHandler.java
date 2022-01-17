@@ -101,7 +101,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
                     if (paramModel == null) {
                         paramModel = new ParamModel();
                     }
-                    paramModel.setType(ParamType.FILE);
+                    paramModel.setType(ParamType.OTHER);
                     paramModel.setValueItem(data.getValue());
 
                     paramMap.put(data.getName(), paramModel);
