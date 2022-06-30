@@ -9,6 +9,8 @@ import io.magician.network.handler.HttpBaseHandler;
 import io.magician.network.handler.WebSocketBaseHandler;
 import io.magician.network.processing.exchange.HttpExchange;
 import io.magician.network.processing.exchange.WebSocketExchange;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -17,6 +19,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.websocketx.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * 分发器
@@ -167,13 +170,17 @@ public class Distribution {
             ctx.write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
-        if (frame instanceof TextWebSocketFrame) {
-            webSocketExchange.getWebSocketBaseHandler().onMessage(webSocketExchange.getWebSocketSession(), ((TextWebSocketFrame) frame).text());
+        if (frame instanceof TextWebSocketFrame || frame instanceof BinaryWebSocketFrame) {
+            ByteBuf byteBuf = frame.content();
+            byte[] bytes = null;
+            if(byteBuf != null){
+                bytes = ByteBufUtil.getBytes(byteBuf);
+            }
+            if(bytes == null){
+                bytes = new byte[0];
+            }
+            webSocketExchange.getWebSocketBaseHandler().onMessage(webSocketExchange.getWebSocketSession(), bytes);
             return;
-        }
-        if (frame instanceof BinaryWebSocketFrame) {
-//            ctx.write(frame.retain());
-            logger.warn("WebSocket暂时不支持二进制消息");
         }
     }
 }

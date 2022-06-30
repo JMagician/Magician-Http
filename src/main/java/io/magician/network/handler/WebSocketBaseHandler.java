@@ -21,6 +21,6 @@ public interface WebSocketBaseHandler {
      * 收到消息时调用
      * @param message
      */
-    void onMessage(WebSocketSession webSocketSession, String message);
+    void onMessage(WebSocketSession webSocketSession, byte[] message);
 
 }

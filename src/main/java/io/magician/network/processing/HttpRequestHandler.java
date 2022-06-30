@@ -122,6 +122,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
         if(contentType == null){
             return false;
         }
-        return contentType.startsWith(HttpConstant.CONTENT_TYPE_JSON) || contentType.equals(HttpConstant.CONTENT_TYPE_JSON);
+        contentType = contentType.toLowerCase();
+
+        return contentType.startsWith(HttpConstant.CONTENT_TYPE_JSON.toLowerCase()) || contentType.equals(HttpConstant.CONTENT_TYPE_JSON.toLowerCase());
     }
 }
