@@ -82,7 +82,7 @@ public class DemoSocketHandler implements WebSocketBaseHandler {
     }
 
     @Override
-    public void onMessage(String message, WebSocketSession webSocketSession) {
+    public void onMessage(WebSocketSession webSocketSession, byte[] message) {
 
     }
 }
