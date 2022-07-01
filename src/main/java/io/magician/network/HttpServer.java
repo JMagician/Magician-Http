@@ -13,9 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class HttpServer {
 
@@ -27,8 +24,8 @@ public class HttpServer {
     private MagicianConfig magicianConfig = new MagicianConfig();
 
     private ServerBootstrap bootstrap = null;
-
-    private ThreadPoolExecutor threadPoolExecutor = null;
+    EventLoopGroup boss = null;
+    EventLoopGroup work = null;
 
     private int portCount = 0;
 
@@ -60,8 +57,8 @@ public class HttpServer {
      */
     private void createBootstrap() {
         bootstrap = new ServerBootstrap();
-        EventLoopGroup boss = new NioEventLoopGroup(magicianConfig.getBossThreads());
-        EventLoopGroup work = new NioEventLoopGroup(magicianConfig.getWorkThreads());
+        boss = new NioEventLoopGroup(magicianConfig.getBossThreads());
+        work = new NioEventLoopGroup(magicianConfig.getWorkThreads());
         bootstrap.group(boss, work)
                 .handler(new LoggingHandler(magicianConfig.getNettyLogLevel()))
                 .channel(NioServerSocketChannel.class)
@@ -77,25 +74,30 @@ public class HttpServer {
     public void bind(int port) throws Exception {
         if (bootstrap == null) {
             createBootstrap();
-
-            // 这个线程池 只需要放监听端口的N个线程，所以这里干脆把核心数，最大数，队列长度 都设置为一样的
-            threadPoolExecutor = new ThreadPoolExecutor(magicianConfig.getNumberOfPorts(), magicianConfig.getNumberOfPorts(), 3, TimeUnit.SECONDS, new LinkedBlockingQueue<>(magicianConfig.getNumberOfPorts()));
-        }
+       }
 
         if (portCount >= magicianConfig.getNumberOfPorts()) {
+            shutdown();
             throw new Exception("本实例最多只能监听" + magicianConfig.getNumberOfPorts() + "个端口，如果你想监听更多，请调整MagicianConfig类下面的numberOfPorts字段");
         }
 
         portCount++;
-        threadPoolExecutor.execute(() -> {
-            try {
-                ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
-                f.channel().closeFuture();
 
-                logger.info("启动HTTP服务成功, port: [{}]", port);
-            } catch (Exception e) {
-                logger.error("启动HTTP服务异常, port: [{}]", port, e);
-            }
-        });
+        ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
+        f.channel().closeFuture();
+
+        logger.info("启动HTTP服务成功, port: [{}]", port);
+    }
+
+    /**
+     * 关闭服务
+     */
+    public void shutdown(){
+        if(work != null){
+            work.shutdownGracefully();
+        }
+        if(boss != null){
+            boss.shutdownGracefully();
+        }
     }
 }
