@@ -24,8 +24,8 @@ public class HttpServer {
     private MagicianConfig magicianConfig = new MagicianConfig();
 
     private ServerBootstrap bootstrap = null;
-    EventLoopGroup boss = null;
-    EventLoopGroup work = null;
+    private EventLoopGroup boss = null;
+    private EventLoopGroup work = null;
 
     private int portCount = 0;
 
