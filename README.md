@@ -87,10 +87,3 @@ public class DemoSocketHandler implements WebSocketBaseHandler {
     }
 }
 ```
-
-## More components
-
-These components can be used to develop web projects easily
-
-[Magician-Web](https://github.com/yuyenews/Magician-Web) | 
-[Magician-JDBC](https://github.com/yuyenews/Magician-JDBC)
