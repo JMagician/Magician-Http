@@ -37,8 +37,9 @@ public class MagicianRequest {
         return httpExchange;
     }
 
-    public void setHttpExchange(HttpExchange httpExchange) {
+    public void setHttpExchange(HttpExchange httpExchange, MagicianResponse magicianResponse) {
         this.httpExchange = httpExchange;
+        this.magicianResponse = magicianResponse;
 
         Map<String, ParamModel> paramMap = httpExchange.getParam();
         if (paramMap != null) {
@@ -229,10 +230,6 @@ public class MagicianRequest {
      * @return
      */
     public MagicianResponse getResponse(){
-        if(magicianResponse == null){
-            magicianResponse = new MagicianResponse();
-            magicianResponse.setHttpExchange(httpExchange);
-        }
         return magicianResponse;
     }
 }

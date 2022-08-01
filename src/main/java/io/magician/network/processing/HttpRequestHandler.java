@@ -6,7 +6,7 @@ import io.magician.common.constant.HttpConstant;
 import io.magician.network.processing.enums.ParamType;
 import io.magician.network.processing.exchange.HttpExchange;
 import io.magician.network.processing.model.ParamModel;
-import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
@@ -38,6 +38,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
             exchange = parse(fullHttpRequest, exchange);
 
             Distribution.execute(exchange);
+
         } else if (obj instanceof WebSocketFrame) {
             // 处理websocket消息
             WebSocketFrame webSocketFrame = (WebSocketFrame)obj;
@@ -70,9 +71,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
             });
         } else {
             if (isJSON(fullReq.headers().get(HttpConstant.CONTENT_TYPE))) {
-                ByteBuf buf = fullReq.content();
-                byte[] content = new byte[buf.capacity()];
-                buf.readBytes(content);
+                byte[] content = ByteBufUtil.getBytes(fullReq.content());
                 exchange.setJsonParam(new String(content, CommonConstant.ENCODING));
                 return exchange;
             }

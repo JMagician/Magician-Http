@@ -37,11 +37,10 @@ public class Distribution {
             MagicianRequest request = new MagicianRequest();
             MagicianResponse response = new MagicianResponse();
 
-            request.setHttpExchange(exchange);
+            request.setHttpExchange(exchange, response);
             response.setHttpExchange(exchange);
 
             String path = getPath(request);
-
 
             if (isWebSocket(request)) {
                 // 如果是websocket，就升级协议
