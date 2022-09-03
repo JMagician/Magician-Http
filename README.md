@@ -61,8 +61,8 @@ Start the http service
 
 ```java
 Magician.createHttp()
-                    .scan("handler所在的包名")
-                    .bind(8080);
+    .scan("handler所在的包名")
+    .bind(8080);
 ```
 
 ### Creating WebSocket
