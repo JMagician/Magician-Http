@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Extension of MartianHttpExchange
@@ -40,6 +41,7 @@ public class MagicianRequest {
     public void setHttpExchange(HttpExchange httpExchange, MagicianResponse magicianResponse) {
         this.httpExchange = httpExchange;
         this.magicianResponse = magicianResponse;
+        this.files = new ConcurrentHashMap<>();
 
         Map<String, ParamModel> paramMap = httpExchange.getParam();
         if (paramMap != null) {
