@@ -29,7 +29,7 @@ The Jar package for the maven central library supports at least JDK11, but the s
 <dependency>
     <groupId>com.github.yuyenews</groupId>
     <artifactId>Magician</artifactId>
-    <version>2.0.5</version>
+    <version>2.0.6</version>
 </dependency>
 
 <!-- This is the logging package, you must have it or the console will not see anything, any logging package that can bridge with slf4j is supported -->
