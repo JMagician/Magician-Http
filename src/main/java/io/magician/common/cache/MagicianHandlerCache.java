@@ -7,6 +7,9 @@ import io.magician.network.processing.exchange.WebSocketExchange;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Handler cache management, every time a request comes, you need to get the corresponding handler from here to process the business
+ */
 public class MagicianHandlerCache {
 
     private static Map<String, HttpBaseHandler> httpHandler = new ConcurrentHashMap<>();
@@ -45,5 +48,13 @@ public class MagicianHandlerCache {
 
     public static void removeWebSocketExchange(String channelId){
         webSocketSessionMap.remove(channelId);
+    }
+
+    public static int getWebsocketHandlerSize(){
+        return webSocketHandler.size();
+    }
+
+    public static int getHttpHandlerSize(){
+        return httpHandler.size();
     }
 }

@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 public @interface HttpHandler {
 
     /**
-     * 路径
+     * path
      * @return
      */
     String path();

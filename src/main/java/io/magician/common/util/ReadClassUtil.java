@@ -18,7 +18,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * 读取class文件
+ * read class file
  * 
  * @author yuye
  *
@@ -29,12 +29,11 @@ public class ReadClassUtil {
 	
 
 	/**
-	 * 获取某包下（包括该包的所有子包）所有类
+	 * Get all classes under a package (including all subpackages of the package)
 	 *
 	 * @param packageName
-	 *            包名
-	 * @return 类的完整名称
-	 * @throws UnsupportedEncodingException 异常
+	 * @return the full name of the class
+	 * @throws UnsupportedEncodingException
 	 */
 	public static Set<String> loadClassList(String packageName) throws IOException {
 		if(packageName == null) {
@@ -44,120 +43,112 @@ public class ReadClassUtil {
 	}
 
 	/**
-	 * 从包package中获取所有的Class
+	 * Get all the Classes from the package
 	 * 
-	 * @param pack 包
-	 * @return 集合
+	 * @param pack
+	 * @return
 	 */
 	private static Set<String> getClasses(String pack) {
 
-		// 第一个class类的集合
+		// A collection of all classes
 		Set<String> classes = new LinkedHashSet<String>();
-		// 是否循环迭代
+		// whether to iterate
 		boolean recursive = true;
-		// 获取包的名字 并进行替换
+		// Get the name of the package and replace it
 		String packageName = pack;
 		String packageDirName = packageName.replace('.', '/');
-		// 定义一个枚举的集合 并进行循环来处理这个目录下的things
+		// Define an enumerated collection and loop through the things in this directory
 		Enumeration<URL> dirs;
 		try {
 			dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
-			// 循环迭代下去
 			while (dirs.hasMoreElements()) {
-				// 获取下一个元素
+				// get the next element
 				URL url = dirs.nextElement();
-				// 得到协议的名称
+				// get the name of the protocol
 				String protocol = url.getProtocol();
-				// 如果是以文件的形式保存在服务器上
+				// If it is saved as a file on the server
 				if ("file".equals(protocol)) {
-					// 获取包的物理路径
+					// Get the physical path of the package
 					String filePath = URLDecoder.decode(url.getFile(), CommonConstant.ENCODING);
-					// 以文件的方式扫描整个包下的文件 并添加到集合中
+					// Scan files under the entire package as files and add to the collection
 					findAndAddClassesInPackageByFile(packageName, filePath, recursive, classes);
 				} else if ("jar".equals(protocol)) {
-					// 如果是jar包文件
-					// 定义一个JarFile
+					// Define a JarFile
 					JarFile jar;
 					try {
-						// 获取jar
 						jar = ((JarURLConnection) url.openConnection()).getJarFile();
-						// 从此jar包 得到一个枚举类
+						// Get an enumeration class from this jar
 						Enumeration<JarEntry> entries = jar.entries();
-						// 同样的进行循环迭代
+
 						while (entries.hasMoreElements()) {
-							// 获取jar里的一个实体 可以是目录 和一些jar包里的其他文件 如META-INF等文件
+							// Get an entity in the jar, which can be a directory and some other files in the jar package such as META-INF and other files
 							JarEntry entry = entries.nextElement();
 							String name = entry.getName();
-							// 如果是以/开头的
+
 							if (name.charAt(0) == '/') {
-								// 获取后面的字符串
 								name = name.substring(1);
 							}
-							// 如果前半部分和定义的包名相同
+							// If the first half is the same as the defined package name
 							if (name.startsWith(packageDirName)) {
 								int idx = name.lastIndexOf('/');
-								// 如果以"/"结尾 是一个包
 								if (idx != -1) {
-									// 获取包名 把"/"替换成"."
+									// Get package name Replace "/" with "."
 									packageName = name.substring(0, idx).replace('/', '.');
 								}
-								// 如果可以迭代下去 并且是一个包
+								// If it can iterate and is a package
 								if ((idx != -1) || recursive) {
-									// 如果是一个.class文件 而且不是目录
+									// If it's a .class file instead of a directory
 									if (name.endsWith(".class") && !entry.isDirectory()) {
-										// 去掉后面的".class" 获取真正的类名
+										// Remove the trailing ".class" to get the real class name
 										String className = name.substring(packageName.length() + 1, name.length() - 6);
-										// 添加到classes
 										classes.add(packageName + '.' + className);
 									}
 								}
 							}
 						}
 					} catch (IOException e) {
-						// log.error("在扫描用户定义视图时从jar包获取文件出错");
-						log.error("",e);
+						log.error("Error getting files from jar package while scanning user-defined views",e);
 					}
 				}
 			}
 		} catch (IOException e) {
-			log.error("扫描["+packageName+"]包下的类发送错误",e);
+			log.error("An error occurred while scanning the classes under the [" + packageName + "] package",e);
 		}
 
 		return classes;
 	}
 
 	/**
-	 * 以文件的形式来获取包下的所有Class
+	 * Get all the Classes under the package in the form of a file
 	 * 
-	 * @param packageName 包
-	 * @param packagePath 路径
-	 * @param recursive 不知道
-	 * @param classes 不知道
+	 * @param packageName
+	 * @param packagePath
+	 * @param recursive
+	 * @param classes
 	 */
 	public static void findAndAddClassesInPackageByFile(String packageName, String packagePath, final boolean recursive,
 			Set<String> classes) {
-		// 获取此包的目录 建立一个File
+		// Get the directory of this package Create a File
 		File dir = new File(packagePath);
-		// 如果不存在或者 也不是目录就直接返回
+		// If it does not exist or is not a directory, it will return directly
 		if (!dir.exists() || !dir.isDirectory()) {
-			// log.warn("用户定义包名 " + packageName + " 下没有任何文件");
 			return;
 		}
-		// 如果存在 就获取包下的所有文件 包括目录
+		// If it exists, get all files under the package, including directories
 		File[] dirfiles = dir.listFiles(new FileFilter() {
-			// 自定义过滤规则 如果可以循环(包含子目录) 或则是以.class结尾的文件(编译好的java类文件)
+			// Custom filtering rules If you can loop (including subdirectories) or files ending with .class (compiled java class files)
 			public boolean accept(File file) {
 				return (recursive && file.isDirectory()) || (file.getName().endsWith(".class"));
 			}
 		});
-		// 循环所有文件
+
 		for (File file : dirfiles) {
-			// 如果是目录 则继续扫描
+			// If it is a directory, continue scanning
 			if (file.isDirectory()) {
 				findAndAddClassesInPackageByFile(packageName + "." + file.getName(), file.getAbsolutePath(), recursive,
 						classes);
 			} else {
-				// 如果是java类文件 去掉后面的.class 只留下类名
+				// If it is a java class file, remove the following .class and leave only the class name
 				String className = file.getName().substring(0, file.getName().length() - 6);
 				classes.add(packageName + '.' + className);
 			}

@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 参数实体
+ * parameter entity
  */
 public class ParamModel {
 
     /**
-     * 参数类型，文件，其他
+     * parameter type, file, other
      */
     private ParamType type;
 
     /**
-     * 参数值集合
+     * set of parameter values
      */
     private List value;
 

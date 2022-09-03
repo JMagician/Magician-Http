@@ -1,5 +1,8 @@
 package io.magician.common.constant;
 
+/**
+ * websocket constant
+ */
 public class WebSocketConstant {
 
     public static final String CONNECTION = "Connection";

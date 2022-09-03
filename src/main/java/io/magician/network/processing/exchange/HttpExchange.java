@@ -9,39 +9,43 @@ import io.netty.handler.codec.http.HttpMethod;
 import java.util.Map;
 
 /**
- * http数据交换器
+ * http data exchange
  */
 public class HttpExchange {
 
     /**
-     * 本次请求的url
+     * url of this request
      */
     private String url;
 
     /**
-     * 请求方式
+     * request method
      */
     private HttpMethod method;
 
     /**
-     * 请求头
+     * request header
      */
     private HttpHeaders httpHeaders;
 
     /**
-     * 参数
+     * request parameter
      */
     private Map<String, ParamModel> param;
 
     /**
-     * json参数，字符串
+     * json parameter, string
      */
     private String jsonParam;
 
     /**
-     * netty原生的channel和request
+     * netty's channel
      */
     private ChannelHandlerContext channelHandlerContext;
+
+    /**
+     * netty's request
+     */
     private FullHttpRequest fullHttpRequest;
 
     public String getUrl() {

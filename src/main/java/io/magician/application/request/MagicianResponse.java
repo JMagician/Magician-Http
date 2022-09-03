@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 响应管理
+ * Response management
  */
 public class MagicianResponse {
 
@@ -38,7 +38,7 @@ public class MagicianResponse {
     }
 
     /**
-     * 设置响应头
+     * set response headers
      * @param key
      * @param value
      */
@@ -48,7 +48,7 @@ public class MagicianResponse {
     }
 
     /**
-     * 响应文本数据
+     * response text data
      * @param data
      */
     public void sendText(String data) throws Exception {
@@ -57,7 +57,7 @@ public class MagicianResponse {
     }
 
     /**
-     * 响应html数据
+     * response html data
      * @param data
      */
     public void sendHtml(String data) throws Exception {
@@ -66,8 +66,8 @@ public class MagicianResponse {
     }
 
     /**
-     * 响应自定义格式的数据
-     * 需要自己设置 content-type
+     * Respond with custom formatted data
+     * You need to set the content-type yourself
      * @param data
      */
     public void sendData(String data) throws Exception {
@@ -75,7 +75,7 @@ public class MagicianResponse {
     }
 
     /**
-     * 响应json数据
+     * response json data
      * @param data
      */
     public void sendJson(String data) throws Exception {
@@ -84,7 +84,7 @@ public class MagicianResponse {
     }
 
     /**
-     * 响应二进制
+     * response binary
      * @param bytes
      * @throws Exception
      */
@@ -95,7 +95,7 @@ public class MagicianResponse {
     }
 
     /**
-     * 响应错误提示
+     * Respond to error prompts
      * @param code
      * @param msg
      * @throws Exception
@@ -110,7 +110,7 @@ public class MagicianResponse {
     }
 
     /**
-     * 响应数据
+     * response data
      * @param content
      */
     private void responseWrite(byte[] content){

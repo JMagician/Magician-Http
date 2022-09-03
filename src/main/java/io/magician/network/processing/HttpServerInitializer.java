@@ -8,7 +8,9 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
-
+/**
+ * Set netty as http service
+ */
 public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private MagicianConfig magicianConfig;
@@ -20,9 +22,9 @@ public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
-        pipeline.addLast(new HttpServerCodec(magicianConfig.getMaxInitialLineLength(), magicianConfig.getMaxHeaderSize(), magicianConfig.getMaxChunkSize())); // http 编解码
-        pipeline.addLast("httpAggregator",new HttpObjectAggregator(Integer.MAX_VALUE)); // http 消息聚合器
+        pipeline.addLast(new HttpServerCodec(magicianConfig.getMaxInitialLineLength(), magicianConfig.getMaxHeaderSize(), magicianConfig.getMaxChunkSize())); // http codec
+        pipeline.addLast("httpAggregator",new HttpObjectAggregator(Integer.MAX_VALUE)); // http message aggregator
         pipeline.addLast("http-chunked",new ChunkedWriteHandler());
-        pipeline.addLast(new HttpRequestHandler()); // 请求处理器
+        pipeline.addLast(new HttpRequestHandler()); // process the request
     }
 }

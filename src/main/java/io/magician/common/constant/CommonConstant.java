@@ -1,17 +1,17 @@
 package io.magician.common.constant;
 
 /**
- * 公共常量
+ * public constant
  */
 public class CommonConstant {
 
     /**
-     * 参数字符编码
+     * parameter character encoding
      */
     public static final String ENCODING = "UTF-8";
 
     /**
-     * 浏览器图标名称
+     * browser icon name
      */
     public static final String FAVICON_ICO = "/FAVICON.ICO";
 

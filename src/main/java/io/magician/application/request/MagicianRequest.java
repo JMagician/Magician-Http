@@ -16,20 +16,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * MartianHttpExchange的扩展
- * 提供了参数的获取方法
+ * Extension of MartianHttpExchange
+ * Provides a method for obtaining parameters
  */
 public class MagicianRequest {
 
     private HttpExchange httpExchange;
 
     /**
-     * 响应管理
+     * Response management
      */
     private MagicianResponse magicianResponse;
 
     /**
-     * 上传的文件
+     * uploaded file
      */
     private Map<String, List<MixedFileUpload>> files;
 
@@ -68,7 +68,7 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取所有参数
+     * get all parameters
      * @return
      */
     public Map<String, List> getMagicianParams() {
@@ -89,7 +89,7 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取json传参
+     * Get json parameters
      * @return
      */
     public String getJsonParam() {
@@ -97,7 +97,7 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取所有文件
+     * get all files
      * @return
      */
     public Map<String, List<MixedFileUpload>> getFileMap() {
@@ -105,7 +105,7 @@ public class MagicianRequest {
     }
 
     /**
-     * 按请求name获取对应的所有文件
+     * Get all files corresponding to the request name
      * @param name
      * @return
      */
@@ -117,7 +117,7 @@ public class MagicianRequest {
     }
 
     /**
-     * 按请求name获取对应的一个文件
+     * Get a corresponding file by request name
      * @param name
      * @return
      */
@@ -135,7 +135,7 @@ public class MagicianRequest {
 
 
     /**
-     * 获取一个参数
+     * get a parameter
      * @param name
      * @return
      */
@@ -148,7 +148,7 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取多个name相同的参数
+     * Get multiple parameters with the same name
      * @param name
      * @return
      */
@@ -165,8 +165,8 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取参数类型
-     * @return 参数类型
+     * get content type
+     * @return content type
      */
     public String getContentType(){
         try {
@@ -184,23 +184,23 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取请求方法
-     * @return 请求方法
+     * get request method
+     * @return request method
      */
     public HttpMethod getMethod() {
         return httpExchange.getMethod();
     }
 
     /**
-     * 获取要请求的uri
-     * @return 请求方法
+     * Get the uri to request
+     * @return uri
      */
     public String getUrl() {
         return httpExchange.getUrl();
     }
 
     /**
-     * 获取remote地址
+     * Get remote address
      * @return
      * @throws IOException
      */
@@ -209,7 +209,7 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取所有请求头
+     * get all request headers
      * @return
      */
     public HttpHeaders getRequestHeaders(){
@@ -217,16 +217,16 @@ public class MagicianRequest {
     }
 
     /**
-     * 获取请求头数据
-     * @param key 键
-     * @return 头数据
+     * Get request header data
+     * @param key
+     * @return
      */
     public String getRequestHeader(String key) {
         return httpExchange.getHttpHeaders().get(key);
     }
 
     /**
-     * 获取响应对象
+     * get response object
      * @return
      */
     public MagicianResponse getResponse(){

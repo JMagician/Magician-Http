@@ -10,12 +10,12 @@ import io.magician.network.handler.WebSocketBaseHandler;
 import java.util.Set;
 
 /**
- * 加载TCP所需资源
+ * Load the required resources
  */
 public class LoadResource {
 
     /**
-     * 加载handler
+     * load handler
      * @param packageName
      * @throws Exception
      */
@@ -28,7 +28,7 @@ public class LoadResource {
             HttpHandler httpHandler = cls.getAnnotation(HttpHandler.class);
             WebSocketHandler webSocketHandler = cls.getAnnotation(WebSocketHandler.class);
             if(httpHandler != null && webSocketHandler != null){
-                throw new Exception("handler只能是HTTP或者WebSocket，不可以两个都配，类名:" + className);
+                throw new Exception("handler can only be HTTP or WebSocket, not both, class name:" + className);
             }
 
             if(httpHandler != null){

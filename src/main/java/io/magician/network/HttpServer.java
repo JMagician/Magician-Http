@@ -3,6 +3,7 @@ package io.magician.network;
 import io.magician.common.config.MagicianConfig;
 import io.magician.network.processing.HttpServerInitializer;
 import io.magician.network.load.LoadResource;
+import io.magician.application.thread.BusinessThreadPool;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -19,7 +20,7 @@ public class HttpServer {
     private Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
     /**
-     * 启动参数配置
+     * Startup parameter
      */
     private MagicianConfig magicianConfig = new MagicianConfig();
 
@@ -30,7 +31,7 @@ public class HttpServer {
     private int portCount = 0;
 
     /**
-     * 扫描handler
+     * scan handler
      *
      * @param scanPackage
      * @return
@@ -42,7 +43,7 @@ public class HttpServer {
     }
 
     /**
-     * 设置配置项
+     * Set launch configuration
      *
      * @param magicianConfig
      * @return
@@ -53,7 +54,7 @@ public class HttpServer {
     }
 
     /**
-     * 创建ServerBootstrap
+     * Create ServerBootstrap
      */
     private void createBootstrap() {
         bootstrap = new ServerBootstrap();
@@ -66,7 +67,17 @@ public class HttpServer {
     }
 
     /**
-     * 启动http服务
+     * Initialize the business thread pool
+     */
+    private void initBusinessThreadPool(){
+        BusinessThreadPool.init(magicianConfig.getCorePoolSize(),
+                magicianConfig.getMaximumPoolSize(),
+                magicianConfig.getKeepAliveTime()
+        );
+    }
+
+    /**
+     * start http service
      *
      * @param port
      * @throws Exception
@@ -74,11 +85,12 @@ public class HttpServer {
     public void bind(int port) throws Exception {
         if (bootstrap == null) {
             createBootstrap();
+            initBusinessThreadPool();
        }
 
         if (portCount >= magicianConfig.getNumberOfPorts()) {
             shutdown();
-            throw new Exception("本实例最多只能监听" + magicianConfig.getNumberOfPorts() + "个端口，如果你想监听更多，请调整MagicianConfig类下面的numberOfPorts字段");
+            throw new Exception("This instance can only listen to " + magicianConfig.getNumberOfPorts() + " ports at most, if you want to listen more, please adjust the numberOfPorts field under the MagicianConfig class");
         }
 
         portCount++;
@@ -86,11 +98,11 @@ public class HttpServer {
         ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
         f.channel().closeFuture();
 
-        logger.info("启动HTTP服务成功, port: [{}]", port);
+        logger.info("Start HTTP service successfully, port: [{}]", port);
     }
 
     /**
-     * 关闭服务
+     * shut down service
      */
     public void shutdown(){
         if(work != null){

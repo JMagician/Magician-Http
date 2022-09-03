@@ -6,20 +6,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 扫描工具类
+ * scanning tools
  */
 public class ScanUtil {
 
 
     /**
-     * 扫描指定的包
+     * scan the specified package
      * @param packageName
      * @return
      * @throws Exception
      */
     public static Set<String> loadClass(String packageName) throws Exception {
         if(packageName == null || packageName.equals("")){
-            throw new NullPointerException("请配置要扫描的包名");
+            throw new NullPointerException("Please configure the package name to scan");
         }
 
         Set<String> packageSet = MagicianCacheManager.getScanClassList();
@@ -37,10 +37,10 @@ public class ScanUtil {
     }
 
     /**
-     * 扫描框架的类
-     * @param packageName 要扫描的包名
-     * @return 扫描出来的包
-     * @throws Exception 异常
+     * Scan all classes in the specified package name
+     * @param packageName
+     * @return
+     * @throws Exception
      */
     private static Set<String> scanClassList(Set<String> packageName) throws Exception {
         Set<String> scanClassList = new HashSet<>();

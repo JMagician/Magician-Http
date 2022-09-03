@@ -4,12 +4,12 @@ package io.magician;
 import io.magician.network.HttpServer;
 
 /**
- * 主类，创建服务
+ * Main class, create service
  */
 public class Magician {
 
     /**
-     * 创建http
+     * create http
      * @return
      * @throws Exception
      */

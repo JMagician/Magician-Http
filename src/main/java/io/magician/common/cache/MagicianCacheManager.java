@@ -2,10 +2,13 @@ package io.magician.common.cache;
 
 import java.util.Set;
 
+/**
+ * Cache management, used to save the scanned classes in memory for subsequent functions
+ */
 public class MagicianCacheManager {
 
     /**
-     * 扫描出来的类
+     * Scanned class
      */
     private static Set<String> classList;
 

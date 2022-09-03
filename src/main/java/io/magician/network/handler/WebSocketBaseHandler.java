@@ -3,7 +3,7 @@ package io.magician.network.handler;
 import io.magician.application.request.WebSocketSession;
 
 /**
- * socket处理器
+ * websocket handler interface
  */
 public interface WebSocketBaseHandler {
 

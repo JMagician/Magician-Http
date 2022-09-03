@@ -5,22 +5,22 @@ import io.magician.network.handler.WebSocketBaseHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 
 /**
- * WebSocket数据交换器
+ * WebSocket Data Exchanger
  */
 public class WebSocketExchange {
 
     /**
-     * netty原生对象
+     * object of netty
      */
     private WebSocketServerHandshaker webSocketServerHandshaker;
 
     /**
-     * 本次连接绑定的handler
+     * The handler bound to this connection
      */
     private WebSocketBaseHandler webSocketBaseHandler;
 
     /**
-     * 连接会话
+     * connection session
      */
     private WebSocketSession webSocketSession;
 

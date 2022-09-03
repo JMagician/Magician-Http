@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 处理请求
+ * process the request
  */
 public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object obj) throws Exception {
         if (obj instanceof FullHttpRequest) {
-            // 处理http请求
+            // handle http requests
             FullHttpRequest fullHttpRequest = (FullHttpRequest)obj;
 
             HttpExchange exchange = new HttpExchange();
@@ -40,16 +40,16 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
             Distribution.execute(exchange);
 
         } else if (obj instanceof WebSocketFrame) {
-            // 处理websocket消息
+            // Handling websocket messages
             WebSocketFrame webSocketFrame = (WebSocketFrame)obj;
             Distribution.handleWebSocketFrame(channelHandlerContext, webSocketFrame);
         }
     }
 
     /**
-     * 解析请求参数
+     * Parse request parameters
      *
-     * @return 包含所有请求参数的键值对, 如果没有参数, 则返回空Map
+     * @return A key-value pair containing all request parameters, or an empty Map if there are no parameters
      */
     public HttpExchange parse(FullHttpRequest fullReq, HttpExchange exchange) throws Exception {
         HttpMethod method = fullReq.method();
@@ -113,8 +113,8 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     /**
-     * 是否是json格式
-     * @param contentType 内容类型
+     * Is it in json format
+     * @param contentType
      * @return
      */
     private static boolean isJSON(String contentType){

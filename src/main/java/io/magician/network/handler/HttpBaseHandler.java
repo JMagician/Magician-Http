@@ -4,7 +4,7 @@ import io.magician.application.request.MagicianRequest;
 import io.magician.application.request.MagicianResponse;
 
 /**
- * 自定义处理器接口
+ * http handler interface
  */
 public interface HttpBaseHandler {
 

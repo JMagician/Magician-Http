@@ -9,8 +9,14 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 import java.util.Date;
 
+/**
+ * Websocket session management
+ */
 public class WebSocketSession {
 
+    /**
+     * Session ID, unique across all websocket connections
+     */
     private String id;
 
     private ChannelHandlerContext channelHandlerContext;
@@ -31,12 +37,20 @@ public class WebSocketSession {
         this.channelHandlerContext = channelHandlerContext;
     }
 
+    /**
+     * Send binary data to client
+     * @param message
+     */
     public void sendBytes(byte[] message){
         ByteBuf byteBuf = Unpooled.buffer(message.length);
         byteBuf.writeBytes(message);
         channelHandlerContext.writeAndFlush(new BinaryWebSocketFrame(byteBuf));
     }
 
+    /**
+     * Send string data to client
+     * @param message
+     */
     public void sendString(String message){
         channelHandlerContext.writeAndFlush(new TextWebSocketFrame(message));
     }
