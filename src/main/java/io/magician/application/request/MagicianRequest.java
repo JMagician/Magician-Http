@@ -10,7 +10,6 @@ import io.netty.handler.codec.http.multipart.MixedFileUpload;
 
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class MagicianRequest {
      */
     public Map<String, List> getParamsMap() {
         Map<String, ParamModel> paramMap = httpExchange.getParam();
-        if (paramMap == null) {
+        if (paramMap == null || paramMap.size() < 1) {
             return null;
         }
 
