@@ -29,65 +29,59 @@ public class MagicianRequest {
      */
     private MagicianResponse magicianResponse;
 
-    /**
-     * uploaded file
-     */
-    private Map<String, List<MixedFileUpload>> files;
+    public MagicianRequest(HttpExchange httpExchange, MagicianResponse magicianResponse){
+        this.httpExchange = httpExchange;
+        this.magicianResponse = magicianResponse;
+    }
 
     public HttpExchange getHttpExchange() {
         return httpExchange;
-    }
-
-    public void setHttpExchange(HttpExchange httpExchange, MagicianResponse magicianResponse) {
-        this.httpExchange = httpExchange;
-        this.magicianResponse = magicianResponse;
-        this.files = new ConcurrentHashMap<>();
-
-        Map<String, ParamModel> paramMap = httpExchange.getParam();
-        if (paramMap != null) {
-            for (Map.Entry<String, ParamModel> entry : paramMap.entrySet()){
-                ParamModel paramModel = entry.getValue();
-                if (paramModel == null) {
-                    continue;
-                }
-
-                if (ParamType.FILE.equals(paramModel.getType())) {
-                    List list = paramModel.getValue();
-                    if (list == null) {
-                        continue;
-                    }
-                    List<MixedFileUpload> mixedFileUploadList = new ArrayList<>();
-                    for (Object item : list){
-                        if (item == null) {
-                            continue;
-                        }
-                        mixedFileUploadList.add((MixedFileUpload) item);
-                    }
-                    files.put(entry.getKey(), mixedFileUploadList);
-                }
-            }
-        }
     }
 
     /**
      * get all parameters
      * @return
      */
-    public Map<String, List> getMagicianParams() {
+    public Map<String, List> getParamsMap() {
         Map<String, ParamModel> paramMap = httpExchange.getParam();
         if (paramMap == null) {
             return null;
         }
+
         Map<String, List> params = new HashMap<>();
         for (Map.Entry<String, ParamModel> entry : paramMap.entrySet()) {
             ParamModel paramModel = entry.getValue();
-            if (paramModel == null) {
+            if (paramModel == null || ParamType.OTHER.equals(paramModel.getType()) == false) {
                 continue;
             }
-            params.put(entry.getKey(), paramModel.getValue());
+            params.put(entry.getKey(), paramModel.getValues());
         }
 
         return params;
+    }
+
+    /**
+     * get all files
+     * @return
+     */
+    public Map<String, List<MixedFileUpload>> getFilesMap() {
+        Map<String, ParamModel> paramMap = httpExchange.getParam();
+        if (paramMap == null) {
+            return null;
+        }
+
+        Map<String, List<MixedFileUpload>> files = new ConcurrentHashMap<>();
+
+        for (Map.Entry<String, ParamModel> entry : paramMap.entrySet()){
+            ParamModel paramModel = entry.getValue();
+            if (paramModel == null || ParamType.FILE.equals(paramModel.getType()) == false) {
+                continue;
+            }
+
+            files.put(entry.getKey(), paramModel.getFiles());
+        }
+
+        return files;
     }
 
     /**
@@ -99,23 +93,22 @@ public class MagicianRequest {
     }
 
     /**
-     * get all files
-     * @return
-     */
-    public Map<String, List<MixedFileUpload>> getFileMap() {
-        return files;
-    }
-
-    /**
      * Get all files corresponding to the request name
      * @param name
      * @return
      */
     public List<MixedFileUpload> getFiles(String name){
-        if(files == null){
+        Map<String, ParamModel> paramModelMap = httpExchange.getParam();
+        if(paramModelMap == null || paramModelMap.size() < 1){
             return null;
         }
-        return files.get(name);
+
+        ParamModel paramModel = httpExchange.getParam().get(name);
+        if(paramModel == null || ParamType.FILE.equals(paramModel.getType()) == false){
+            return null;
+        }
+
+        return paramModel.getFiles();
     }
 
     /**
@@ -124,29 +117,11 @@ public class MagicianRequest {
      * @return
      */
     public MixedFileUpload getFile(String name){
-        if(files == null){
-            return null;
-        }
-
-        List<MixedFileUpload> mixedFileUploadList = files.get(name);
-        if(mixedFileUploadList == null){
+        List<MixedFileUpload> mixedFileUploadList = getFiles(name);
+        if(mixedFileUploadList == null || mixedFileUploadList.size() < 1){
             return null;
         }
         return mixedFileUploadList.get(0);
-    }
-
-
-    /**
-     * get a parameter
-     * @param name
-     * @return
-     */
-    public String getParam(String name){
-        List<String> params = getParams(name);
-        if(params == null){
-            return null;
-        }
-        return params.get(0);
     }
 
     /**
@@ -154,16 +129,31 @@ public class MagicianRequest {
      * @param name
      * @return
      */
-    public List<String> getParams(String name){
-        Map<String, List> magicianParams = getMagicianParams();
-        if(magicianParams == null){
+    public List getParams(String name){
+        Map<String, ParamModel> paramModelMap = httpExchange.getParam();
+        if(paramModelMap == null || paramModelMap.size() < 1){
             return null;
         }
-        List<String> params = magicianParams.get(name);
+
+        ParamModel paramModel = paramModelMap.get(name);
+        if(paramModel == null || ParamType.OTHER.equals(paramModel.getType()) == false){
+            return null;
+        }
+
+        return paramModel.getValues();
+    }
+
+    /**
+     * get a parameter
+     * @param name
+     * @return
+     */
+    public String getParam(String name){
+        List params = getParams(name);
         if(params == null || params.size() < 1){
             return null;
         }
-        return params;
+        return String.valueOf(params.get(0));
     }
 
     /**

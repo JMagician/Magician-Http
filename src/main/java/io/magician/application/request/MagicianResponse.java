@@ -25,16 +25,13 @@ public class MagicianResponse {
 
     private Map<String, String> headers;
 
-    public MagicianResponse(){
-        headers = new HashMap<>();
+    public MagicianResponse(HttpExchange httpExchange){
+        this.headers = new HashMap<>();
+        this.httpExchange = httpExchange;
     }
 
     public HttpExchange getHttpExchange() {
         return httpExchange;
-    }
-
-    public void setHttpExchange(HttpExchange httpExchange) {
-        this.httpExchange = httpExchange;
     }
 
     /**

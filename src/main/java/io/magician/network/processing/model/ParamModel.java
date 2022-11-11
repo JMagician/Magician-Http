@@ -1,6 +1,7 @@
 package io.magician.network.processing.model;
 
 import io.magician.network.processing.enums.ParamType;
+import io.netty.handler.codec.http.multipart.MixedFileUpload;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,12 @@ public class ParamModel {
     /**
      * set of parameter values
      */
-    private List value;
+    private List values;
+
+    /**
+     * set of parameter files
+     */
+    private List<MixedFileUpload> files;
 
     public ParamType getType() {
         return type;
@@ -28,21 +34,41 @@ public class ParamModel {
         this.type = type;
     }
 
-    public List getValue() {
-        return value;
+    public List getValues() {
+        return values;
     }
 
     public void setValue(List value) {
-        if (this.value != null) {
-            this.value.addAll(value);
+        if (this.values != null) {
+            this.values.addAll(value);
+            return;
         }
-        this.value = value;
+        this.values = value;
     }
 
     public void setValueItem(Object value) {
-        if (this.value == null) {
-            this.value = new ArrayList();
+        if (this.values == null) {
+            this.values = new ArrayList();
         }
-        this.value.add(value);
+        this.values.add(value);
+    }
+
+    public List<MixedFileUpload> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<MixedFileUpload> files) {
+        if(this.files != null){
+            this.files.addAll(files);
+            return;
+        }
+        this.files = files;
+    }
+
+    public void setFileItem(MixedFileUpload file) {
+        if(this.files == null){
+            this.files = new ArrayList<>();
+        }
+        this.files.add(file);
     }
 }

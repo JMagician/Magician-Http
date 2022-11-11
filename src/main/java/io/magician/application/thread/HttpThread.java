@@ -36,11 +36,8 @@ public class HttpThread implements Runnable {
     @Override
     public void run() {
         try {
-            request = new MagicianRequest();
-            response = new MagicianResponse();
-
-            request.setHttpExchange(exchange, response);
-            response.setHttpExchange(exchange);
+            request = new MagicianRequest(exchange, response);
+            response = new MagicianResponse(exchange);
 
             String path = getPath(request);
 

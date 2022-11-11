@@ -82,18 +82,18 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
             List<InterfaceHttpData> paramList = decoder.getBodyHttpDatas();
 
             for (InterfaceHttpData param : paramList) {
-                if (param instanceof FileUpload) {
-                    FileUpload fileUpload = (FileUpload) param;
+                if (param instanceof MixedFileUpload) {
+                    MixedFileUpload fileUpload = (MixedFileUpload) param;
 
                     ParamModel paramModel = paramMap.get(fileUpload.getName());
                     if (paramModel == null) {
                         paramModel = new ParamModel();
                     }
                     paramModel.setType(ParamType.FILE);
-                    paramModel.setValueItem(fileUpload);
+                    paramModel.setFileItem(fileUpload);
 
                     paramMap.put(fileUpload.getName(), paramModel);
-                } else {
+                } else if(param instanceof Attribute) {
                     Attribute data = (Attribute) param;
 
                     ParamModel paramModel = paramMap.get(data.getName());
