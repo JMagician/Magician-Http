@@ -44,83 +44,97 @@ public class MagicianConfig {
     private int maxHeaderSize = 8192;
     private int maxChunkSize = 8192;
 
+    public static MagicianConfig create(){
+        return new MagicianConfig();
+    }
+
     public int getBossThreads() {
         return bossThreads;
     }
 
-    public void setBossThreads(int bossThreads) {
+    public MagicianConfig setBossThreads(int bossThreads) {
         this.bossThreads = bossThreads;
+        return this;
     }
 
     public int getWorkThreads() {
         return workThreads;
     }
 
-    public void setWorkThreads(int workThreads) {
+    public MagicianConfig setWorkThreads(int workThreads) {
         this.workThreads = workThreads;
+        return this;
     }
 
     public int getNumberOfPorts() {
         return numberOfPorts;
     }
 
-    public void setNumberOfPorts(int numberOfPorts) {
+    public MagicianConfig setNumberOfPorts(int numberOfPorts) {
         this.numberOfPorts = numberOfPorts;
+        return this;
     }
 
     public int getCorePoolSize() {
         return corePoolSize;
     }
 
-    public void setCorePoolSize(int corePoolSize) {
+    public MagicianConfig setCorePoolSize(int corePoolSize) {
         this.corePoolSize = corePoolSize;
+        return this;
     }
 
     public int getMaximumPoolSize() {
         return maximumPoolSize;
     }
 
-    public void setMaximumPoolSize(int maximumPoolSize) {
+    public MagicianConfig setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
+        return this;
     }
 
     public long getKeepAliveTime() {
         return keepAliveTime;
     }
 
-    public void setKeepAliveTime(long keepAliveTime) {
+    public MagicianConfig setKeepAliveTime(long keepAliveTime) {
         this.keepAliveTime = keepAliveTime;
+        return this;
     }
 
     public LogLevel getNettyLogLevel() {
         return nettyLogLevel;
     }
 
-    public void setNettyLogLevel(LogLevel nettyLogLevel) {
+    public MagicianConfig setNettyLogLevel(LogLevel nettyLogLevel) {
         this.nettyLogLevel = nettyLogLevel;
+        return this;
     }
 
     public int getMaxInitialLineLength() {
         return maxInitialLineLength;
     }
 
-    public void setMaxInitialLineLength(int maxInitialLineLength) {
+    public MagicianConfig setMaxInitialLineLength(int maxInitialLineLength) {
         this.maxInitialLineLength = maxInitialLineLength;
+        return this;
     }
 
     public int getMaxHeaderSize() {
         return maxHeaderSize;
     }
 
-    public void setMaxHeaderSize(int maxHeaderSize) {
+    public MagicianConfig setMaxHeaderSize(int maxHeaderSize) {
         this.maxHeaderSize = maxHeaderSize;
+        return this;
     }
 
     public int getMaxChunkSize() {
         return maxChunkSize;
     }
 
-    public void setMaxChunkSize(int maxChunkSize) {
+    public MagicianConfig setMaxChunkSize(int maxChunkSize) {
         this.maxChunkSize = maxChunkSize;
+        return this;
     }
 }

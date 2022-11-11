@@ -114,7 +114,7 @@ public class HttpThread implements Runnable {
         if (lastIndex > -1) {
             url = url.substring(0, lastIndex);
         }
-        if (!url.startsWith("/")) {
+        if (url.startsWith("/") == false) {
             url = "/" + url;
         }
         return url;
