@@ -14,7 +14,6 @@ import io.netty.handler.codec.http.multipart.*;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,9 +78,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
             HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(fullReq);
             decoder.offer(fullReq);
 
-            List<InterfaceHttpData> paramList = decoder.getBodyHttpDatas();
-
-            for (InterfaceHttpData param : paramList) {
+            for (InterfaceHttpData param : decoder.getBodyHttpDatas()) {
                 if (param instanceof MixedFileUpload) {
                     MixedFileUpload fileUpload = (MixedFileUpload) param;
 
