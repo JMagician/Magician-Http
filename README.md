@@ -1,7 +1,7 @@
 <h1> 
     <a href="https://magician-io.com">Magician</a> ·
     <img src="https://img.shields.io/badge/licenes-MIT-brightgreen.svg"/>
-    <img src="https://img.shields.io/badge/jdk-11+-brightgreen.svg"/>
+    <img src="https://img.shields.io/badge/jdk-8+-brightgreen.svg"/>
     <img src="https://img.shields.io/badge/maven-3.5.4+-brightgreen.svg"/>
     <img src="https://img.shields.io/badge/release-master-brightgreen.svg"/>
 </h1>
@@ -14,11 +14,7 @@ In addition, we provide many other components that make up a toolkit that will w
 
 ## Running environment
 
-JDK11+
-
----
-
-The Jar package for the maven central library supports at least JDK11, but the source code can support at least jdk8, if you need to run on 8, you can download the latest tag and compile it yourself
+JDK8+
 
 ## Documentation
 
