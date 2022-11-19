@@ -70,7 +70,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
                 paramMap.put(entry.getKey(), paramModel);
             });
         } else {
-            if (isJSON(fullReq.headers().get(HttpConstant.CONTENT_TYPE))) {
+            if (isJSON(fullReq)) {
                 byte[] content = ByteBufUtil.getBytes(fullReq.content());
                 exchange.setJsonParam(new String(content, CommonConstant.ENCODING));
                 return exchange;
@@ -114,10 +114,21 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 
     /**
      * Is it in json format
-     * @param contentType
+     * @param fullReq
      * @return
      */
-    private static boolean isJSON(String contentType){
+    private static boolean isJSON(FullHttpRequest fullReq){
+        String contentType = fullReq.headers().get(HttpConstant.CONTENT_TYPE);
+        if(contentType == null){
+            contentType = fullReq.headers().get(HttpConstant.CONTENT_TYPE_TWO);
+        }
+        if(contentType == null){
+            contentType = fullReq.headers().get(HttpConstant.CONTENT_TYPE_THREE);
+        }
+        if(contentType == null){
+            contentType = fullReq.headers().get(HttpConstant.CONTENT_TYPE_FOUR);
+        }
+
         if(contentType == null){
             return false;
         }
