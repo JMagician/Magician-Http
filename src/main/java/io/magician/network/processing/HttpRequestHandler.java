@@ -55,7 +55,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<Object> {
 
         Map<String, ParamModel> paramMap = new HashMap<>();
 
-        if (HttpMethod.GET == method) {
+        if (HttpMethod.GET.equals(method)) {
             QueryStringDecoder decoder = new QueryStringDecoder(fullReq.uri());
             decoder.parameters().entrySet().forEach( entry -> {
 
