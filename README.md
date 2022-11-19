@@ -10,6 +10,12 @@ Magician is a small HTTP service package based on Netty that makes it very easy 
 
 If you want to develop an http service with netty but find it cumbersome, then Magician may help you.
 
+## Other Components
+
+<div style="width=100%;" align="center">
+<img width="100%" src="https://magician-io.com/source/images/components.png"/>
+</div>
+
 ## Running environment
 
 JDK11+
