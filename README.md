@@ -18,7 +18,7 @@ JDK8+
 
 ## Documentation
 
-[https://magician-io.com](https://magician-io.com)
+[https://github.com/JMagician/Magician/blob/master/Document.md](https://github.com/JMagician/Magician/blob/master/Document.md)
 
 ## Example
 
